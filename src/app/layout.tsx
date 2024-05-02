@@ -17,10 +17,12 @@ export default function RootLayout({
 	let { Header, Footer } = params;
 	return (
 		<html lang="en">
-			<body className="h-screen flex flex-col">
-				<header className="flex h-10">{Header}</header>
-				<main className="flex flex-1 overflow-auto">{children}</main>
-				<footer className="flex h-10">{Footer}</footer>
+			<body className="flex min-h-screen flex-col">
+				<header className="sticky left-0 top-0 z-50">{Header}</header>
+				<main className="flex flex-grow items-center justify-center overflow-auto">
+					{children}
+				</main>
+				<footer className="bottom-0 z-50">{Footer}</footer>
 			</body>
 		</html>
 	);
