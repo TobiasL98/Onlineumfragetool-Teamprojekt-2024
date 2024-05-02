@@ -9,9 +9,12 @@ const config: Config = {
 	theme: {
 		extend: {
 			colors: {
-				borderSeparatorColor: "rgb(121, 150, 163)",
-				buttonBackgroundColor: "rgb(68, 64, 51)",
+				borderBackgroundColor: "rgb(33 44 50)",
+				borderSeparatorColor: "rgb(56, 69, 74)",
+				inputBorderColor: "rgb(86, 106, 115)",
+				inputBackgroundColor: "rgb(43 57 65)",
 				buttonBorderColor: "rgb(255, 209, 17)",
+				buttonBackgroundColor: "rgb(68, 64, 51)",
 			},
 		},
 	},
