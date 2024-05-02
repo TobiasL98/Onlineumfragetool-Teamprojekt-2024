@@ -1,6 +1,6 @@
 export default function Page() {
 	return (
-		<div className="mx-10 flex flex-col items-center justify-center">
+		<div className="mx-36 flex flex-col items-center justify-center">
 			<div className="text-center">
 				<h1 className="text-4xl font-medium">
 					Herzlich Willkommen zur Umfrage
