@@ -1200,11 +1200,17 @@ pre > code {
 .ml-4 {
 	margin-left: 1rem;
 }
+.ml-8 {
+	margin-left: 2rem;
+}
 .mr-2 {
 	margin-right: 0.5rem;
 }
 .mr-4 {
 	margin-right: 1rem;
+}
+.mr-8 {
+	margin-right: 2rem;
 }
 .mt-2 {
 	margin-top: 0.5rem;
@@ -1426,6 +1432,9 @@ pre > code {
 .fill-skin-base {
 	fill: rgb(var(--color-text-base));
 }
+.p-1 {
+	padding: 0.25rem;
+}
 .p-2 {
 	padding: 0.5rem;
 }
@@ -1505,6 +1514,9 @@ pre > code {
 }
 .pr-3 {
 	padding-right: 0.75rem;
+}
+.pr-10 {
+	padding-right: 2.5rem;
 }
 .pt-12 {
 	padding-top: 3rem;

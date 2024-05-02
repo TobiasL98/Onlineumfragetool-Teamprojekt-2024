@@ -18,9 +18,9 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className="h-screen flex flex-col">
-				<header className="flex h-10">{Header}</header>
-				<main className="flex flex-1 overflow-auto">{children}</main>
-				<footer className="flex h-10">{Footer}</footer>
+			{/*<header className="flex h-10">{Header}</header>*/}
+				<main className="flex flex-1 flex-col overflow-auto">{children}</main>
+			{/*<footer className="flex h-10">{Footer}</footer>*/}
 			</body>
 		</html>
 	);
