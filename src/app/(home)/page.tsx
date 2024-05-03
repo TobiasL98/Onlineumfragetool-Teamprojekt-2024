@@ -1,8 +1,10 @@
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 export default function Page() {
 	return (
 		<div className="mx-36 flex flex-col items-center justify-center">
 			<div className="text-center">
-				<h1 className="text-4xl font-medium">
+				<h1 className="pb-8 font-mono text-4xl font-medium">
 					Herzlich Willkommen zur Umfrage
 				</h1>
 				<div className="m-3 border-b-2 border-b-borderSeparatorColor"></div>
