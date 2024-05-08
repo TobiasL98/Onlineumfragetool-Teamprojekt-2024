@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Header(admin: bool) {
+export default function Header(admin: boolean) {
 	return (
 		<header className="nav-container border-b border-b-borderSeparatorColor bg-[--header-color] px-6">
 			<div className="astro-3ef6ksr2 top-nav-wrap flex justify-between p-4 font-mono text-sm">
@@ -18,6 +18,7 @@ export default function Header(admin: bool) {
 							width="120"
 						/>
 					</Link>
+
 					{admin ? (
 						<nav className="astro-3ef6ksr2 flex" id="nav-menu">
 							<ul
@@ -43,16 +44,15 @@ export default function Header(admin: bool) {
 						</nav>
 					) : null}
 				</div>
-				{admin ? null : (
-					<div className="astro-3ef6ksr2 flex px-4">
-						<Link
-							className="astro-3ef6ksr2 focus-outline astro-5eunqzkt group inline-block border border-buttonBorderColor bg-[#444033] p-1 px-4 font-mono text-[#FFD111]"
-							href="/login"
-						>
-							Anmelden
-						</Link>
-					</div>
-				)}
+				<div className="astro-3ef6ksr2 flex px-4">
+					<Link
+						className="astro-3ef6ksr2 focus-outline astro-5eunqzkt group inline-block border border-buttonBorderColor bg-[#444033] p-1 px-4 font-mono text-[#FFD111]"
+						href="/login"
+					>
+						{/* TODO handle sessions */}
+						{admin ? "Abmelden" : "Anmelden"}
+					</Link>
+				</div>
 			</div>
 		</header>
 	);
