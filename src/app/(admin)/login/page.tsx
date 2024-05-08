@@ -1,8 +1,8 @@
+import Headline from "app/components/Headline";
 export default function Page() {
 	return (
 		<div className="flex w-[650px] flex-col items-center justify-center rounded-3xl bg-borderBackgroundColor text-center">
-			<h1 className="m-4 mb-3 text-4xl font-medium">Admin Login</h1>
-			<p className="w-3/4 border-b-2  border-b-borderSeparatorColor"></p>
+			<Headline className="w-3/4 flex-grow" text="Admin Login" />
 			<form className="mt-5 w-3/5 flex-grow">
 				<input
 					className="mb-3 w-full rounded-lg border-2 border-inputBorderColor bg-inputBackgroundColor px-2 py-1 text-inputBorderColor placeholder-inputBorderColor focus:outline-none focus:outline-inputBorderColor"
