@@ -1,11 +1,10 @@
+import Headline from "app/components/Headline";
+
 export default function Page() {
 	return (
 		<div className="mx-36 flex flex-col items-center justify-center">
 			<div className="text-center">
-				<h1 className="mb-4 text-4xl font-medium">
-					Herzlich Willkommen zur Umfrage
-				</h1>
-				<div className="m-4 border-b-2 border-b-borderSeparatorColor"></div>
+				<Headline text="Herzlich Willkommen zur Umfrage" />
 				<p className="mb-2">
 					Ihre Meinung ist uns wichtig, um ein umfassendes Bild
 					&uumlber Ihr Einkaufsverhlaten zu erhalten und somit die
