@@ -7,7 +7,7 @@ export default function Header(admin: bool) {
 				<div className="flex align-baseline ">
 					<a
 						className="astro-3ef6ksr2 logo whitespace-nowrap p-1"
-						href="#"
+						href="/"
 					>
 						<img
 							src={"/Logo_flowculate_4c_day_M 1.svg"}
