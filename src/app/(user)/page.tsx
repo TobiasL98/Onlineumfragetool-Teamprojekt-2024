@@ -4,11 +4,14 @@ export default function Page() {
 	return (
 		<div className="mx-36 flex flex-col items-center justify-center">
 			<div className="text-center">
-				<Headline text="Herzlich Willkommen zur Umfrage" />
+				<Headline
+					className="w-full flex-grow"
+					text="Herzlich Willkommen zur Umfrage"
+				/>
 				<p className="mb-2">
 					Ihre Meinung ist uns wichtig, um ein umfassendes Bild
-					&uumlber Ihr Einkaufsverhlaten zu erhalten und somit die
-					Grundlage f&uumlr die Berechnung eines typischen
+					&uuml;ber Ihr Einkaufsverhlaten zu erhalten und somit die
+					Grundlage f&uuml;r die Berechnung eines typischen
 					Personenflusses in Einkaufzentren zu schaffen.
 				</p>
 				<p className="mb-4">Dauer: ca. 10 Minuten</p>
