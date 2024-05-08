@@ -1,14 +1,19 @@
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 export default function Page() {
 	return (
 		<div className="mx-36 flex flex-col items-center justify-center">
 			<div className="text-center">
-				<h1 className="pb-8 font-mono text-4xl font-medium">
+				<h1 className="mb-4 text-4xl font-medium">
 					Herzlich Willkommen zur Umfrage
 				</h1>
-				<div className="m-3 border-b-2 border-b-borderSeparatorColor"></div>
-				<h3 className="font-semibold">So funkionierts:</h3>
+				<div className="m-4 border-b-2 border-b-borderSeparatorColor"></div>
+				<p className="mb-2">
+					Ihre Meinung ist uns wichtig, um ein umfassendes Bild
+					&uumlber Ihr Einkaufsverhlaten zu erhalten und somit die
+					Grundlage f&uumlr die Berechnung eines typischen
+					Personenflusses in Einkaufzentren zu schaffen.
+				</p>
+				<p className="mb-4">Dauer: ca. 10 Minuten</p>
+				<h3 className="font-semibold">So funktioniert's:</h3>
 				<p>
 					Beantworten Sie bitte zun&auml;chst einige kurze Fragen zu
 					Ihrer Einkaufssituation. W&auml;hlen Sie im folgenden
@@ -17,15 +22,15 @@ export default function Page() {
 					kurzen Umfragen zu unterschiedlichen Supermarktlayouts
 					teilnehmen.
 				</p>
-				<h3 className="my-6 font-semibold">
+				<h3 className="my-4 font-semibold">
 					Mit Ihrer Teilnahme helfen Sie uns, die Gestaltung von
-					Superm&auml;rkten zu verbessern!
+					Superm&auml;rkten kontinuierlich zu verbessern!
 				</h3>
-				<h3 className="my-6 font-semibold">
+				<h3 className="my-4 font-semibold font-semibold">
 					Vielen Dank f&uuml;r Ihre Unterst&uuml;tzung!
 				</h3>
 			</div>
-			<button className="my-6 border-2 border-buttonBorderColor bg-buttonBackgroundColor p-7 text-buttonBorderColor">
+			<button className="mt-2 border-2 border-buttonBorderColor bg-buttonBackgroundColor p-6 text-buttonBorderColor">
 				Umfrage Starten
 			</button>
 		</div>
