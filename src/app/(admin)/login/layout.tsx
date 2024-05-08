@@ -1,3 +1,4 @@
 import DefaultLayout from "utils/layoutGenerator";
+import Header from "app/components/Header";
 
-export default DefaultLayout();
+export default DefaultLayout(() => Header(true));
