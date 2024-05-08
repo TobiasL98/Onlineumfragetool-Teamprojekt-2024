@@ -5,7 +5,7 @@ export default function Header(admin: bool) {
 		<header className="nav-container border-b border-b-borderSeparatorColor bg-[--header-color] px-6">
 			<div className="astro-3ef6ksr2 top-nav-wrap flex justify-between p-4 font-mono text-sm">
 				<div className="flex align-baseline ">
-					<a
+					<Link
 						className="astro-3ef6ksr2 logo whitespace-nowrap p-1"
 						href="/"
 					>
@@ -17,7 +17,7 @@ export default function Header(admin: bool) {
 							fetchPriority="high"
 							width="120"
 						/>
-					</a>
+					</Link>
 					{admin ? (
 						<nav className="astro-3ef6ksr2 flex" id="nav-menu">
 							<ul
@@ -25,19 +25,19 @@ export default function Header(admin: bool) {
 								id="menu-items"
 							>
 								<li className="astro-3ef6ksr2 flex px-5">
-									<a className="astro-3ef6ksr2" href="#">
+									<Link className="astro-3ef6ksr2" href="#">
 										Neues Layout
-									</a>
+									</Link>
 								</li>
 								<li className="astro-3ef6ksr2 flex px-5">
-									<a className="astro-3ef6ksr2" href="#">
+									<Link className="astro-3ef6ksr2" href="#">
 										Layouts
-									</a>
+									</Link>
 								</li>
 								<li className="astro-3ef6ksr2 flex px-5">
-									<a className="astro-3ef6ksr2" href="#">
+									<Link className="astro-3ef6ksr2" href="#">
 										Ergebnisse
-									</a>
+									</Link>
 								</li>
 							</ul>
 						</nav>
