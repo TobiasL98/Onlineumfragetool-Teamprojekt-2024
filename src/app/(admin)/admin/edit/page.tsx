@@ -1,4 +1,38 @@
+"use client";
+
 import YellowButton from "components/Button";
+import { useState } from "react";
+
+type Pair<K, V> = [K, V];
+function RadioGroup<T>(
+	buttons: Pair<string, () => T>[],
+): [JSX.Element, () => () => T] {
+	const [selected, setSelected] = useState(0);
+	const selectedFunction = () => buttons[selected][1];
+
+	return [
+		<>
+			{buttons.map((e, index) => {
+				const text = e[0];
+				return (
+					<button
+						key={text}
+						onClick={() => {
+							setSelected(index);
+						}}
+						className={
+							selected == index
+								? "border-l-2 border-buttonBorderColor bg-backgroundColor text-textColor"
+								: ""
+						}
+						dangerouslySetInnerHTML={{ __html: text }}
+					/>
+				);
+			})}
+		</>,
+		selectedFunction,
+	];
+}
 
 function Button({
 	group,
@@ -29,35 +63,45 @@ function Button({
 }
 
 export default function Editor() {
+	let [buttons, selected] = RadioGroup([
+		["W&auml;nde", () => 1],
+		["Eingang", () => 2],
+		["Regale", () => 3],
+	]);
 	return (
 		<div className="flex grow self-stretch">
-			<div className="flex basis-1/6 flex-col bg-[--header-color] text-inputBorderColor">
-				<p className="mx-6 border-t-2 border-t-buttonBorderColor font-semibold text-buttonBorderColor"></p>
-				<h2 className="m-2 text-center text-lg text-buttonBorderColor">
-					Dein Layout
-				</h2>
-				<div className="space-y-2 border-y-2 border-black">
-					<div className="mx-6 flex flex-col space-y-3 py-4">
-						<button className="border-2 border-inputBorderColor bg-inputBackgroundColor">
-							Eigenes Layout laden
-						</button>
-						<button className="border-2 border-inputBorderColor bg-inputBackgroundColor">
-							Typische Vorlage laden
-						</button>
+			<div className="flex basis-1/6 flex-col justify-between bg-[--header-color] text-inputBorderColor">
+				<div>
+					<p className="mx-6 border-t-2 border-t-buttonBorderColor font-semibold text-buttonBorderColor"></p>
+					<h2 className="m-2 text-center text-lg text-buttonBorderColor">
+						Dein Layout
+					</h2>
+					<div className="space-y-2 border-y-2 border-black">
+						<div className="mx-6 flex flex-col space-y-3 py-4">
+							<button className="border-2 border-inputBorderColor bg-inputBackgroundColor">
+								Eigenes Layout laden
+							</button>
+							<button className="border-2 border-inputBorderColor bg-inputBackgroundColor">
+								Typische Vorlage laden
+							</button>
+						</div>
+					</div>
+					<div>
+						<h2 className="my-6 ms-4 text-lg font-medium">
+							Architektur
+						</h2>
+						<div className="flex flex-col text-center">
+							{buttons}
+						</div>
 					</div>
 				</div>
-				<div className="border-b-2 border-black">
-					<h2 className="my-6 ms-4 text-lg font-medium">
-						Architektur
-					</h2>
-					<form className="text-center">
-						<Button text="W&auml;nde" name="wall" group="blocks" />
-						<Button text="Eingang" name="entrance" group="blocks" />
-						<Button text="Regale" name="shelf" group="blocks" />
-					</form>
-				</div>
-				<div className="bottom-0 z-50 my-4 flex flex-col items-center">
-					<YellowButton className="w-2/3 text-center">
+				<div className="bottom-0 z-50 flex flex-col items-center border-t-2 border-black p-4">
+					<YellowButton
+						onClick={() => {
+							console.log(selected()());
+						}}
+						className="w-3/4 py-1 text-center"
+					>
 						Speichern
 					</YellowButton>
 				</div>
