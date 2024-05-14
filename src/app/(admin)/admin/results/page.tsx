@@ -19,29 +19,34 @@ export default function Results() {
 						<Headline className="mb-2">
 							<h4 className="font-semibold">Dein Layout</h4>
 						</Headline>
-						<form name="results" id="results" className="">
-							<div className="flex justify-between">
-								<label htmlFor="time" className="font-semibold">
-									Tageszeit
-								</label>
-								<Select name="time" id="time">
-									<option value="volvo">Volvo</option>
-									<option value="saab">Saab</option>
-									<option value="mercedes">Mercedes</option>
-									<option value="audi">Audi</option>
-								</Select>
-							</div>
-							<div className="mt-5 flex justify-between space-x-4">
-								<label htmlFor="day" className="font-semibold">
-									Wochentag
-								</label>
-								<Select name="time" id="time">
-									<option value="volvo">Volvo</option>
-									<option value="saab">Saab</option>
-									<option value="mercedes">Mercedes</option>
-									<option value="audi">Audi</option>
-								</Select>
-							</div>
+						<form
+							name="results"
+							id="results"
+							className="grid w-3/4 grid-cols-2 grid-rows-2 gap-y-5 text-left"
+						>
+							<label htmlFor="time" className="font-semibold">
+								Tageszeit
+							</label>
+							<Select name="time" id="time">
+								{/*TODO*/}
+								<option value="volvo">Volvo</option>
+								<option value="saab">Saab</option>
+								<option value="mercedes">Mercedes</option>
+								<option value="audi">Audi</option>
+							</Select>
+
+							<label htmlFor="day" className="font-semibold">
+								Wochentag
+							</label>
+							<Select name="day" id="day">
+								<option value="monday">Montag</option>
+								<option value="tuesday">Dienstag</option>
+								<option value="wednesday">Mittwoch</option>
+								<option value="thursday">Donnerstag</option>
+								<option value="friday">Freitag</option>
+								<option value="saturday">Samstag</option>
+								<option value="sunday">Sonnabend</option>
+							</Select>
 						</form>
 						<Headline className="mt-6"></Headline>
 						<Button
