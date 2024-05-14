@@ -15,6 +15,8 @@ const config: Config = {
 				inputBackgroundColor: "rgb(43 57 65)",
 				buttonBorderColor: "rgb(255, 209, 17)",
 				buttonBackgroundColor: "rgb(68, 64, 51)",
+				backgroundColor: "rgba(19, 31, 37, 1);",
+				textColor: "rgba(255, 255, 255, 1)",
 			},
 		},
 	},
