@@ -1,16 +1,17 @@
 export default function Headline({
-	text,
+	children,
 	className,
 }: {
-	text: string;
+	children?: React.ReactNode;
 	className?: string;
 }) {
+	// TODO the content of the headline can be props.children
 	return (
-		<div className={className}>
+		<div className={`${className} w-full flex-grow`}>
 			<div className="flex flex-col items-center justify-center align-middle">
-				<h1 className="m-4 mb-4 flex-grow text-4xl font-medium">
-					{text}
-				</h1>
+				{children && (
+					<div className="m-4 mb-4 flex-grow">{children}</div>
+				)}
 				<p className="mb-4 w-5/6 flex-grow border-b-2 border-b-borderSeparatorColor"></p>
 			</div>
 		</div>

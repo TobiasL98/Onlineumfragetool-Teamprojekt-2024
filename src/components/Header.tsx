@@ -36,7 +36,10 @@ export default function Header(admin: boolean) {
 									</Link>
 								</li>
 								<li className="astro-3ef6ksr2 flex px-5">
-									<Link className="astro-3ef6ksr2" href="#">
+									<Link
+										className="astro-3ef6ksr2"
+										href="/admin/results"
+									>
 										Ergebnisse
 									</Link>
 								</li>

@@ -1,13 +1,15 @@
-import Headline from "app/components/Headline";
+import Button from "components/Button";
+import Headline from "components/Headline";
 
 export default function Page() {
 	return (
 		<div className="flex flex-col items-center justify-center">
 			<div className="text-center">
-				<Headline
-					className="w-full flex-grow"
-					text="Herzlich Willkommen zur Umfrage"
-				/>
+				<Headline className="w-full flex-grow">
+					<h1 className="text-4xl font-medium">
+						Herzlich Willkommen zur Umfrage
+					</h1>
+				</Headline>
 				<div className="mx-72">
 					<p className="mb-2">
 						Ihre Meinung ist uns wichtig, um ein umfassendes Bild
@@ -34,9 +36,7 @@ export default function Page() {
 					</h3>
 				</div>
 			</div>
-			<button className="mt-2 border-2 border-buttonBorderColor bg-buttonBackgroundColor p-6 text-buttonBorderColor">
-				Umfrage Starten
-			</button>
+			<Button className="mt-2 border-2 p-6">Umfrage Starten</Button>
 		</div>
 	);
 }
