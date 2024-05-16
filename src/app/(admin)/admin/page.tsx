@@ -1,4 +1,4 @@
-import Headline from "app/components/Headline";
+import Headline from "components/Headline";
 
 function Button({ text }: { text: string }) {
 	return (

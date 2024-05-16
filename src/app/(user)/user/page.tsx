@@ -1,3 +1,4 @@
+import Button from "components/Button";
 import Link from "next/link";
 
 import Headline from "app/components/Headline";
@@ -6,10 +7,11 @@ export default function UserHome() {
 	return (
 		<div className="flex flex-col items-center justify-center">
 			<div className="text-center">
-				<Headline
-					className="w-full flex-grow"
-					text="Herzlich Willkommen zur Umfrage"
-				/>
+				<Headline className="w-full flex-grow">
+					<h1 className="text-4xl font-medium">
+						Herzlich Willkommen zur Umfrage
+					</h1>
+				</Headline>
 				<div className="mx-72">
 					<p className="mb-2">
 						Ihre Meinung ist uns wichtig, um ein umfassendes Bild
