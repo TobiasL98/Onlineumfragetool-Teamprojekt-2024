@@ -1,6 +1,6 @@
 "use client";
 
-import YellowButton from "components/Button";
+import Button from "components/Button";
 import { useState } from "react";
 
 type Pair<K, V> = [K, V];
@@ -32,34 +32,6 @@ function RadioGroup<T>(
 		</>,
 		selectedFunction,
 	];
-}
-
-function Button({
-	group,
-	name,
-	text,
-}: {
-	group: string;
-	name: string;
-	text: string;
-}) {
-	return (
-		<div className="has-[:checked]:border-l-2 has-[:checked]:border-buttonBorderColor has-[:checked]:bg-backgroundColor has-[:checked]:text-textColor">
-			<input
-				type="radio"
-				id={name}
-				name={group}
-				className="peer hidden appearance-none outline-none"
-				value={name}
-			/>
-			<label
-				className="z-10 me-auto ms-5 ms-auto text-center"
-				htmlFor={name}
-			>
-				{text}
-			</label>
-		</div>
-	);
 }
 
 export default function Editor() {
@@ -96,14 +68,14 @@ export default function Editor() {
 					</div>
 				</div>
 				<div className="bottom-0 z-50 flex flex-col items-center border-t-2 border-black p-4">
-					<YellowButton
+					<Button
 						onClick={() => {
 							console.log(selected()());
 						}}
 						className="w-3/4 py-1 text-center"
 					>
 						Speichern
-					</YellowButton>
+					</Button>
 				</div>
 			</div>
 			<div className="grow basis-5/6 bg-white"></div>
