@@ -1,6 +1,6 @@
 "use client"
 
-import Headline from "app/components/Headline";
+import Headline from "components/Headline";
 import Link from "next/link";
 import { useState } from "react"
 
@@ -10,9 +10,11 @@ export default function ShoppingStrategyPage() {
     return (
         <div className="flex flex-col">
             <Headline
-                className="w-full flex-grow"
-                text="Einkaufszentrum Layout"
-            />
+                className="w-full flex-grow">
+                <h1 className="text-4xl font-medium">
+                    Einkaufsstrategie
+                </h1>
+            </Headline>
             <div className="flex h-65">
                 <div className="w-30-percent flex flex-col justify-between">
                     <form className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor jjustify-space-around m-5 ml-8">

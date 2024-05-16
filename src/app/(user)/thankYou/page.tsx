@@ -1,4 +1,4 @@
-import Headline from "app/components/Headline";
+import Headline from "components/Headline";
 import Link from "next/link";
 
 export default function ThankYouPage() {
@@ -7,8 +7,11 @@ export default function ThankYouPage() {
             <div className="text-center">
                 <Headline
                     className="w-full flex-grow"
-                    text="Vielen Dank für Ihre Teilnahme!"
-                />
+                >
+                    <h1 className="text-4xl font-medium">
+                        Vielen Dank für Ihre Teilnahme!
+                    </h1>
+                </Headline>
                 <div className="mx-72">
                     <p className="my-5 mb-9">
                         Ihre Antworten wurden gespeichert.

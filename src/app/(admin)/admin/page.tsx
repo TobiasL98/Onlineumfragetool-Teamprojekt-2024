@@ -17,10 +17,9 @@ export default function AdminHome() {
 	return (
 		<div className="flex flex-col items-center justify-center">
 			<div>
-				<Headline
-					className="w-full flex-grow"
-					text="Admin Management"
-				/>
+				<Headline className="w-full flex-grow">
+					<h1 className="text-4xl font-medium">Admin Management </h1>
+				</Headline>
 				<p className="mx-72 mb-12 text-center">
 					Erstellen Sie ein neues Supermark-Layout ganz nach Ihren
 					Vorstellung, laden Sie eigene Layouts hoch oder nutzen Sie

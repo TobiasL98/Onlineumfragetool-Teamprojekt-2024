@@ -1,7 +1,7 @@
 import Button from "components/Button";
 import Link from "next/link";
 
-import Headline from "app/components/Headline";
+import Headline from "components/Headline";
 
 export default function UserHome() {
 	return (
