@@ -2,12 +2,12 @@ import Link from "next/link";
 
 export default function Header(admin: boolean) {
 	return (
-		<header className="nav-container border-b border-b-borderSeparatorColor bg-[--header-color] px-6">
+		<header className="nav-container bg-[--header-color] border-b border-b-[--header-footer-separator-color]  px-6 font-mono">
 			<div className="astro-3ef6ksr2 top-nav-wrap flex justify-between p-4 font-mono text-sm">
 				<div className="flex align-baseline ">
 					<Link
 						className="astro-3ef6ksr2 logo whitespace-nowrap p-1"
-						href="/"
+						href="/user"
 					>
 						<img
 							src={"/Logo_flowculate_4c_day_M 1.svg"}
@@ -15,14 +15,14 @@ export default function Header(admin: boolean) {
 							className="astro-3ef6ksr2"
 							decoding="async"
 							fetchPriority="high"
-							width="120"
+							width="125"
 						/>
 					</Link>
 
 					{admin ? (
 						<nav className="astro-3ef6ksr2 flex" id="nav-menu">
 							<ul
-								className="astro-3ef6ksr2 display-none  flex items-center pl-10"
+								className="astro-3ef6ksr2 display-none flex items-center pl-10"
 								id="menu-items"
 							>
 								<li className="astro-3ef6ksr2 flex px-5">
@@ -50,7 +50,7 @@ export default function Header(admin: boolean) {
 						href="/login"
 					>
 						{/* TODO handle sessions */}
-						{admin ? "Abmelden" : "Anmelden"}
+						{admin ? "Admin Logout" : "Admin Login"}
 					</Link>
 				</div>
 			</div>

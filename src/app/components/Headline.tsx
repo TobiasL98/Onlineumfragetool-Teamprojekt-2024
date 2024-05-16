@@ -7,7 +7,7 @@ export default function Headline({
 }) {
 	return (
 		<div className={className}>
-			<div className="flex flex-col items-center justify-center align-middle">
+			<div className="flex flex-col items-center justify-center align-middle font-mono">
 				<h1 className="m-4 mb-4 flex-grow text-4xl font-medium">
 					{text}
 				</h1>

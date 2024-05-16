@@ -93,6 +93,8 @@ table {
 }
 button,
 input,
+input[type='radio'],
+label,
 optgroup,
 select,
 textarea {
@@ -185,6 +187,7 @@ textarea::-moz-placeholder {
 	opacity: 1;
 	color: #9ca3af;
 }
+
 input::placeholder,
 textarea::placeholder {
 	opacity: 1;
@@ -1251,12 +1254,17 @@ pre > code {
 .h-full {
 	height: 100%;
 }
+.h-8 {
+	height: 80%;
+}
 .max-h-96 {
 	max-height: 24rem;
 }
+
 .w-44 {
 	width: 11rem;
 }
+
 .w-6 {
 	width: 1.5rem;
 }
@@ -1349,6 +1357,12 @@ pre > code {
 .justify-between {
 	justify-content: space-between;
 }
+.justify-space-evenly {
+	justify-content: space-evenly;
+}
+.justify-space-around {
+	justify-content: space-around;
+}
 .gap-x-2 {
 	-moz-column-gap: 0.5rem;
 	column-gap: 0.5rem;
@@ -1390,6 +1404,9 @@ pre > code {
 }
 .border-b {
 	border-bottom-width: 1px;
+}
+.border-l {
+	border-left-width: 1px;
 }
 .border-\[\#7996A3\] {
 	--tw-border-opacity: 1;
@@ -1491,6 +1508,9 @@ pre > code {
 	padding-top: 1.5rem;
 	padding-bottom: 1.5rem;
 }
+.pb-2 {
+	padding-bottom: 0.5rem;
+}
 .pb-3 {
 	padding-bottom: 0.75rem;
 }
@@ -1515,11 +1535,17 @@ pre > code {
 .pr-3 {
 	padding-right: 0.75rem;
 }
+.pr-8 {
+	padding-right: 2rem;
+}
 .pr-10 {
 	padding-right: 2.5rem;
 }
 .pt-12 {
 	padding-top: 3rem;
+}
+.pt-2 {
+	padding-top: 0.5rem;
 }
 .pt-4 {
 	padding-top: 1rem;

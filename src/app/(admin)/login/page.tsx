@@ -14,7 +14,7 @@ export default function Page() {
 					placeholder="password"
 				></input>
 			</form>
-			<button className="my-6 border-2 border-buttonBorderColor bg-buttonBackgroundColor px-7 py-2 text-buttonBorderColor">
+			<button className="font-mono my-6 border-2 border-buttonBorderColor bg-buttonBackgroundColor px-7 py-2 text-buttonBorderColor">
 				Login
 			</button>
 		</div>

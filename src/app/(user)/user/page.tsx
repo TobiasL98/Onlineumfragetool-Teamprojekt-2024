@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 import Headline from "app/components/Headline";
 
-export default function Page() {
+export default function UserHome() {
 	return (
 		<div className="flex flex-col items-center justify-center">
 			<div className="text-center">
@@ -34,9 +36,12 @@ export default function Page() {
 					</h3>
 				</div>
 			</div>
-			<button className="mt-2 border-2 border-buttonBorderColor bg-buttonBackgroundColor p-6 text-buttonBorderColor">
+			<Link
+				className="font-mono mt-2 border border-buttonBorderColor bg-buttonBackgroundColor p-4 text-buttonBorderColor"
+				href="/survey"
+			>
 				Umfrage Starten
-			</button>
+			</Link>
 		</div>
 	);
 }
