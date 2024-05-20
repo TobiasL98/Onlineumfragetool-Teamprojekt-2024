@@ -12,7 +12,7 @@ export default function Results() {
 				</Headline>
 				<p className="mx-72 mb-12 text-center">
 					Bitte w&auml;hlen Sie den Wochentag und die Tageszeit aus,
-					f&uuml; die Sie die Ergebnisse ansehen m&ouml;chten.
+					f&uuml;r die Sie die Ergebnisse ansehen m&ouml;chten.
 				</p>
 				<div className="m-auto flex w-5/6 shrink flex-col items-center md:flex-row md:space-x-10">
 					<Bordered className="grow max-md:w-full">

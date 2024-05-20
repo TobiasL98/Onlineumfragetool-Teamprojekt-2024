@@ -5,7 +5,6 @@ export default function Headline({
 	children?: React.ReactNode;
 	className?: string;
 }) {
-	// TODO the content of the headline can be props.children
 	return (
 		<div className={`${className} w-full flex-grow`}>
 			<div className="flex flex-col items-center justify-center align-middle">

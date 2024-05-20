@@ -21,7 +21,7 @@ export default function AdminHome() {
 					<h1 className="text-4xl font-medium">Admin Management </h1>
 				</Headline>
 				<p className="mx-72 mb-12 text-center">
-					Erstellen Sie ein neues Supermark-Layout ganz nach Ihren
+					Erstellen Sie ein neues Supermarkt-Layout ganz nach Ihren
 					Vorstellung, laden Sie eigene Layouts hoch oder nutzen Sie
 					eine typische Vorlage, um Zeit zu sparen und Inspiration zu
 					erhalten.
