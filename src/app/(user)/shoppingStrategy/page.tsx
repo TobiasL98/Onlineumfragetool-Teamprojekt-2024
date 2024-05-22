@@ -16,8 +16,8 @@ export default function ShoppingStrategyPage() {
                 </h1>
             </Headline>
             <div className="flex h-65">
-                <div className="w-30-percent flex flex-col justify-between">
-                    <form className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor jjustify-space-around m-5 ml-8">
+                <div className="w-25-percent flex flex-col justify-between m-5 ml-7">
+                    {/*<form className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor jjustify-space-around m-5 ml-8">
                         <div className="flex flex-col my-3">
                             <h3 className="font-mono mb-3 font-semibold font-semibold text-center">
                                 Aufenthaltsdauer
@@ -64,9 +64,19 @@ export default function ShoppingStrategyPage() {
                                 </small>
                             </div>
                         </div>
-                    </form>
-                    <Link className="flex justify-start w-full ml-8 mb-5" href="/survey">
-                        <button className="font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-4 text-buttonBorderColor">
+                    </form>*/}
+                    <div className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor">
+                        <div className="italic mb-5">
+                            Stellen Sie sich im Geiste vor Sie machen gerade Ihren Einkauf...
+                        </div>
+                        <div className="mt-5">
+                            Wählen Sie per Rechtsklick Schritt für Schritt Ihre
+                            Einkaufsreihenfolge aus und wie lange Sie jeweils an
+                            den Bereichen verweilen
+                        </div>
+                    </div>
+                    <Link className="flex justify-start ml-2" href="/thankYou">
+                        <button className="px-4 font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-3 text-buttonBorderColor">
                             Zurück
                         </button>
                     </Link>
@@ -74,19 +84,9 @@ export default function ShoppingStrategyPage() {
                 <div className="italic p-4 flex rounded-3xl w-full bg-borderBackgroundColor m-5">
                     The actual, clickable Supermarkt Layout will be displayed here
                 </div>
-                <div className="w-30-percent flex flex-col justify-between ">
-                    <div className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor m-5 mr-8">
-                        <div className="italic mb-5">
-                            Stellen Sie sich im Geiste vor Sie machen gerade Ihren Einkauf...
-                        </div>
-                        <div className="italic mt-5">
-                            Wählen Sie per Rechtsklick Schritt für Schritt Ihre
-                            Einkaufsreihenfolge aus und wie lange Sie jeweils an
-                            den Bereichen verweilen
-                        </div>
-                    </div>
-                    <Link className="flex justify-end mr-8 mb-5" href="/thankYou">
-                        <button className="px-4 font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-3 text-buttonBorderColor">
+                <div className="flex flex-col justify-end m-5 mr-7">
+                    <Link className="flex w-full" href="/survey">
+                        <button className="font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-4 text-buttonBorderColor">
                             Fertig
                         </button>
                     </Link>

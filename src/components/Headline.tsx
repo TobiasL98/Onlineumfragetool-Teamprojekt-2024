@@ -6,7 +6,7 @@ export default function Headline({
 	className?: string;
 }) {
 	return (
-		<div className={`${className} w-full flex-grow`}>
+		<div className={`${className} w-full flex-grow font-mono`}>
 			<div className="flex flex-col items-center justify-center align-middle">
 				{children && (
 					<div className="m-4 mb-4 flex-grow">{children}</div>

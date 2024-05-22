@@ -1,18 +1,56 @@
 "use client"
 
 import { useState } from "react"
+import { useEffect } from "react";
 import Link from "next/link";
-
 import Select, { StylesConfig} from 'react-select';
-import OptionTypeBase  from 'react-select';
+
 
 export default function SurveyPage() {
     const [isRotated, setIsRotated] = useState(false);
     const [marginTop, setMarginTop] = useState("0.6rem");
     const [selectedGender, setSelectedGender] = useState("");
-    const [selectedAllergy, setSelectedAllergy] = useState("");
+    //const [selectedAllergy, setSelectedAllergy] = useState("");
     const [selectedOtherPersons, setSelectedOtherPersons] = useState("");
-    const [selectedWeekday, setSelectedWeekday] = useState("");
+    //const [selectedWeekday, setSelectedWeekday] = useState("");
+    const [selectedTime, setSelectedTime] = useState("");
+
+    type OptionType = {
+        value: string;
+        label: string;
+    };
+
+    type WeekdayType = {
+        [key: string]: boolean;
+        monday: boolean;
+        tuesday: boolean;
+        wednesday: boolean;
+        thursday: boolean;
+        friday: boolean;
+        saturday: boolean;
+        noPreferredDay: boolean;
+    };
+
+    type AllergyType = {
+        [key: string]: boolean;
+        gluten: boolean;
+        soja: boolean;
+        lactose: boolean;
+        peanuts: boolean;
+        fructose: boolean;
+        noAllergies: boolean;
+        otherAllergies: boolean;
+    };
+
+    const [selectedWeekday, setSelectedWeekday] = useState<WeekdayType>({
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        noPreferredDay: false,
+    });
 
     const weekdayOptions = [
         { value: 'monday', label: 'Montag' },
@@ -21,6 +59,7 @@ export default function SurveyPage() {
         { value: 'thursday', label: 'Donnerstag' },
         { value: 'friday', label: 'Freitag' },
         { value: 'saturday', label: 'Samstag' },
+        { value: 'noPreferredDay', label: 'Kein bevorzugter Tag' },
     ];
 
     const timeOptions = [
@@ -44,6 +83,26 @@ export default function SurveyPage() {
         { value: 'student', label: 'Student' },
         { value: 'pupil', label: 'Schüler' },
         { value: 'unemployed', label: 'Arbeitslos' },
+    ];
+
+    const [selectedAllergies, setSelectedAllergy] = useState<AllergyType>({
+        gluten: false,
+        soja: false,
+        lactose: false,
+        peanuts: false,
+        fructose: false,
+        noAllergies: false,
+        otherAllergies: false,
+    });
+
+    const allergyOptions = [
+        { value: 'gluten', label: 'Gluten' },
+        { value: 'soja', label: 'Soja' },
+        { value: 'lactose', label: 'Laktose' },
+        { value: 'peanuts', label: 'Erdnüsse' },
+        { value: 'fructose', label: 'Fruktose' },
+        { value: 'noAllergies', label: 'Keine' },
+        { value: 'otherAllergies', label: 'Andere' },
     ];
 
     const selectStyles: StylesConfig = {
@@ -106,6 +165,22 @@ export default function SurveyPage() {
         }),
     };
 
+    useEffect(() => {
+        const isAnyWeekdaySelected = Object.values(selectedWeekday).some(value => value);
+        const enterWeekdayDiv = document.getElementById('enterWeekday');
+        if (isAnyWeekdaySelected && enterWeekdayDiv) {
+            enterWeekdayDiv.style.display = 'none';
+        }
+    }, [selectedWeekday]);
+
+    useEffect(() => {
+        const isTimeSelected = selectedTime !== "";
+        const enterTimeOptionDiv = document.getElementById('enterTimeOption');
+        if (isTimeSelected && enterTimeOptionDiv) {
+            enterTimeOptionDiv.style.display = 'none';
+        }
+    }, [selectedTime])
+
     function handleCaretClick() {
         const optionalQuestions = document.getElementById('optionalQuestions');
 
@@ -122,43 +197,90 @@ export default function SurveyPage() {
         }
     }
 
+    function handleContinueClick(event: React.MouseEvent) {
+        const isAnyWeekdaySelected = Object.values(selectedWeekday).some(value => value);
+        const isTimeSelected = selectedTime !== "";
+
+        if (!isAnyWeekdaySelected) {
+            const enterWeekdayDiv = document.getElementById('enterWeekday');
+            if (enterWeekdayDiv) {
+                enterWeekdayDiv.style.display = 'block';
+            }
+        }
+
+        if (!isTimeSelected) {
+            const enterTimeOptionDiv = document.getElementById('enterTimeOption');
+            if (enterTimeOptionDiv) {
+                enterTimeOptionDiv.style.display = 'block';
+            }
+        }
+
+        if (!isAnyWeekdaySelected || !isTimeSelected) {
+            event.preventDefault();
+        }
+    }
+
     return (
         <div className="w-80-percent flex flex-col items-center justify-center m-5">
-            <div className="flex rounded-3xl w-full bg-borderBackgroundColor text-center m-5">
+            <div className="flex rounded-3xl w-full bg-borderBackgroundColor m-5">
                 <form className="w-3/5 flex flex-col items-center justify-center flex-grow">
-                    <div className="flex flex-col m-5 my-6">
-                        <div className="text-center mb-5">
-                            <p>An welchem Wochentag gehen Sie für gewöhnlich einkaufen?</p>
+                    <div className="flex flex-col m-5 mb-5 mt-7">
+                        <div className="flex text-center justify-center">
+                            <p>An welchem Wochentag gehen Sie für gewöhnlich einkaufen?<span className="p-2" style={{color: 'red'}}>*</span></p>
                         </div>
-                        <div className="flex justify-center">
-                            <Select
-                                className="mb-1 mx-6 w-80-percent bg-inputBackgroundColor text-inputBorderColor"
-                                options={weekdayOptions}
-                                styles={selectStyles}
-                                placeholder="Bitte wählen"
-                            />
+                        <div id="enterWeekday" className="pt-1 pl-5 hidden opacity-75 hint" style={{color:'red'}}>
+                            * Bitte wählen Sie mindestens eine Option.
+                        </div>
+                        <small className="pl-5 pr-8 text-center flex flex-wrap mt-3 mb-5">
+                            {weekdayOptions.map((option) => (
+                                <label key={option.value} className="flex items-center m-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedWeekday[option.value]}
+                                        onChange={() => setSelectedWeekday(prev => ({ ...prev, [option.value]: !prev[option.value] }))}
+                                        className="styled-checkbox mr-2 border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
+                                    />
+                                    {option.label}
+                                </label>
+                            ))}
+                        </small>
+                        <div className="hint opacity-30 flex p-1 pl-5">
+                            <div className="flex">
+                                <p className="mr-1  font-bold">Hinweis: </p> Sie können mehrere Tage auswählen, jedoch wird anschließend
+                                nur eine Einkaufsstrategie für alle ausgewählten Tage angewendet.
+                                Sie können die Umfrage für verschiedene Tage wiederholen.
+                            </div>
                         </div>
                     </div>
                 </form>
                 <p className="my-4 flex-grow border-l border-borderSeparatorColor"></p>
-                <form className="w-3/5 flex flex-col items-center justify-center flex-grow">
-                    <div className="flex flex-col m-5 my-6">
-                        <div className="text-center mb-5">
-                            <p>Zu welcher Tageszeit gehen Sie für gewöhnlich einkaufen?</p>
+                <form className="w-3/5 flex flex-col items-center flex-grow">
+                    <div className="flex flex-col m-5 mb-5 mt-7">
+                        <div className="text-center">
+                            <p>Zu welcher Tageszeit gehen Sie für gewöhnlich einkaufen?<span className="p-2" style={{color: 'red'}}>*</span></p>
                         </div>
-                        <div className="flex justify-center">
+                        <div id="enterTimeOption" className="pt-1 hidden opacity-75 hint" style={{color:'red'}}>
+                            * Bitte wählen Sie eine Option.
+                        </div>
+                        <div className="flex justify-center mt-5">
                             <Select
                                 className="mb-1 mx-6 w-80-percent bg-inputBackgroundColor text-inputBorderColor"
                                 options={timeOptions}
                                 styles={selectStyles}
                                 placeholder="Bitte wählen"
+                                onChange={(newValue: unknown, actionMeta) => {
+                                    const option = newValue as OptionType | null;
+                                    if (actionMeta.action === 'select-option' || actionMeta.action === 'clear') {
+                                        setSelectedTime(option ? option.value : "");
+                                    }
+                                }}
                             />
                         </div>
                     </div>
                 </form>
             </div>
-            <div className="flex flex-col w-full justify-center rounded-3xl bg-borderBackgroundColor text-center m-5 p-3 px-5">
-                <div className="flex items-start align-center border-b border-b-borderSeparatorColor p-2">
+            <div className="flex flex-col w-full justify-center rounded-3xl bg-borderBackgroundColor text-center m-5 mb-7 p-3 px-5">
+                <div className="flex items-start align-center p-2">
                     <button
                         className="border border-l-transparent border-t-transparent border-b-buttonBorderColor border-r-buttonBorderColor p-1 mx-1"
                         style={{ transform: isRotated ? "rotate(45deg)" : "rotate(225deg)", marginTop: marginTop }}
@@ -172,7 +294,7 @@ export default function SurveyPage() {
                         (optional)
                     </div>
                 </div>
-                <div id="optionalQuestions" className="hidden">
+                <div id="optionalQuestions" className="hidden border-t border-t-borderSeparatorColor ">
                     <form className="w-3/5 flex flex-col items-center flex-grow">
                         <div className="flex flex-col m-6">
                             <div className="flex">
@@ -305,92 +427,23 @@ export default function SurveyPage() {
                                     Allergien / Unverträglichkeiten
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 ml-5">
+                                    {allergyOptions.map((option) => (
+                                        <small key={option.value} className="flex justify-start">
+                                            <label className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedAllergies[option.value]}
+                                                    onChange={() => setSelectedAllergy(prev => ({ ...prev, [option.value]: !prev[option.value] }))}
+                                                    className="styled-checkbox mr-2 border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
+                                                />
+                                                {option.label}
+                                            </label>
+                                        </small>
+                                    ))}
                                     <small className="flex justify-start">
-                                        <label className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="gluten"
-                                                value="gluten"
-                                                checked={selectedAllergy === "gluten"}
-                                                onClick={() => setSelectedAllergy(prev => prev === "gluten" ? "" : "gluten")}
-                                                className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-                                            />
-                                            Gluten
-                                        </label>
-                                    </small>
-                                    <small className="flex justify-start">
-                                        <label className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="soja"
-                                                value="soja"
-                                                checked={selectedAllergy === "soja"}
-                                                onClick={() => setSelectedAllergy(prev => prev === "soja" ? "" : "soja")}
-                                                className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-                                            /> Soja
-                                        </label>
-                                    </small>
-                                    <small className="flex justify-start">
-                                        <label className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="lactose"
-                                                value="lactose"
-                                                checked={selectedAllergy === "lactose"}
-                                                onClick={() => setSelectedAllergy(prev => prev === "lactose" ? "" : "lactose")}
-                                                className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-                                            />Laktose
-                                        </label>
-                                    </small>
-                                    <small className="flex justify-start">
-                                        <label className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="peanuts"
-                                                value="peanuts"
-                                                checked={selectedAllergy === "peanuts"}
-                                                onClick={() => setSelectedAllergy(prev => prev === "peanuts" ? "" : "peanuts")}
-                                                className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-                                            />Erdnüsse
-                                        </label>
-                                    </small>
-                                    <small className="flex justify-start">
-                                        <label className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="fructose"
-                                                value="fructose"
-                                                checked={selectedAllergy === "fructose"}
-                                                onClick={() => setSelectedAllergy(prev => prev === "fructose" ? "" : "fructose")}
-                                                className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-                                            />Fruktose
-                                        </label>
-                                    </small>
-                                    <small className="flex justify-start">
-                                        <label className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="noAllergies"
-                                                value="noAllergies"
-                                                checked={selectedAllergy === "noAllergies"}
-                                                onClick={() => setSelectedAllergy(prev => prev === "noAllergies" ? "" : "noAllergies")}
-                                                className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-                                            />Keine
-                                        </label>
-                                    </small>
-                                    <small className="flex justify-start">
-                                        <label className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="otherAllergies"
-                                                value="otherAllergies"
-                                                checked={selectedAllergy === "otherAllergies"}
-                                                onClick={() => setSelectedAllergy(prev => prev === "otherAllergies" ? "" : "otherAllergies")}
-                                                className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-                                            />Andere:
-                                        </label>
                                         <input
-                                            className="ml-3 flex px-1 justify-start col-span-2 h-6 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none focus:outline-inputBorderColor"
+                                            className="flex px-1 justify-start col-span-2 h-6 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none focus:outline-inputBorderColor"
+                                            style={{marginLeft: '-4rem'}}
                                         ></input>
                                     </small>
                                 </div>
@@ -406,7 +459,10 @@ export default function SurveyPage() {
                     </button>
                 </Link>
                 <Link className="flex justify-end w-full" href="/shoppingStrategy">
-                    <button className="font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-4 text-buttonBorderColor">
+                    <button
+                        className="font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-4 text-buttonBorderColor"
+                        onClick={handleContinueClick}
+                    >
                         Weiter
                     </button>
                 </Link>
