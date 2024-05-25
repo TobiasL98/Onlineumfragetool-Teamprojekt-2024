@@ -6,8 +6,8 @@ import { EditorModes } from "lib/edit/EditorModes";
 
 const PlanTab = ({ editorMode, onModeChange }: { editorMode: EditorModes, onModeChange: (editorMode: EditorModes) => void }) => {
     return (
-        <div className="pb-3 flex flex-col text-center">
-            <div>
+        <div className=" flex flex-col h-full justify-between text-center">
+            <div className="pb-8">
                 <PlanButton
                     label={"Wände"}
                     Component={IconWalls}
@@ -29,11 +29,45 @@ const PlanTab = ({ editorMode, onModeChange }: { editorMode: EditorModes, onMode
                     Component={IconObjectsPlan}
                     fill="#7996A3"
                     hoverFill="white"
-                    onClick={() => onModeChange(EditorModes.objects)}
-                    active={editorMode === EditorModes.objects}
+                    onClick={() => onModeChange(EditorModes.subdomains)}
+                    active={editorMode === EditorModes.subdomains}
                 />
             </div>
+            <div id="erklärung" className={"px-4 border-t-2 border-black"}>
+                <div className="w-full flex flex-row  mt-3 mb-1">
+                    {editorMode === EditorModes.walls && (
+                        <p className={"text-white text-[13px] font-bold"}>Wände</p>
+                    )}
+                    {editorMode === EditorModes.doors && (
+                        <p className={"text-white text-[13px] font-bold"}>Eingang</p>
+                    )}
+                    {editorMode === EditorModes.subdomains && (
+                        <p className={"text-white text-[13px] font-bold"}>Regale</p>
+                    )}
+                </div>
+                <div className="pb-3">
+                    <div>
+                        {editorMode === EditorModes.walls && (
+                            <p className={"text-white text-[11px]"}>
+                                In der Simulation dienen die Wände als äußere Begrenzung der Fläche, auf der sich die Personen bewegen sollen. Eingestellte Eckpunkte können mit der rechten Maustaste gelöscht werden. Die Außenwände müssen eine geschlossene Fläche bilden. Nur wenn eine geschlossene Fläche mit einem Ausgang vorhanden ist, kann eine Simulation durchgeführt werden.
+                            </p>
+                        )}
+                        {editorMode === EditorModes.doors && (
+                            <p className={"text-white text-[11px]"}>
+                                Die Personen betreten die Simulation durch Türen. Türen können mit der rechten Maustaste wieder gelöscht werden.
+                            </p>
+                        )}
+                        {editorMode === EditorModes.subdomains && (
+                            <p className={"text-white text-[11px]"}>
+                                Regale sind Teile innerhalb eines Plans, die zur Aufbewahrung und Organisation von Produkten dienen. Eingestellte Regale können mit der linken Maustaste einem Bereich zugeordnet werden. Jedes Regal muss einem Bereich zugeordnet werden und jeder Bereich kann auch nur einmalig ausgewählt werden.
+                                Eingestellte Eckpunkte können mit der rechten Maustaste gelöscht werden.
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
+
     )
 }
 
