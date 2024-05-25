@@ -84,6 +84,7 @@ interface CanvasProps {
     onCornerMove?: (point: Point) => void;
     onAddObject?: (newObjects: IRect) => void;
     onSubdomainMove?: (subdomain: ISubdomain) => void;
+    onSubdomainClick?: (evt: KonvaEventObject<MouseEvent>, subdomain: ISubdomain) => void;
     //onStartareaMove?: (startArea: IStartArea) => void;
     onWallClick?: (evt: KonvaEventObject<MouseEvent>, id: string) => void
     onImageUpdate?: (imagePosition: IBackgroundImagePosition) => void;
@@ -122,6 +123,7 @@ function PolygonCanvas({
                            onDeleteSubdomain = () => { return },
                            //onDeleteStartArea = () => { return },
                            onSubdomainMove = () => { return },
+                            onSubdomainClick = () => { return },
                            //onStartareaMove = () => { return },
                            onAddPoint = () => { return },
                            onCornerMove = () => { return },
@@ -392,10 +394,13 @@ function PolygonCanvas({
         setStartRectPosition({ x, y });
         setCurrentRectPosition({ x, y });
         setIsDragging(true);
+
+      
     };
 
     const handleCanvasMouseUp = () => {
         if (isDragging) {
+
             const newRectangle = {
                 x: Math.min(startRectPosition.x, currentRectPosition.x),
                 y: Math.min(startRectPosition.y, currentRectPosition.y),
@@ -477,6 +482,12 @@ function PolygonCanvas({
                 handleAddPoint(clickPosition)
                 break;
             case EditorModes.objects:
+                if (checkObjectForLine(e.target.attrs) || isRightClick) {
+                    break;
+                }
+                handleAddPoint(clickPosition)
+                break;
+            case EditorModes.subdomains:
                 if (checkObjectForLine(e.target.attrs) || isRightClick) {
                     break;
                 }
@@ -940,7 +951,15 @@ function PolygonCanvas({
                 */}
                             <Group ref={konvaRefs.subdomainGroup}>
                                 {subdomains.map((subdom, index) => (
-                                    <CanvasSubdomain key={index} scale={stage.scale} subdomain={subdom} onChange={onSubdomainMove} onDelete={onDeleteSubdomain} mode={mode} />
+                                    <CanvasSubdomain 
+                                        key={index} 
+                                        scale={stage.scale} 
+                                        subdomain={subdom} 
+                                        onChange={onSubdomainMove}
+                                        onClick={onSubdomainClick}
+                                        onDelete={onDeleteSubdomain} 
+                                        mode={mode}
+                                    />
                                 ))}
                             </Group>
                             {/*

@@ -6,4 +6,6 @@ export interface ISubdomain {
     //velocity: number,
     polygon: IRect,
     hover: Boolean,
+    text: string;
+    selectedItems: string[];
 }

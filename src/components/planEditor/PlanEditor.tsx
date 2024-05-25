@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 //import { IRect } from "interfaces/canvas/IRect";
 import { IRect } from "konva/lib/types";
 
+import ContextMenu from "components/planEditor/polygonCanvas/ContextMenu"
 import { ISubdomain } from "interfaces/edit/ISubdomain";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { EditorModes } from "lib/edit/EditorModes";
@@ -75,15 +76,29 @@ function PlanEditor({
                         handleImageMoved
                     }: IPlanEditorProps) {
     const [activeDoorPoint, setActiveDoorPoint] = useState<{ point: Point, vector: Vector } | null>(null);
-   // const [activeMeasurementPoint, setActiveMeasurementPoint] = useState<Point | null>(null);
+    // const [activeMeasurementPoint, setActiveMeasurementPoint] = useState<Point | null>(null);
    // const [activeAttractorPoint, setActiveAttractorPoint] = useState<Point | null>(null);
+    const [globalSelectedItems, setGlobalSelectedItems] = useState<string[]>([]);
     const [clickedLine, setClickedLine] = useState<string | null>(null);
+    const [contextMenu, setContextMenu] = useState<{
+        visible: boolean;
+        x: number;
+        y: number;
+        subdomain: ISubdomain | null;
+    }>({
+        visible: false,
+        x: 0,
+        y: 0,
+        subdomain: null,
+    });
 
     useEffect(() => {
         if (mode !== EditorModes.doors) {
             setActiveDoorPoint(null)
             setClickedLine(null)
         }
+
+
 
         // Add event listeners
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -93,7 +108,6 @@ function PlanEditor({
             }
         };
         const handleContextMenu = (e: MouseEvent) => {
-            console.debug("mouse clicked")
             if (e.button === 2) {
                 // Do something when the right mouse button is clicked
                 handleRightClick(mode);
@@ -127,6 +141,7 @@ function PlanEditor({
         //    setActiveAttractorPoint(null)
         //}
     }
+    
 
     const handleCreateDoor = (e: any, id: string) => {
         const stage = e.target.getStage();
@@ -356,7 +371,7 @@ function PlanEditor({
     };
 
     const handleAddSubdomain = (newObject: IRect) => {
-        const newSubdomain: ISubdomain = { name: "subdom1", id: nanoid(), polygon: newObject, hover: false }
+        const newSubdomain: ISubdomain = { name: "subdom1", id: nanoid(), polygon: newObject, hover: false, text: "", selectedItems: [] }
         const newObjects = [...subdomains, newSubdomain]
         handleSubdomainsChange(newObjects)
     }
@@ -366,12 +381,15 @@ function PlanEditor({
             console.warn("The EditorMode does not support deleting subdomains");
             return
         }
+        const newGlobalSelectedItems = globalSelectedItems.filter(item => !subdomainDelete.selectedItems.includes(item));
+        setGlobalSelectedItems(newGlobalSelectedItems);
+
         const newSubdomains = subdomains.filter((subdom) => subdomainDelete !== subdom);
         handleSubdomainsChange(newSubdomains);
     };
 
     const handleMoveSubdomain = (movedSubdomain: ISubdomain) => {
-        // if (mode != EditorModes.walls) { return }
+         if (mode != EditorModes.walls) { return }
         const newSubdomains = subdomains.map((subdom) => {
             if (movedSubdomain.id === subdom.id) {
                 return movedSubdomain
@@ -380,6 +398,28 @@ function PlanEditor({
         });
 
         handleSubdomainsChange(newSubdomains);
+    };
+
+    const handleClickSubdomain = (e: any, subdomain: ISubdomain) => {
+        if (mode !== EditorModes.subdomains) {
+            console.warn("The EditorMode does not support deleting subdomains");
+            return
+        }
+
+        const stage = e.target.getStage();
+        const mousePos = stage.getPointerPosition();
+        const stageBox = stage.container().getBoundingClientRect();
+
+        setContextMenu({
+            visible: true,
+            x: mousePos.x + stageBox.left,
+            y: mousePos.y + stageBox.top,
+            subdomain: subdomain
+        });
+    };
+
+    const handleCloseContextMenu = () => {
+        setContextMenu({ ...contextMenu, visible: false });
     };
 
    /* const handleMoveStartarea = (movedStartarea: IStartArea) => {
@@ -564,51 +604,76 @@ function PlanEditor({
                 break;*/
             default:
                 break;
-        }
+        }//const [subdomain, setSubdomain] = useState(initialValue);
     }
+    const handleMenuItemClick = (itemText: string, selectedSubdomain: ISubdomain | null) => {
+        if (selectedSubdomain) {
+            if (itemText === selectedSubdomain.text) {
+                selectedSubdomain.text = "";
+                selectedSubdomain.selectedItems = selectedSubdomain.selectedItems.filter(item => item !== itemText);
+                setGlobalSelectedItems(prevItems => prevItems.filter(item => item !== itemText));
+            } else {
+                selectedSubdomain.text = itemText;
+                selectedSubdomain.selectedItems.push(itemText);
+                setGlobalSelectedItems(prevItems => [...prevItems, itemText]);
+            }
+        }
+    };
 
 
     return (
-        <PolygonCanvas
-            backgroundImage={backgroundImage}
-            mode={mode}
-            fit={fit}
-            zoom={zoom}
-            grid={grid}
-            polygonCorners={polygonCorners}
-            holePolygons={holePolygons}
-            doors={doors}
-            activeDoorPoint={activeDoorPoint}
-            //activeMeasurementPoint={activeMeasurementPoint}
-            //activeAttractorPoint={activeAttractorPoint}
-            walls={walls}
-            holeWalls={holeWallsList}
-            subdomains={subdomains}
-           // startAreas={startAreas}
-            referenceLine={referenceLine}
-            //measurementLines={measurementLines}
-            //attractors={attractors}
-            backgroundImagePosition={backgroundImagePosition}
-            onReferenceLineChange={handleReferenceLineChange}
-            onWallClick={handleWallClickWrapper}
-            onAddObject={handleAddObjectWrapper}
-            onDeleteDoors={handleDeleteDoors}
-            onChangeDoor={handleChangeDoor}
-            //onChangeMeasurementLine={handleMoveMeasurementLine}
-            // onCreateMeasurementLine={handleCreateMeasurementLine}
-            // onDeleteMeasurementLine={handleDeleteMeasurementLine}
-           // onChangeAttractor={handleMoveAttractor}
-            //onCreateAttractor={handleCreateAttractor}
-            //onDeleteAttractor={handleDeleteAttractor}
-            onDeleteCorner={handleDeleteCornerWrapper}
-            onDeleteSubdomain={handleDeleteSubdomain}
-            //onDeleteStartArea={handleDeleteStartArea}
-            onSubdomainMove={handleMoveSubdomain}
-            //onStartareaMove={handleMoveStartarea}
-            onAddPoint={handleAddPointWrapper}
-            onCornerMove={handleMoveCornerWrapper}
-            onImageUpdate={handleImageMoved}
-        />
+        <>
+            <PolygonCanvas
+                backgroundImage={backgroundImage}
+                mode={mode}
+                fit={fit}
+                zoom={zoom}
+                grid={grid}
+                polygonCorners={polygonCorners}
+                holePolygons={holePolygons}
+                doors={doors}
+                activeDoorPoint={activeDoorPoint}
+                //activeMeasurementPoint={activeMeasurementPoint}
+                //activeAttractorPoint={activeAttractorPoint}
+                walls={walls}
+                holeWalls={holeWallsList}
+                subdomains={subdomains}
+               // startAreas={startAreas}
+                referenceLine={referenceLine}
+                //measurementLines={measurementLines}
+                //attractors={attractors}
+                backgroundImagePosition={backgroundImagePosition}
+                onReferenceLineChange={handleReferenceLineChange}
+                onWallClick={handleWallClickWrapper}
+                onAddObject={handleAddObjectWrapper}
+                onDeleteDoors={handleDeleteDoors}
+                onChangeDoor={handleChangeDoor}
+                //onChangeMeasurementLine={handleMoveMeasurementLine}
+                // onCreateMeasurementLine={handleCreateMeasurementLine}
+                // onDeleteMeasurementLine={handleDeleteMeasurementLine}
+               // onChangeAttractor={handleMoveAttractor}
+                //onCreateAttractor={handleCreateAttractor}
+                //onDeleteAttractor={handleDeleteAttractor}
+                onDeleteCorner={handleDeleteCornerWrapper}
+                onDeleteSubdomain={handleDeleteSubdomain}
+                //onDeleteStartArea={handleDeleteStartArea}
+                onSubdomainMove={handleMoveSubdomain}
+                onSubdomainClick={handleClickSubdomain}
+                //onStartareaMove={handleMoveStartarea}
+                onAddPoint={handleAddPointWrapper}
+                onCornerMove={handleMoveCornerWrapper}
+                onImageUpdate={handleImageMoved}
+            />
+            <ContextMenu
+                visible={contextMenu.visible}
+                x={contextMenu.x}
+                y={contextMenu.y}
+                subdomain={contextMenu.subdomain}
+                onClose={handleCloseContextMenu}
+                onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.subdomain)}
+                globalSelectedItems={globalSelectedItems} 
+            />
+        </>
     );
 }
 
