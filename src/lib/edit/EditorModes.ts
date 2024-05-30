@@ -9,5 +9,6 @@ export enum EditorModes {
     measurementLines = "measurementLines",
     attractors = "attractors",
     image = "image",
-    scenario = "scenario"
+    scenario = "scenario",
+    checkouts = "checkouts"
 }

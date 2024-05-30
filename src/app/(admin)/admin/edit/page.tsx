@@ -8,11 +8,12 @@ import { IDoor } from "interfaces/edit/IDoor";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { IReferenceLine } from "interfaces/edit/IReferenceLine";
 import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { ICheckout } from "interfaces/edit/ICheckout";
 import { EditorModes } from "lib/edit/EditorModes";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
 import { useState } from "react";
-import { connectPoints } from "utils/edit/utils";
+import { connectPoints, getBounds } from "utils/edit/utils";
 
 
 type Pair<K, V> = [K, V];
@@ -46,6 +47,14 @@ function RadioGroup<T>(
 	];
 }
 
+const validatePlan = (polygonCorners: IPolygon, doors: IDoor[], referenceLine: IReferenceLine): boolean => {
+	if (polygonCorners.closed === true && doors.length !== 0 && referenceLine.a.x !== referenceLine.b.x) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
 export default function Editor() {
 	// States for all eflow.json parameter
 	/*const [defaultParams, setDefaultParams] = useState<IeFlowFile>(DefaultParameter)
@@ -73,6 +82,7 @@ export default function Editor() {
 	const innerWallsList = holePolygons.map((corners) => connectPoints(corners));
 
 	const [subdomains, setSubdomains] = useState<ISubdomain[]>([])
+	const [checkouts, setCheckouts] = useState<ICheckout[]>([])
 	//const [startAreas, setStartAreas] = useState<IStartArea[]>([])
 	const [doors, setDoors] = useState<IDoor[]>([])
 	const [referenceLine, setReferenceLine] = useState<IReferenceLine>({ a: new Point(100, 100), b: new Point(200, 100), width: 10 }); // [start, end
@@ -86,10 +96,40 @@ export default function Editor() {
 	const defaultImagePosition: IBackgroundImagePosition = { name: "default", x: 0, y: 0, width: 0, height: 0, rotation: 0, scaleX: 1, scaleY: 1 }
 	const [backgroundImagePosition, setBackgroundImagePosition] = useState<IBackgroundImagePosition>(defaultImagePosition)
 
+	const calculateScale = () => {
+		const bounds = getBounds(polygonCorners)
+		const width = bounds.maxX - bounds.minX
+		const height = bounds.maxY - bounds.minY
+		const scale = width / height
+		return scale
+	}
+
+	const scale = calculateScale()
+
+	const planValid = validatePlan(polygonCorners, doors, referenceLine)
+
+	const handleDoorChange = ({ index, newValue }: { index: number, newValue: IDoor }) => {
+		if (!doors) { return }
+		let newState = [...doors]
+		newState[index] = newValue
+		setDoors(newState)
+	}
+
+	const handleReset = () => {
+		if (tab === "Plan") {
+			setPolygonCorners({corners: [], closed: false});
+			setHolePolygons([]);
+			setDoors([]);
+			setSubdomains([]);
+			setCheckouts([])
+		}
+	};
+
 	let [buttons, selected] = RadioGroup([
 		["W&auml;nde", () => 1],
 		["Eingang", () => 2],
 		["Regale", () => 3],
+		["Kassen", () => 4],
 	]);
 	return (
 		<div className="flex grow self-stretch">
@@ -153,9 +193,11 @@ export default function Editor() {
 					doors={doors}
 					handleDoorChange={(newDoors) => setDoors(newDoors)}
 					subdomains={subdomains}
+					checkouts={checkouts}
 					//startAreas={startAreas}
 					//scenario={scenario}
 					handleSubdomainsChange={(newSubdomain) => setSubdomains(newSubdomain)}
+					handleCheckoutsChange={(newCheckout) => setCheckouts(newCheckout)}
 					//handleStartAreasChange={(newStartArea) => setStartAreas(newStartArea)}
 					handleImageMoved={(newBackgroundImagePosition) => { setBackgroundImagePosition(newBackgroundImagePosition) }}
 				/>

@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { LineConfig } from "konva/lib/shapes/Line";
-import { guidedPosition } from "../CanvasElements/CanvasPoint";
+import { guidedPosition } from "../canvasElements/CanvasPoint";
 
 export const getGobalSnaplines = (stage: Konva.Stage, excludedShape: Konva.Shape | null) => {
   const vertical: number[] = [];

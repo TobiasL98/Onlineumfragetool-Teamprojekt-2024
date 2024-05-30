@@ -219,7 +219,7 @@ export function transformFromConfigStartareas(polygons: ISubdomainRhoInit[], sta
     });
 }*/
 
-export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomainFD[] => {
+/*export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomainFD[] => {
     return subdomains.map((subdomain) => {
         const { polygon, name } = subdomain;
         const { x, y, width, height } = polygon;
@@ -269,7 +269,7 @@ export function transformToConfigMeasurementstations(measurementLines: Vector[],
         };
     });
     return configStations;
-}
+}*/
 
 /*export function transformFromConfigMeasurementstations(measurementstations: IMeasurementStations[] | [], stageHeight: number): Vector[] {
     const lines = measurementstations.map((station) => {

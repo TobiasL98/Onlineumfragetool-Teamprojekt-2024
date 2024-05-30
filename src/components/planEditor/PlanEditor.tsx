@@ -5,6 +5,7 @@ import { IRect } from "konva/lib/types";
 
 import ContextMenu from "components/planEditor/polygonCanvas/ContextMenu"
 import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { ICheckout } from "interfaces/edit/ICheckout";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { EditorModes } from "lib/edit/EditorModes";
 import { IDoor, IExit } from "interfaces/edit/IDoor";
@@ -32,6 +33,7 @@ export interface IPlanEditorProps {
     backgroundImagePosition: IBackgroundImagePosition,
     holeWallsList: Vector[][],
     subdomains: ISubdomain[],
+    checkouts: ICheckout[],
    // startAreas: IStartArea[],
     //scenario: IScenarioParameter
     onModeChange: (newMode: EditorModes) => (void),
@@ -41,6 +43,7 @@ export interface IPlanEditorProps {
     //handleMeasurementLinesChange: (newMeasurementLines: Vector[]) => (void),
     //handleAttractorsChange: (newAtrractors: IAttractor[]) => (void),
     handleSubdomainsChange: (newObjects: ISubdomain[]) => void,
+    handleCheckoutsChange: (newObjects: ICheckout[]) => void,
     //handleStartAreasChange: (newObjects: IStartArea[]) => void,
     handleDoorChange: (doors: IDoor[]) => (void)
     handleImageMoved: (imagePosition: IBackgroundImagePosition) => void
@@ -59,7 +62,8 @@ function PlanEditor({
                         zoom,
                         holeWallsList,
                         subdomains,
-                       // scenario,
+                        checkouts,
+                       //scenario,
                        // startAreas,
                         referenceLine,
                         // measurementLines,
@@ -72,6 +76,7 @@ function PlanEditor({
                         handleHoleCornerChange,
                         handleDoorChange,
                         handleSubdomainsChange,
+                        handleCheckoutsChange,
                        // handleStartAreasChange,
                         handleImageMoved
                     }: IPlanEditorProps) {
@@ -97,8 +102,6 @@ function PlanEditor({
             setActiveDoorPoint(null)
             setClickedLine(null)
         }
-
-
 
         // Add event listeners
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -370,6 +373,34 @@ function PlanEditor({
         handleCornerUpdate([...remainingPolygons, polygon]);
     };
 
+    const handleAddCheckout = (newObject: IRect) => {
+        const newCheckout: ICheckout = { name: "checkout1", id: nanoid(), polygon: newObject, hover: false, text: "Kasse"}
+        const newObjects = [...checkouts, newCheckout]
+        handleCheckoutsChange(newObjects)
+    }
+
+    const handleDeleteCheckout = (checkoutDelete: ICheckout) => {
+        if (mode !== EditorModes.checkouts) {
+            console.warn("The EditorMode does not support deleting checkouts");
+            return
+        }
+
+        const newCheckouts = checkouts.filter((subdom) => checkoutDelete !== subdom);
+        handleCheckoutsChange(newCheckouts);
+    };
+
+    const handleMoveCheckout = (movedCheckout: ICheckout) => {
+        if (mode != EditorModes.walls) { return }
+        const newCheckouts = checkouts.map((checkout) => {
+            if (movedCheckout.id === checkout.id) {
+                return movedCheckout
+            }
+            return checkout
+        });
+
+        handleCheckoutsChange(newCheckouts);
+    };
+
     const handleAddSubdomain = (newObject: IRect) => {
         const newSubdomain: ISubdomain = { name: "subdom1", id: nanoid(), polygon: newObject, hover: false, text: "", selectedItems: [] }
         const newObjects = [...subdomains, newSubdomain]
@@ -392,6 +423,7 @@ function PlanEditor({
          if (mode != EditorModes.walls) { return }
         const newSubdomains = subdomains.map((subdom) => {
             if (movedSubdomain.id === subdom.id) {
+                subdom.textPosition = { x: movedSubdomain.polygon.x, y: movedSubdomain.polygon.y };
                 return movedSubdomain
             }
             return subdom
@@ -402,7 +434,7 @@ function PlanEditor({
 
     const handleClickSubdomain = (e: any, subdomain: ISubdomain) => {
         if (mode !== EditorModes.subdomains) {
-            console.warn("The EditorMode does not support deleting subdomains");
+            console.warn("The EditorMode does not support clicking subdomains");
             return
         }
 
@@ -599,27 +631,29 @@ function PlanEditor({
             case EditorModes.subdomains:
                 handleAddSubdomain(newObject)
                 break;
+            case EditorModes.checkouts:
+                handleAddCheckout(newObject)
+                break;
            /* case EditorModes.startAreas:
                 handleAddStartArea(newObject)
                 break;*/
             default:
                 break;
-        }//const [subdomain, setSubdomain] = useState(initialValue);
+        }
     }
+
     const handleMenuItemClick = (itemText: string, selectedSubdomain: ISubdomain | null) => {
         if (selectedSubdomain) {
-            if (itemText === selectedSubdomain.text) {
-                selectedSubdomain.text = "";
-                selectedSubdomain.selectedItems = selectedSubdomain.selectedItems.filter(item => item !== itemText);
-                setGlobalSelectedItems(prevItems => prevItems.filter(item => item !== itemText));
-            } else {
+            selectedSubdomain.selectedItems = [];
+            setGlobalSelectedItems([]);
+
+            if (itemText !== selectedSubdomain.text) {
                 selectedSubdomain.text = itemText;
                 selectedSubdomain.selectedItems.push(itemText);
                 setGlobalSelectedItems(prevItems => [...prevItems, itemText]);
             }
         }
     };
-
 
     return (
         <>
@@ -638,6 +672,7 @@ function PlanEditor({
                 walls={walls}
                 holeWalls={holeWallsList}
                 subdomains={subdomains}
+                checkouts={checkouts}
                // startAreas={startAreas}
                 referenceLine={referenceLine}
                 //measurementLines={measurementLines}
@@ -656,8 +691,10 @@ function PlanEditor({
                 //onDeleteAttractor={handleDeleteAttractor}
                 onDeleteCorner={handleDeleteCornerWrapper}
                 onDeleteSubdomain={handleDeleteSubdomain}
+                onDeleteCheckout={handleDeleteCheckout}
                 //onDeleteStartArea={handleDeleteStartArea}
                 onSubdomainMove={handleMoveSubdomain}
+                onCheckoutMove={handleMoveCheckout}
                 onSubdomainClick={handleClickSubdomain}
                 //onStartareaMove={handleMoveStartarea}
                 onAddPoint={handleAddPointWrapper}

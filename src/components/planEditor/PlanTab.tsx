@@ -32,6 +32,14 @@ const PlanTab = ({ editorMode, onModeChange }: { editorMode: EditorModes, onMode
                     onClick={() => onModeChange(EditorModes.subdomains)}
                     active={editorMode === EditorModes.subdomains}
                 />
+                <PlanButton
+                    label={"Kassen"}
+                    Component={IconObjectsPlan} // TO DO: Different Icon
+                    fill="#7996A3"
+                    hoverFill="white"
+                    onClick={() => onModeChange(EditorModes.checkouts)}
+                    active={editorMode === EditorModes.checkouts}
+                />
             </div>
             <div id="erklärung" className={"px-4 border-t-2 border-black"}>
                 <div className="w-full flex flex-row  mt-3 mb-1">
@@ -43,6 +51,9 @@ const PlanTab = ({ editorMode, onModeChange }: { editorMode: EditorModes, onMode
                     )}
                     {editorMode === EditorModes.subdomains && (
                         <p className={"text-white text-[13px] font-bold"}>Regale</p>
+                    )}
+                    {editorMode === EditorModes.checkouts && (
+                        <p className={"text-white text-[13px] font-bold"}>Kassen</p>
                     )}
                 </div>
                 <div className="pb-3">
@@ -61,6 +72,12 @@ const PlanTab = ({ editorMode, onModeChange }: { editorMode: EditorModes, onMode
                             <p className={"text-white text-[11px]"}>
                                 Regale sind Teile innerhalb eines Plans, die zur Aufbewahrung und Organisation von Produkten dienen. Eingestellte Regale können mit der linken Maustaste einem Bereich zugeordnet werden. Jedes Regal muss einem Bereich zugeordnet werden und jeder Bereich kann auch nur einmalig ausgewählt werden.
                                 Eingestellte Eckpunkte können mit der rechten Maustaste gelöscht werden.
+                            </p>
+                        )}
+                        {editorMode === EditorModes.checkouts && (
+                            <p className={"text-white text-[11px]"}>
+                                Kassen stellen in der Simulation den Ausgang, also den letzten Punkt dar, welcher eine Person besucht.
+                                Kassen können mit der rechten Maustaste gelöscht werden.
                             </p>
                         )}
                     </div>

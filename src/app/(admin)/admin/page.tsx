@@ -1,11 +1,21 @@
+import Link from "next/link";
+
 import Headline from "components/Headline";
 
 function Button({ text }: { text: string }) {
-	return (
-		<button className="h-32 w-40 whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
-			{text}
-		</button>
-	);
+	if (text === "Neues Layout erstellen") {
+		return (
+			<Link href="/admin/edit" className="h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
+				{text}
+			</Link>
+		);
+	} else {
+		return (
+			<button className="h-32 w-40 whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
+				{text}
+			</button>
+		);
+	}
 }
 
 export default function AdminHome() {

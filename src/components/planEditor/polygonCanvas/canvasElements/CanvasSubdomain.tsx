@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { Rect, Text } from "react-konva";
-import {useRef, useState } from "react";
+import {useRef, useState, useEffect } from "react";
 
 import { restrictPoints } from "../utils/guideLineUtils";
 import { ISubdomain } from "interfaces/edit/ISubdomain";
@@ -20,20 +20,14 @@ interface CanvasSubdomProps {
 export default function CanvasSubdomain({ subdomain, scale, onDelete = () => { return }, onChange, mode, onClick }: CanvasSubdomProps) {
   const draggable = mode === EditorModes.subdomains;
   const highlighted = (mode === EditorModes.subdomains) || subdomain.hover
-
+  const textRef = useRef <Konva.Text | null>(null);
   const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 }); // Store the initial position of the point
-  const [contextMenuVisible, setContextMenuVisible] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
-  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
-
-  
 
   const handleDragStart = (e: Konva.KonvaEventObject<DragEvent>) => {
     const initPos = e.target.getPosition();
     setInitialPosition(initPos);
   }
-
-
+  
   const handleDragMove = (e: Konva.KonvaEventObject<DragEvent>) => {
     const eventPoint = e.target as Konva.Circle; // Assuming e.target is the Konva point
     const stage = eventPoint.getStage();
@@ -43,11 +37,16 @@ export default function CanvasSubdomain({ subdomain, scale, onDelete = () => { r
     subdomain.polygon.x = restrictedPointX;
     subdomain.polygon.y = restrictedPointY;
 
+      subdomain.textPosition = { x: restrictedPointX + 10, y: restrictedPointY + 10 };
+
+      if (textRef.current && subdomain.textPosition) {
+          textRef.current.position(subdomain.textPosition);
+      }
+
     onChange(subdomain);
   };
 
   const handleHover = (enable: boolean) => {
-    if (mode !== EditorModes.scenario) return;
     onChange({ ...subdomain, hover: enable });
   }
 
@@ -76,6 +75,7 @@ export default function CanvasSubdomain({ subdomain, scale, onDelete = () => { r
             }}
         />
         <Text
+            ref={textRef}
             x={subdomain.polygon.x + 10}
             y={subdomain.polygon.y + 10}
             text={subdomain.text}

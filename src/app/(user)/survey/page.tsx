@@ -68,6 +68,7 @@ export default function SurveyPage() {
         { value: 'noon', label: 'Mittags 12:00-14:00' },
         { value: 'afternoon', label: 'Nachmittags 14:00-17:00' },
         { value: 'evening', label: 'Abends 17:00-20:00' },
+        { value: 'noPreferredTime', label: 'Keine bevorzugte Zeit' },
     ];
 
     const nutritionOptions = [
