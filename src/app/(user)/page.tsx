@@ -1,4 +1,3 @@
-import Button from "components/Button";
 import Link from "next/link";
 
 import Headline from "components/Headline";
@@ -39,7 +38,7 @@ export default function UserHome() {
 				</div>
 			</div>
 			<Link
-				className="font-mono mt-2 border border-buttonBorderColor bg-buttonBackgroundColor p-4 text-buttonBorderColor"
+				className="mt-2 border border-buttonBorderColor bg-buttonBackgroundColor p-4 font-mono text-buttonBorderColor"
 				href="/survey"
 			>
 				Umfrage Starten
