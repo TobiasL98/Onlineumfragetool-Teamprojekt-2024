@@ -5,7 +5,7 @@ export default function Button({
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
 	return (
 		<button
-			className={`border-2 border-buttonBorderColor bg-buttonBackgroundColor text-buttonBorderColor ${className}`}
+			className={`cursor-pointer border-2 border-buttonBorderColor bg-buttonBackgroundColor text-buttonBorderColor hover:border-hoverColor hover:text-hoverColor ${className}`}
 			{...rest}
 		>
 			{children}
