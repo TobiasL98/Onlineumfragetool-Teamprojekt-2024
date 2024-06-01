@@ -17,7 +17,6 @@ const config: Config = {
 				buttonBackgroundColor: "rgb(68, 64, 51)",
 				backgroundColor: "rgba(19, 31, 37, 1);",
 				textColor: "rgba(255, 255, 255, 1)",
-				hoverColor: "rgb(121, 150, 163)",
 			},
 		},
 	},
