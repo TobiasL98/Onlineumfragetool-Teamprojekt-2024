@@ -10,14 +10,14 @@ export default function Page() {
 				<h1 className="text-4xl font-medium">Admin Login </h1>
 			</Headline>
 			<form className="mt-4 w-3/5 flex-grow" name="login" id="login">
-				<Input className="mb-4" placeholder="admin" />
+				<Input className="mb-4 px-2 py-1" placeholder="admin" />
 				<br></br>
-				<Input placeholder="password" />
+				<Input placeholder="password" className="px-2 py-1" />
 				<Button
 					type="submit"
 					value="login"
 					form="login"
-					className="font-mono my-6 px-7 py-2"
+					className="my-6 px-7 py-2 font-mono"
 				>
 					Login
 				</Button>
