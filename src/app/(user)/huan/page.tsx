@@ -112,14 +112,10 @@ export default function Survey() {
 	const optionalQuestionsRef = useRef<HTMLDivElement>(null);
 	const daysRequiredErrorRef = useRef<HTMLDivElement>(null);
 	const timeRequiredErrorRef = useRef<HTMLDivElement>(null);
-	const noBuyingForErrorRef = useRef<HTMLDivElement>(null);
-	const noAllergiesErrorRef = useRef<HTMLDivElement>(null);
 	const typedAllergiesFormatErrorRef = useRef<HTMLDivElement>(null);
 	const selectedTimeRef = useRef<HTMLSelectElement>(null);
-	const buyingForNoneRef = useRef<HTMLDivElement>(null);
 	const buyingForSomeRef = useRef<HTMLDivElement>(null);
 	const allergiesRef = useRef<HTMLDivElement>(null);
-	const noAllergiesRef = useRef<HTMLDivElement>(null);
 	const typedAllergiesRef = useRef<HTMLDivElement>(null);
 	const [selectedDays, setSelectedDays] = stateFromFormObject(days);
 	const [selectedAllergies, setSelectedAllergies] =
@@ -343,10 +339,6 @@ export default function Survey() {
 										Für wie viele weitere Personen kaufen
 										sie ein?
 									</p>
-									<Error
-										ref={noBuyingForErrorRef}
-										text="Sie haben schon Keine ausgewählt"
-									/>
 									<small className="flex items-start space-x-8">
 										<div ref={buyingForSomeRef}>
 											{buyingFor.slice(0, -1).map((x) => {
@@ -367,20 +359,45 @@ export default function Survey() {
 												);
 											})}
 										</div>
-										<div ref={buyingForNoneRef}>
-											{buyingFor
-												.slice(-1)
-												.map(
-													checkboxMapper("buyingFor"),
-												)}
+										<div>
+											{buyingFor.slice(-1).map(
+												checkboxMapper(
+													"buyingFor",
+													(e) => {
+														const self =
+															e.target as HTMLInputElement;
+														const others =
+															buyingForSomeRef.current!.querySelectorAll(
+																"input",
+															);
+														if (self.checked) {
+															others.forEach(
+																(x) => {
+																	x.value =
+																		"";
+																	x.disabled =
+																		true;
+																	x.readOnly =
+																		true;
+																},
+															);
+														} else {
+															others.forEach(
+																(x) => {
+																	x.disabled =
+																		false;
+																	x.readOnly =
+																		false;
+																},
+															);
+														}
+													},
+												),
+											)}
 										</div>
 									</small>
 									<Separator />
 									<p>Allergien / Unverträglichkeiten</p>
-									<Error
-										ref={noAllergiesErrorRef}
-										text="Sie haben schon Keine ausgewählt"
-									/>
 									<Error
 										ref={typedAllergiesFormatErrorRef}
 										text="Andere im Format: Allergie LEERZEICHEN Allergie..."
@@ -402,11 +419,56 @@ export default function Survey() {
 													),
 												)}
 										</div>
-										<div ref={noAllergiesRef}>
+										<div>
 											{[
 												allergies[allergies.length - 2],
 											].map(
-												checkboxMapper("noAllergies"),
+												checkboxMapper(
+													"noAllergies",
+													(e) => {
+														const self =
+															e.target as HTMLInputElement;
+														let allergies =
+															allergiesRef.current!.querySelectorAll(
+																"input",
+															);
+														let otherAllergies =
+															typedAllergiesRef.current!.querySelector(
+																"input",
+															)!;
+														if (self.checked) {
+															allergies.forEach(
+																(x) => {
+																	x.checked =
+																		false;
+																	x.readOnly =
+																		true;
+																	x.disabled =
+																		true;
+																	otherAllergies.disabled =
+																		true;
+																	otherAllergies.readOnly =
+																		true;
+																	otherAllergies.value =
+																		"";
+																},
+															);
+														} else {
+															allergies.forEach(
+																(x) => {
+																	x.readOnly =
+																		false;
+																	x.disabled =
+																		false;
+																	otherAllergies.readOnly =
+																		false;
+																	otherAllergies.disabled =
+																		false;
+																},
+															);
+														}
+													},
+												),
 											)}
 										</div>
 										<div ref={typedAllergiesRef}>
@@ -459,37 +521,9 @@ export default function Survey() {
 							selectedDays.filter((x) => x.selected).length == 0,
 							daysRequiredErrorRef.current!,
 						);
-						const buyingForNone =
-							buyingForNoneRef.current!.querySelector("input")!;
-						const buyingForSome = Array.from(
-							buyingForSomeRef.current!.querySelectorAll(
-								"input",
-							)!,
-						);
-						const noBuying = noBuyingForErrorRef.current!;
-						error(
-							buyingForNone.checked &&
-								buyingForSome.filter((x) => x.value.length != 0)
-									.length != 0,
-							noBuying,
-						);
-						console.log(buyingForSome);
-						const noAllergies = noAllergiesRef.current!.firstChild!
-							.firstChild as HTMLInputElement;
-						const allergies = Array.from(
-							allergiesRef.current!.querySelectorAll("input"),
-						);
 						const typedAllergies =
 							typedAllergiesRef.current!.querySelector("input")!;
-						const selectedNoAllergies =
-							noAllergiesErrorRef.current!;
-						error(
-							noAllergies.checked &&
-								(allergies.filter((x) => x.checked).length !=
-									0 ||
-									typedAllergies.value.length != 0),
-							selectedNoAllergies,
-						);
+
 						const typedAllergyFormat =
 							typedAllergiesFormatErrorRef.current!;
 						error(
