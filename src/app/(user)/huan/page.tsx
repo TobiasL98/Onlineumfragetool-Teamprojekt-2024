@@ -10,8 +10,20 @@ import {
 	HTMLAttributes,
 	forwardRef,
 	useRef,
-	useState,
 } from "react";
+
+import {
+	useForm,
+	days,
+	allergies,
+	sex,
+	time,
+	diet,
+	buyingFor,
+	occupation,
+} from "../FormContext";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 const Error = forwardRef<HTMLDivElement, { text: string }>((props, ref) => {
 	return (
@@ -35,79 +47,16 @@ function Separator({
 		></p>
 	);
 }
+
 interface FormObject {
 	value: string;
 	label: string;
 }
-interface FormState {
-	value: string;
-	selected: boolean;
-}
-const formObjectMapper = (x: string[]): FormObject => {
-	return {
-		value: x[0],
-		label: x[1],
-	};
-};
-function stateFromFormObject(objs: FormObject[]) {
-	return useState<FormState[]>(
-		objs.map((x) => {
-			return { selected: false, value: x.value };
-		}),
-	);
-}
-const days = [
-	["monday", "Montag"],
-	["tuesday", "Dienstag"],
-	["wednesday", "Mittwoch"],
-	["thursday", "Donnerstag"],
-	["friday", "Freitag"],
-	["saturday", "Samstag"],
-	["noPreferredDay", "Kein bevorzugter Tag"],
-].map(formObjectMapper);
-const time = [
-	["morning", "Morgens 08:00-10:00"],
-	["forenoon", "Vormittags 10:00-12:00"],
-	["noon", "Mittags 12:00-14:00"],
-	["afternoon", "Nachmittags 14:00-17:00"],
-	["evening", "Abends 17:00-20:00"],
-	["noPreferredTime", "Keine bevorzugte Zeit"],
-].map(formObjectMapper);
-const allergies = [
-	["gluten", "Gluten"],
-	["soy", "Soja"],
-	["lactose", "Laktose"],
-	["peanuts", "Erdn\u00FCsse"],
-	["fructose", "Fruktose"],
-	["none", "Keine"],
-	["others", "Andere"],
-].map(formObjectMapper);
-const diet = [
-	["vegan", "Vegan"],
-	["vegetarian", "Vegetarisch"],
-	["omnivore", "Omnivor"],
-].map(formObjectMapper);
-const occupation = [
-	["fulltime", "Vollzeit"],
-	["parttime", "Teilzeit"],
-	["retired", "Rente"],
-	["student", "Student"],
-	["underage", "Sch\u00FCler"],
-	["unemployed", "Arbeitslos"],
-].map(formObjectMapper);
-const sex = [
-	["male", "M\u00E4nnlich"],
-	["female", "Weiblich"],
-	["diverse", "Divers"],
-].map(formObjectMapper);
-const buyingFor = [
-	["adults", "Anzahl Erwachsene"],
-	["children", "Anzahl Kinder"],
-	["nobody", "Keine"],
-].map(formObjectMapper);
 const caretDown = { degree: "rotate(45deg)", marginTop: "0.25rem" };
 const caretUp = { degree: "rotate(225deg)", marginTop: "0.5rem" };
 export default function Survey() {
+	const { formState, onChange } = useForm();
+
 	const caretRef = useRef<HTMLParagraphElement>(null);
 	const optionalQuestionsRef = useRef<HTMLDivElement>(null);
 	const daysRequiredErrorRef = useRef<HTMLDivElement>(null);
@@ -117,26 +66,7 @@ export default function Survey() {
 	const buyingForSomeRef = useRef<HTMLDivElement>(null);
 	const allergiesRef = useRef<HTMLDivElement>(null);
 	const typedAllergiesRef = useRef<HTMLDivElement>(null);
-	const [selectedDays, setSelectedDays] = stateFromFormObject(days);
-	const [selectedAllergies, setSelectedAllergies] =
-		stateFromFormObject(allergies);
-	const onCheckCheckbox = ([selected, setSelected]: [
-		typeof selectedDays,
-		typeof setSelectedDays,
-	]) => {
-		return (e: ChangeEvent<HTMLInputElement>) => {
-			const self = e.target as HTMLInputElement;
-			const update = selected.map((x) =>
-				x.value === self.value
-					? {
-							...x,
-							selected: !x.selected,
-						}
-					: x,
-			);
-			setSelected(update);
-		};
-	};
+
 	const optionMapper = (x: FormObject) => {
 		return (
 			<option key={x.value} value={x.value}>
@@ -155,6 +85,7 @@ export default function Survey() {
 						name={name}
 						value={x.value}
 						onChange={changer}
+						checked={(formState as any)[x.value]}
 					/>
 					{x.label}
 				</Label>
@@ -170,6 +101,8 @@ export default function Survey() {
 						value={x.value}
 						name={name}
 						type="radio"
+						onChange={onChange}
+						checked={(formState as any)[x.value]}
 					/>
 					{x.label}
 				</Label>
@@ -198,15 +131,7 @@ export default function Survey() {
 								text="* Bitte wählen Sie mindestens eine Option."
 							/>
 							<small className="mb-5 mt-3 flex flex-wrap pl-5 pr-8 text-center">
-								{days.map(
-									checkboxMapper(
-										"days",
-										onCheckCheckbox([
-											selectedDays,
-											setSelectedDays,
-										]),
-									),
-								)}
+								{days.map(checkboxMapper("days", onChange))}
 							</small>
 							<div className="hint flex p-1 pl-5 text-left opacity-30">
 								<p className="mr-1 font-bold">Hinweis: </p>
@@ -236,7 +161,12 @@ export default function Survey() {
 								name="time"
 								className="mt-5 p-2"
 								ref={selectedTimeRef}
-								defaultValue="X"
+								defaultValue={
+									formState.time.length == 0
+										? "X"
+										: formState.time
+								}
+								onChange={onChange}
 							>
 								<option disabled value="X">
 									Bitte w&auml;hlen
@@ -295,6 +225,8 @@ export default function Survey() {
 											max="99"
 											name="age"
 											className="ml-2 w-[fit-content]"
+											onChange={onChange}
+											value={formState.age}
 										></Input>
 									</Label>
 									<Separator />
@@ -310,7 +242,12 @@ export default function Survey() {
 										<Select
 											name="diet"
 											className="ml-2 p-2"
-											defaultValue="X"
+											defaultValue={
+												formState.diet.length == 0
+													? "X"
+													: formState.diet
+											}
+											onChange={onChange}
 										>
 											<option disabled value="X">
 												Bitte w&auml;hlen
@@ -322,9 +259,14 @@ export default function Survey() {
 									<Label className="flex justify-between">
 										Berufstätigkeit
 										<Select
-											name="occuptation"
+											name="occupation"
 											className="ml-2 p-2"
-											defaultValue="X"
+											defaultValue={
+												formState.occupation.length == 0
+													? "X"
+													: formState.occupation
+											}
+											onChange={onChange}
 										>
 											<option disabled value="X">
 												Bitte w&auml;hlen
@@ -349,7 +291,13 @@ export default function Survey() {
 													>
 														{x.label}
 														<Input
+															onChange={onChange}
 															name={x.value}
+															value={
+																(
+																	formState as any
+																)[x.value]
+															}
 															type="number"
 															min="1"
 															max="99"
@@ -363,7 +311,9 @@ export default function Survey() {
 											{buyingFor.slice(-1).map(
 												checkboxMapper(
 													"buyingFor",
-													(e) => {
+													(
+														e: ChangeEvent<HTMLInputElement>,
+													) => {
 														const self =
 															e.target as HTMLInputElement;
 														const others =
@@ -371,15 +321,24 @@ export default function Survey() {
 																"input",
 															);
 														if (self.checked) {
+															let updateState: any =
+																{
+																	...formState,
+																};
 															others.forEach(
 																(x) => {
-																	x.value =
-																		"";
+																	updateState[
+																		x.name
+																	] = "";
 																	x.disabled =
 																		true;
 																	x.readOnly =
 																		true;
 																},
+															);
+															onChange(
+																e,
+																updateState,
 															);
 														} else {
 															others.forEach(
@@ -390,6 +349,7 @@ export default function Survey() {
 																		false;
 																},
 															);
+															onChange(e);
 														}
 													},
 												),
@@ -412,10 +372,7 @@ export default function Survey() {
 												.map(
 													checkboxMapper(
 														"allergies",
-														onCheckCheckbox([
-															selectedAllergies,
-															setSelectedAllergies,
-														]),
+														onChange,
 													),
 												)}
 										</div>
@@ -424,10 +381,11 @@ export default function Survey() {
 												allergies[allergies.length - 2],
 											].map(
 												checkboxMapper(
-													"noAllergies",
-													(e) => {
-														const self =
-															e.target as HTMLInputElement;
+													"allergies",
+													(
+														e: ChangeEvent<HTMLInputElement>,
+													) => {
+														const self = e.target;
 														let allergies =
 															allergiesRef.current!.querySelectorAll(
 																"input",
@@ -437,21 +395,33 @@ export default function Survey() {
 																"input",
 															)!;
 														if (self.checked) {
+															let updateState: any =
+																{
+																	...formState,
+																};
 															allergies.forEach(
 																(x) => {
+																	updateState[
+																		x.value
+																	] = false;
 																	x.checked =
 																		false;
 																	x.readOnly =
 																		true;
 																	x.disabled =
 																		true;
-																	otherAllergies.disabled =
-																		true;
-																	otherAllergies.readOnly =
-																		true;
-																	otherAllergies.value =
-																		"";
 																},
+															);
+															otherAllergies.disabled =
+																true;
+															otherAllergies.readOnly =
+																true;
+															updateState[
+																"otherAllergies"
+															] = "";
+															onChange(
+																e,
+																updateState,
 															);
 														} else {
 															allergies.forEach(
@@ -460,12 +430,13 @@ export default function Survey() {
 																		false;
 																	x.disabled =
 																		false;
-																	otherAllergies.readOnly =
-																		false;
-																	otherAllergies.disabled =
-																		false;
 																},
 															);
+															otherAllergies.readOnly =
+																false;
+															otherAllergies.disabled =
+																false;
+															onChange(e);
 														}
 													},
 												),
@@ -481,10 +452,14 @@ export default function Survey() {
 													<Label key={others.value}>
 														{others.label}
 														<Input
+															onChange={onChange}
 															className="ml-2"
 															type="text"
+															value={
+																formState.otherAllergies
+															}
 															pattern="(\w* ?)*"
-															name={others.value}
+															name="otherAllergies"
 														/>
 													</Label>
 												);
@@ -499,11 +474,8 @@ export default function Survey() {
 			</form>
 			<div className="m-5 flex w-4/5 grow justify-between">
 				<div></div>
-				<Button
+				<Link
 					className="p-1 px-4 font-mono"
-					type="submit"
-					form="survey"
-					value="survey"
 					onClick={(e) => {
 						const time = selectedTimeRef.current!;
 						let timeError = timeRequiredErrorRef.current!;
@@ -517,8 +489,16 @@ export default function Survey() {
 							}
 						};
 						error(time.selectedIndex === 0, timeError);
+						// error(
+						// 	selectedDays.filter((x) => x.selected).length == 0,
+						// 	daysRequiredErrorRef.current!,
+						// );
+
 						error(
-							selectedDays.filter((x) => x.selected).length == 0,
+							days.every((x) => {
+								let selected = (formState as any)[x.value];
+								return !selected;
+							}),
 							daysRequiredErrorRef.current!,
 						);
 						const typedAllergies =
@@ -531,9 +511,10 @@ export default function Survey() {
 							typedAllergyFormat,
 						);
 					}}
+					href="/huan/test"
 				>
 					Weiter
-				</Button>
+				</Link>
 			</div>
 		</div>
 	);
