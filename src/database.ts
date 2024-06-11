@@ -1,5 +1,4 @@
-import { Database } from 'drizzle-orm';
-import { SQLiteDriver } from 'drizzle-orm-sqlite';
+import { Database, SQLiteDriver } from 'drizzle-orm';
 
 const driver = new SQLiteDriver('./database.sqlite');
 const db = new Database(driver);
