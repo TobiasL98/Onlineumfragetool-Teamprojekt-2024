@@ -27,7 +27,7 @@ export default function Results() {
 							<label htmlFor="time" className="font-semibold">
 								Tageszeit
 							</label>
-							<Select name="time" id="time">
+							<Select name="time" id="time" className="px-2 py-1">
 								{/*TODO*/}
 								<option value="volvo">Volvo</option>
 								<option value="saab">Saab</option>
@@ -38,7 +38,7 @@ export default function Results() {
 							<label htmlFor="day" className="font-semibold">
 								Wochentag
 							</label>
-							<Select name="day" id="day">
+							<Select name="day" id="day" className="px-2 py-1">
 								<option value="monday">Montag</option>
 								<option value="tuesday">Dienstag</option>
 								<option value="wednesday">Mittwoch</option>
