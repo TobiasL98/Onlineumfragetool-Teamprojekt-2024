@@ -1,23 +1,20 @@
-"use client"
+"use client";
 
 import Headline from "components/Headline";
 import Link from "next/link";
-import { useState } from "react"
+import { useState } from "react";
 
 export default function ShoppingStrategyPage() {
-    const [selectedTime, setSelectedTime] = useState("");
+	const [selectedTime, setSelectedTime] = useState("");
 
-    return (
-        <div className="flex flex-col">
-            <Headline
-                className="w-full flex-grow">
-                <h1 className="text-4xl font-medium">
-                    Einkaufsstrategie
-                </h1>
-            </Headline>
-            <div className="flex h-65">
-                <div className="w-25-percent flex flex-col justify-between m-5 ml-7">
-                    {/*<form className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor jjustify-space-around m-5 ml-8">
+	return (
+		<div className="flex flex-col">
+			<Headline className="w-full flex-grow">
+				<h1 className="text-4xl font-medium">Einkaufsstrategie</h1>
+			</Headline>
+			<div className="h-65 flex">
+				<div className="w-25-percent m-5 ml-7 flex flex-col justify-between">
+					{/*<form className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor jjustify-space-around m-5 ml-8">
                         <div className="flex flex-col my-3">
                             <h3 className="font-mono mb-3 font-semibold font-semibold text-center">
                                 Aufenthaltsdauer
@@ -65,33 +62,34 @@ export default function ShoppingStrategyPage() {
                             </div>
                         </div>
                     </form>*/}
-                    <div className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor">
-                        <div className="italic mb-5">
-                            Stellen Sie sich im Geiste vor Sie machen gerade Ihren Einkauf...
-                        </div>
-                        <div className="mt-5">
-                            Wählen Sie per Rechtsklick Schritt für Schritt Ihre
-                            Einkaufsreihenfolge aus und wie lange Sie jeweils an
-                            den Bereichen verweilen
-                        </div>
-                    </div>
-                    <Link className="flex justify-start ml-2" href="/thankYou">
-                        <button className="px-4 font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-3 text-buttonBorderColor">
-                            Zurück
-                        </button>
-                    </Link>
-                </div>
-                <div className="italic p-4 flex rounded-3xl w-full bg-borderBackgroundColor m-5">
-                    The actual, clickable Supermarkt Layout will be displayed here
-                </div>
-                <div className="flex flex-col justify-end m-5 mr-7">
-                    <Link className="flex w-full" href="/survey">
-                        <button className="font-mono border border-buttonBorderColor bg-buttonBackgroundColor p-1 px-4 text-buttonBorderColor">
-                            Fertig
-                        </button>
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
+					<div className="flex flex-col rounded-3xl bg-borderBackgroundColor p-4">
+						<div className="mb-5 italic">
+							Stellen Sie sich im Geiste vor Sie machen gerade
+							Ihren Einkauf...
+						</div>
+						<div className="mt-5">
+							Wählen Sie per Rechtsklick Schritt für Schritt Ihre
+							Einkaufsreihenfolge aus und wie lange Sie jeweils an
+							den Bereichen verweilen
+						</div>
+					</div>
+					<Link
+						className="link-button w-[fit-content]"
+						href="/survey"
+					>
+						Zurück
+					</Link>
+				</div>
+				<div className="m-5 flex w-full rounded-3xl bg-borderBackgroundColor p-4 italic">
+					The actual, clickable Supermarkt Layout will be displayed
+					here
+				</div>
+				<div className="m-5 mr-7 flex flex-col justify-end">
+					<Link className="link-button flex w-full " href="/thankYou">
+						Fertig
+					</Link>
+				</div>
+			</div>
+		</div>
+	);
 }

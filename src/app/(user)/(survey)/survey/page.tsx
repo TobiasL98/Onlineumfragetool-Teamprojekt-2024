@@ -22,6 +22,7 @@ import {
 	buyingFor,
 	occupation,
 } from "../FormContext";
+import { RedirectType, redirect } from "next/navigation";
 import Link from "next/link";
 
 const Error = forwardRef<HTMLDivElement, { text: string }>((props, ref) => {
@@ -113,32 +114,7 @@ export default function Survey() {
 		<div className="flex flex-col items-center">
 			<form
 				ref={formRef}
-				onSubmit={(e) => {
-					const time = selectedTimeRef.current!;
-					let timeError = timeRequiredErrorRef.current!;
-					const error = <T extends HTMLElement>(
-						cond: boolean,
-						element?: T,
-					) => {
-						if (cond) {
-							element && (element.style.display = "block");
-							e.preventDefault();
-						}
-					};
-					error(time.selectedIndex === 0, timeError);
-					error(
-						days.every((x) => {
-							return !(formState as any)[x.value];
-						}),
-						daysRequiredErrorRef.current!,
-					);
-					const typedAllergies =
-						typedAllergiesRef.current!.querySelector("input")!;
-					const typedAllergyFormat =
-						typedAllergiesFormatErrorRef.current!;
-					error(!typedAllergies.checkValidity(), typedAllergyFormat);
-					error(!formRef.current!.checkValidity());
-				}}
+				onSubmit={(e) => e.preventDefault()}
 				name="survey"
 				id="survey"
 				className="flex flex-col place-items-center items-center"
@@ -514,15 +490,42 @@ export default function Survey() {
 			</form>
 			<div className="m-5 flex w-4/5 grow justify-between">
 				<div></div>
-				<Button
-					className="p-1 px-4 font-mono"
-					onClick={(_) => {
+				<Link
+					href="/shoppingStrategy"
+					className="link-button"
+					onClick={(e) => {
 						formRef.current!.requestSubmit();
+						const time = selectedTimeRef.current!;
+						let timeError = timeRequiredErrorRef.current!;
+						const error = <T extends HTMLElement>(
+							cond: boolean,
+							element?: T,
+						) => {
+							if (cond) {
+								element && (element.style.display = "block");
+								e.preventDefault();
+							}
+						};
+						error(time.selectedIndex === 0, timeError);
+						error(
+							days.every((x) => {
+								return !(formState as any)[x.value];
+							}),
+							daysRequiredErrorRef.current!,
+						);
+						const typedAllergies =
+							typedAllergiesRef.current!.querySelector("input")!;
+						const typedAllergyFormat =
+							typedAllergiesFormatErrorRef.current!;
+						error(
+							!typedAllergies.checkValidity(),
+							typedAllergyFormat,
+						);
+						error(!formRef.current!.checkValidity());
 					}}
-					type="submit"
 				>
 					Weiter
-				</Button>
+				</Link>
 			</div>
 		</div>
 	);
