@@ -22,7 +22,6 @@ import {
 	buyingFor,
 	occupation,
 } from "../FormContext";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 
 const Error = forwardRef<HTMLDivElement, { text: string }>((props, ref) => {
@@ -66,6 +65,7 @@ export default function Survey() {
 	const buyingForSomeRef = useRef<HTMLDivElement>(null);
 	const allergiesRef = useRef<HTMLDivElement>(null);
 	const typedAllergiesRef = useRef<HTMLDivElement>(null);
+	const formRef = useRef<HTMLFormElement>(null);
 
 	const optionMapper = (x: FormObject) => {
 		return (
@@ -112,6 +112,33 @@ export default function Survey() {
 	return (
 		<div className="flex flex-col items-center">
 			<form
+				ref={formRef}
+				onSubmit={(e) => {
+					const time = selectedTimeRef.current!;
+					let timeError = timeRequiredErrorRef.current!;
+					const error = <T extends HTMLElement>(
+						cond: boolean,
+						element?: T,
+					) => {
+						if (cond) {
+							element && (element.style.display = "block");
+							e.preventDefault();
+						}
+					};
+					error(time.selectedIndex === 0, timeError);
+					error(
+						days.every((x) => {
+							return !(formState as any)[x.value];
+						}),
+						daysRequiredErrorRef.current!,
+					);
+					const typedAllergies =
+						typedAllergiesRef.current!.querySelector("input")!;
+					const typedAllergyFormat =
+						typedAllergiesFormatErrorRef.current!;
+					error(!typedAllergies.checkValidity(), typedAllergyFormat);
+					error(!formRef.current!.checkValidity());
+				}}
 				name="survey"
 				id="survey"
 				className="flex flex-col place-items-center items-center"
@@ -131,7 +158,16 @@ export default function Survey() {
 								text="* Bitte wählen Sie mindestens eine Option."
 							/>
 							<small className="mb-5 mt-3 flex flex-wrap pl-5 pr-8 text-center">
-								{days.map(checkboxMapper("days", onChange))}
+								{days.map(
+									checkboxMapper(
+										"days",
+										(e: ChangeEvent<HTMLInputElement>) => {
+											daysRequiredErrorRef.current!.style.display =
+												"none";
+											onChange(e);
+										},
+									),
+								)}
 							</small>
 							<div className="hint flex p-1 pl-5 text-left opacity-30">
 								<p className="mr-1 font-bold">Hinweis: </p>
@@ -166,7 +202,11 @@ export default function Survey() {
 										? "X"
 										: formState.time
 								}
-								onChange={onChange}
+								onChange={(e) => {
+									timeRequiredErrorRef.current!.style.display =
+										"none";
+									onChange(e);
+								}}
 							>
 								<option disabled value="X">
 									Bitte w&auml;hlen
@@ -474,47 +514,15 @@ export default function Survey() {
 			</form>
 			<div className="m-5 flex w-4/5 grow justify-between">
 				<div></div>
-				<Link
+				<Button
 					className="p-1 px-4 font-mono"
-					onClick={(e) => {
-						const time = selectedTimeRef.current!;
-						let timeError = timeRequiredErrorRef.current!;
-						const error = <T extends HTMLElement>(
-							cond: boolean,
-							element?: T,
-						) => {
-							if (cond) {
-								element && (element.style.display = "block");
-								e.preventDefault();
-							}
-						};
-						error(time.selectedIndex === 0, timeError);
-						// error(
-						// 	selectedDays.filter((x) => x.selected).length == 0,
-						// 	daysRequiredErrorRef.current!,
-						// );
-
-						error(
-							days.every((x) => {
-								let selected = (formState as any)[x.value];
-								return !selected;
-							}),
-							daysRequiredErrorRef.current!,
-						);
-						const typedAllergies =
-							typedAllergiesRef.current!.querySelector("input")!;
-
-						const typedAllergyFormat =
-							typedAllergiesFormatErrorRef.current!;
-						error(
-							!typedAllergies.checkValidity(),
-							typedAllergyFormat,
-						);
+					onClick={(_) => {
+						formRef.current!.requestSubmit();
 					}}
-					href="/huan/test"
+					type="submit"
 				>
 					Weiter
-				</Link>
+				</Button>
 			</div>
 		</div>
 	);
