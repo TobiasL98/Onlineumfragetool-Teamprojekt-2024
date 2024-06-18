@@ -102,7 +102,7 @@ export default function Survey() {
 						name={name}
 						type="radio"
 						onChange={onChange}
-						checked={(formState as any)[x.value]}
+						checked={(formState as any)[name] === x.value}
 					/>
 					{x.label}
 				</Label>

@@ -82,9 +82,7 @@ const defaultFormState = {
 	diet: "",
 	otherAllergies: "",
 	occupation: "",
-	male: false,
-	female: false,
-	diverse: false,
+	sex: "",
 	adults: "",
 	children: "",
 	nobody: false,
@@ -104,16 +102,24 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
 		nextState?: typeof formState,
 	) => {
 		const { name, type, value, checked } = event.target as HTMLInputElement;
-		if (["checkbox", "radio"].includes(type)) {
-			setFormState({
-				...(nextState || formState),
-				[value]: checked,
-			});
-		} else {
-			setFormState({
-				...(nextState || formState),
-				[name]: value,
-			});
+		switch (type) {
+			case "checkbox":
+				setFormState({
+					...(nextState || formState),
+					[value]: checked,
+				});
+				break;
+			case "radio":
+				setFormState({
+					...(nextState || formState),
+					[name]: value,
+				});
+				break;
+			default:
+				setFormState({
+					...(nextState || formState),
+					[name]: value,
+				});
 		}
 	};
 	return (
