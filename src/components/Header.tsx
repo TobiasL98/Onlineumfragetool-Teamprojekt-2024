@@ -1,8 +1,15 @@
+"use client";
+
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 import Link from "next/link";
-import { useRouter } from "next/router";
 import Button from "components/Button";
 
-export default function Header(admin: boolean) {
+
+export default function Header({ admin}: { admin: boolean }) {
+	const navigation = usePathname();
+
 	return (
 		<header className="nav-container border-b border-b-[--header-footer-separator-color] bg-[--header-color]  px-6 font-mono">
 			<div className="astro-3ef6ksr2 top-nav-wrap flex justify-between p-4 font-mono text-sm">
@@ -40,25 +47,20 @@ export default function Header(admin: boolean) {
 							</Link>
 							<nav className="astro-3ef6ksr2 flex" id="nav-menu">
 								<ul
-									className="astro-3ef6ksr2 display-none flex items-center pl-10"
+									className="astro-3ef6ksr2 display-none flex items-center pl-10 "
 									id="menu-items"
 								>
-									<li className="astro-3ef6ksr2 flex px-5">
+									<li className="astro-3ef6ksr2 flex px-5 astro-3ef6ksr2 hover:text-[--hover-color]">
 										<Link
-											className="astro-3ef6ksr2"
+											className={`astro-3ef6ksr2 ${navigation === '/admin/edit' ? 'underline' : ''}`}
 											href="/admin/edit"
 										>
 											Neues Layout
 										</Link>
 									</li>
-									{/*<li className="astro-3ef6ksr2 flex px-5">
-        <Link className="astro-3ef6ksr2" href="#">
-            Layouts
-        </Link>
-    </li>*/}
-									<li className="astro-3ef6ksr2 flex px-5">
+									<li className="astro-3ef6ksr2 flex px-5 astro-3ef6ksr2 hover:text-[--hover-color]">
 										<Link
-											className="astro-3ef6ksr2"
+											className={`astro-3ef6ksr2 ${navigation === '/admin/results' ? 'underline' : ''}`}
 											href="/admin/results"
 										>
 											Ergebnisse

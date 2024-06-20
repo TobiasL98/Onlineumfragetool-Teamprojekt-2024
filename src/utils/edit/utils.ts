@@ -1,9 +1,9 @@
+import { IRect } from "konva/lib/types";
+import { nanoid } from "nanoid";
+
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
-import { IRect } from "konva/lib/types";
 import { calculatePointInsidePolygon } from "../geometry/utils";
-import { nanoid } from "nanoid";
-import { IMeasurementStations } from "interfaces/config/IMeasurementStations";
 import {IDoor, IEntrance, IExit } from "interfaces/edit/IDoor";
 import { ISubdomain } from "interfaces/edit/ISubdomain";
 import { IPolygon } from "interfaces/edit/IPolygon";
@@ -11,6 +11,7 @@ import { IDomainPolygon } from "interfaces/edit/IDomainPolygon";
 import { IConfigExit } from "interfaces/edit/IConfigExit";
 import { IConfigEntrance } from "interfaces/edit/IConfigEntrance";
 import { ISubdomainFD } from "interfaces/edit/ISubdomainFD";
+import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 
 
 export const connectPoints = ({ corners, closed }: { corners: Point[], closed: boolean }): Vector[] => {
@@ -185,41 +186,7 @@ export const mergeExitNEntreesToDoors = ({ exits, entrances, stageHeight }: { ex
     return mergedDoors
 }
 
-// transform startAreas
-/*export const transformToConfigStartAreas = (startAreaList: IStartArea[], stageHeight: number): ISubdomainRhoInit[] => {
-    const coordinateList: number[][] = [];
-    startAreaList.forEach((startArea) => {
-        const { x, y, width, height } = startArea.rectangle;
-        const coordinates: number[] = [
-            x, stageHeight - y,                       // Top-left corner (flipped y-coordinate)
-            x + width, stageHeight - y,               // Top-right corner (flipped y-coordinate)
-            x + width, stageHeight - (y + height),    // Bottom-right corner (flipped y-coordinate)
-            x, stageHeight - (y + height)              // Bottom-left corner (flipped y-coordinate)
-        ];
-        coordinateList.push(coordinates);
-    });
-    return coordinateList;
-};
-
-export function transformFromConfigStartareas(polygons: ISubdomainRhoInit[], stageHeight: number): IStartArea[] {
-    return polygons.map((polygon: ISubdomainRhoInit) => {
-        const rect: IRect = {
-            x: polygon[0],
-            y: stageHeight - polygon[1] - (polygon[5] - polygon[1]), // Flip the y-coordinate
-            width: polygon[2] - polygon[0],
-            height: polygon[5] - polygon[1]
-        };
-        const startArea: IStartArea = {
-            name: "startArea",
-            id: nanoid(),
-            rectangle: rect,
-            hover: false
-        };
-        return startArea;
-    });
-}*/
-
-/*export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomainFD[] => {
+export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomainFD[] => {
     return subdomains.map((subdomain) => {
         const { polygon, name } = subdomain;
         const { x, y, width, height } = polygon;
@@ -248,6 +215,8 @@ export function transformFromConfigSubdomains(subdomainsFD: ISubdomainFD[], stag
         };
 
         const subdomain: ISubdomain = {
+            text: subdomainFD.Name,
+            selectedItems: [],
             name: subdomainFD.Name,
             id: nanoid(),
             //velocity: subdomainFD.Velocity,
@@ -258,88 +227,6 @@ export function transformFromConfigSubdomains(subdomainsFD: ISubdomainFD[], stag
     });
 }
 
-export function transformToConfigMeasurementstations(measurementLines: Vector[], stageHeight: number): IMeasurementStations[] {
-    const configStations = measurementLines.map((line) => {
-        return {
-            id: line.id,
-            xr: line.a.x,
-            yr: stageHeight - line.a.y,
-            xl: line.b.x,
-            yl: stageHeight - line.b.y,
-        };
-    });
-    return configStations;
-}*/
-
-/*export function transformFromConfigMeasurementstations(measurementstations: IMeasurementStations[] | [], stageHeight: number): Vector[] {
-    const lines = measurementstations.map((station) => {
-        const measureLine = new Vector(new Point(station.xr, stageHeight - station.yr), new Point(station.xl, stageHeight - station.yl))
-        return measureLine
-    });
-    return lines;
-}*/
-
-/*export function transformToConfigAttractors(attractors: IAttractor[], stageHeight: number): IConfigAttractor[] {
-    const configAttractors = attractors.map((attractor) => {
-        return {
-            xr: attractor.vector.a.x,
-            yr: stageHeight - attractor.vector.a.y,
-            xl: attractor.vector.b.x,
-            yl: stageHeight - attractor.vector.b.y,
-            name: attractor.name,
-            strength: attractor.strength,
-            range: attractor.range,
-            frequency: attractor.frequency,
-        };
-    });
-    return configAttractors;
-}*/
-
-/*export function transformFromConfigAttractors(configAttractors: IConfigAttractor[] | [], stageHeight: number): IAttractor[] {
-    const attractors = configAttractors.map((configAttractor) => {
-        const vector = new Vector(new Point(configAttractor.xr, stageHeight - configAttractor.yr), new Point(configAttractor.xl, stageHeight - configAttractor.yl))
-        return {
-            vector: vector,
-            name: configAttractor.name ? configAttractor.name : "attractor",
-            strength: configAttractor.strength,
-            range: configAttractor.range,
-            frequency: configAttractor.frequency,
-            hover: false
-        }
-
-    });
-    return attractors;
-}*/
-
-/*export function normalizeInfectionValues(infectionParams: IInfectionParameter): IInfectionParameter {
-    const { percentInfected, percentRemoved, infectionRate } = infectionParams;
-
-    const normalizedPercentInfected = percentInfected / 100;
-    const normalizedPercentRemoved = percentRemoved / 100;
-    const normalizedInfection = infectionRate / 100;
-
-    return {
-        ...infectionParams,
-        percentInfected: normalizedPercentInfected,
-        percentRemoved: normalizedPercentRemoved,
-        infectionRate: normalizedInfection,
-    };
-}*/
-
-/*export function denormalizeInfectionValues(infectionParams: IInfectionParameter): IInfectionParameter {
-    const { percentInfected, percentRemoved, infectionRate } = infectionParams;
-
-    const denormalizedPercentInfected = percentInfected * 100;
-    const denormalizedPercentRemoved = percentRemoved * 100;
-    const denormalizedInfection = infectionRate * 100;
-
-    return {
-        ...infectionParams,
-        percentInfected: denormalizedPercentInfected,
-        percentRemoved: denormalizedPercentRemoved,
-        infectionRate: denormalizedInfection,
-    };
-}
 
 export function areConfigsDifferent(
     computed: IeFlowFile | null,
@@ -360,7 +247,7 @@ export function areConfigsDifferent(
     const stringifiedcomputed = JSON.stringify(computed);
     const stringifiedactive = JSON.stringify(active);
     return stringifiedcomputed !== stringifiedactive;
-}*/
+}
 
 export function horiztontalDistanceBetweenOuterPoints(outerPolygon: IPolygon): { distance: number, maxx: number, minx: number } {
     const { corners } = outerPolygon;

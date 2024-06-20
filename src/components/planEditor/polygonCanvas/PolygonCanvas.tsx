@@ -66,31 +66,20 @@ interface CanvasProps {
     holeWalls: Vector[][];
     subdomains: ISubdomain[];
     checkouts: ICheckout[];
-    //startAreas: IStartArea[];
-   // measurementLines: Vector[];
-    //attractors: IAttractor[];
     referenceLine: IReferenceLine;
     backgroundImagePosition: IBackgroundImagePosition;
     onReferenceLineChange?: (referenceLine: IReferenceLine) => void;
     onDeleteCorner?: (point: Point) => void;
     onAddPoint?: (newPoint: Point) => void;
-    // onChangeMeasurementLine?: (measurementLine: Vector) => void;
-    // onCreateMeasurementLine?: (clickedPosition: { x: number; y: number; }) => void;
-    // onDeleteMeasurementLine?: (measurementLine: Vector) => void;
-    //onChangeAttractor?: (attractor: IAttractor) => void;
-    //onCreateAttractor?: (clickedPosition: { x: number; y: number; }) => void;
-    //onDeleteAttractor?: (attractor: IAttractor) => void;
     onDeleteDoors?: (doors: IDoor[]) => void;
     onChangeDoor?: (doors: IDoor) => void;
     onDeleteSubdomain?: (subdomain: ISubdomain) => void;
     onDeleteCheckout?: (checkout: ICheckout) => void;
-    //onDeleteStartArea?: (startArea: IStartArea) => void;
     onCornerMove?: (point: Point) => void;
     onAddObject?: (newObjects: IRect) => void;
     onSubdomainMove?: (subdomain: ISubdomain) => void;
     onSubdomainClick?: (evt: KonvaEventObject<MouseEvent>, subdomain: ISubdomain) => void;
     onCheckoutMove?: (checkout: ICheckout) => void;
-    //onStartareaMove?: (startArea: IStartArea) => void;
     onWallClick?: (evt: KonvaEventObject<MouseEvent>, id: string) => void
     onImageUpdate?: (imagePosition: IBackgroundImagePosition) => void;
 }
@@ -103,15 +92,10 @@ function PolygonCanvas({
                            walls,
                            holeWalls,
                            doors,
-                           // measurementLines,
-                          // attractors,
                            subdomains,
                            checkouts,
-                           //startAreas,
                            referenceLine,
                            activeDoorPoint,
-                          // activeMeasurementPoint,
-                           //activeAttractorPoint,
                            zoom = true,
                            grid = true,
                            fit = false,
@@ -119,20 +103,12 @@ function PolygonCanvas({
                            onReferenceLineChange = () => { return },
                            onDeleteDoors = () => { return },
                            onChangeDoor = () => { return },
-                           //  onChangeMeasurementLine = () => { return },
-                           //  onCreateMeasurementLine = () => { return },
-                           //  onDeleteMeasurementLine = () => { return },
-                           //onChangeAttractor = () => { return },
-                           //onCreateAttractor = () => { return },
-                           //onDeleteAttractor = () => { return },
                            onDeleteCorner = () => { return },
                            onDeleteSubdomain = () => { return },
                            onDeleteCheckout = () => { return },
-                           //onDeleteStartArea = () => { return },
                            onSubdomainMove = () => { return },
                            onSubdomainClick = () => { return },
                            onCheckoutMove = () => { return },
-                           //onStartareaMove = () => { return },
                            onAddPoint = () => { return },
                            onCornerMove = () => { return },
                            onAddObject = () => { return },
@@ -171,20 +147,12 @@ function PolygonCanvas({
     const determineActivePoint = ({
                                       mode,
                                       activeDoorPoint,
-                                     // activeMeasurementPoint,
-                                      //activeAttractorPoint,
                                       polygonCorners,
                                       holePolygons
                                   }: DetermineActivePointInputs) => {
         if (mode === EditorModes.doors) {
             return activeDoorPoint?.point
         }
-       /* if (mode === EditorModes.measurementLines) {
-            return activeMeasurementPoint
-        }*/
-       /* if (mode === EditorModes.attractors) {
-            return activeAttractorPoint
-        }*/
         if (mode === EditorModes.walls) {
             if (polygonCorners.corners.length > 0 && !polygonCorners.closed) {
                 return polygonCorners.corners[polygonCorners.corners.length - 1]
@@ -203,27 +171,15 @@ function PolygonCanvas({
             }
             return null
         }
-       /* if (mode === EditorModes.objects) {
-            if (holePolygons.length > 0 && !holePolygons[holePolygons.length - 1].closed) {
-                return holePolygons[holePolygons.length - 1].corners[holePolygons[holePolygons.length - 1].corners.length - 1]
-            }
-            return null
-        }*/
-
         return null
     }
     const activePoint = determineActivePoint({ mode, activeDoorPoint, polygonCorners, holePolygons })
-
-
 
     const konvaRefs = {
         wallGroup: useRef<Konva.Group>(null),
         subdomainGroup: useRef<Konva.Group | null>(null),
         checkoutGroup: useRef<Konva.Group | null>(null),
-        //startareaGroup: useRef<Konva.Group | null>(null),
         doorGroup: useRef<Konva.Group | null>(null),
-        //measurementLineGroup: useRef<Konva.Group | null>(null),
-        //attractorGroup: useRef<Konva.Group | null>(null),
         holeGroup: useRef<Konva.Group>(null),
         image: useRef<Konva.Image | null>(null),
         transformer: useRef<Konva.Transformer>(null),
@@ -367,19 +323,10 @@ function PolygonCanvas({
             case EditorModes.checkouts:
                 checkoutGroup.current?.moveToTop();
                 break;
-           /* case EditorModes.startAreas:
-                startareaGroup.current?.moveToTop();
-                break;*/
             case EditorModes.doors:
                 wallGroup.current?.moveToTop();
                 doorGroup.current?.moveToTop();
                 break;
-            /*case EditorModes.measurementLines:
-                measurementLineGroup.current?.moveToTop();
-                break;*/
-           /* case EditorModes.attractors:
-                attractorGroup.current?.moveToTop();
-                break;*/
             case EditorModes.objects:
                 holeGroup.current?.moveToTop();
                 break;
@@ -517,18 +464,6 @@ function PolygonCanvas({
                 }
                 handleAddPoint(clickPosition)
                 break;
-            /*case EditorModes.measurementLines:
-                if (isRightClick) {
-                    break;
-                }
-                onCreateMeasurementLine(clickPosition)
-                break;*/
-            /*case EditorModes.attractors:
-                if (isRightClick) {
-                    break;
-                }
-                onCreateAttractor(clickPosition)
-                break;*/
             default:
                 console.debug("The EditorMode does not support canvas click");
                 break;
@@ -545,10 +480,6 @@ function PolygonCanvas({
                 if (e.target instanceof Konva.Rect) { break; }
                 handleRectCanvasMouseDown(e)
                 break;
-            /*case EditorModes.startAreas:
-                if (e.target instanceof Konva.Rect) { break; }
-                handleRectCanvasMouseDown(e)
-                break;*/
             default:
                 console.debug("The EditorMode does not support canvas click");
                 break;
@@ -870,110 +801,6 @@ function PolygonCanvas({
                             </Group>
                             {/*
                 -------------------------
-                Group: Measurement Lines
-                -------------------------
-                */}
-                            {/* <Group ref={konvaRefs.measurementLineGroup}>
-                                {measurementLines.map((line, index) => {
-                                    return <CanvasMeasurementLine key={line.id} line={line} scale={stage.scale} canvasRatio={canvasRatio} onChange={onChangeMeasurementLine} onDelete={onDeleteMeasurementLine} color="white" draggable={mode === EditorModes.measurementLines} highlighted={mode === EditorModes.measurementLines} onSnapLinesChange={(snaplines) => drawLines(snaplines)} />
-                                })}
-                                {mode === EditorModes.measurementLines && activeMeasurementPoint && cursorPosition && (
-                                    <>
-                                        <Circle
-                                            width={10 / stage.scale}
-                                            height={10 / stage.scale}
-                                            x={activeMeasurementPoint.x}
-                                            y={activeMeasurementPoint.y}
-                                            fill="orange"
-                                        />
-                                        <Line
-                                            points={[
-                                                activeMeasurementPoint.x,
-                                                activeMeasurementPoint.y,
-                                                cursorPosition.x,
-                                                cursorPosition.y,
-                                            ]}
-                                            stroke="orange"
-                                            strokeWidth={3 / stage.scale}
-                                            dash={[5, 5]}
-                                            listening={false}
-                                        />
-                                        <Circle
-                                            width={10 / stage.scale}
-                                            height={10 / stage.scale}
-                                            x={cursorPosition.x}
-                                            y={cursorPosition.y}
-                                            fill="orange"
-                                            listening={false}
-                                        />
-                                        <RegularPolygon
-                                            x={activeMeasurementPoint.x}
-                                            y={activeMeasurementPoint.y}
-                                            sides={3}
-                                            stroke={"orange"}
-                                            strokeWidth={3 / stage.scale}
-                                            radius={6 / stage.scale}
-                                            lineCap="round"
-                                            lineJoin="round"
-                                            fill={"orange"}
-                                            rotation={activeMeasurementAngle + 90} />
-                                        <RegularPolygon
-                                            x={cursorPosition.x}
-                                            y={cursorPosition.y}
-                                            sides={3}
-                                            stroke={"orange"}
-                                            strokeWidth={3 / stage.scale}
-                                            radius={6 / stage.scale}
-                                            lineCap="round"
-                                            lineJoin="round"
-                                            fill={"orange"}
-                                            rotation={activeMeasurementAngle - 90} />
-                                    </>
-                                )}
-                            </Group>*/}
-                            {/*
-                -------------------------
-                Group: Attractors
-                -------------------------
-                */}
-                            {/* <Group ref={konvaRefs.attractorGroup}>
-                                {attractors.map((attractor, index) => {
-                                    return <CanvasAttractor key={attractor.vector.id} attractor={attractor} referenceLine={referenceLine} scale={stage.scale} onChange={onChangeAttractor} onDelete={onDeleteAttractor} color="white" mode={mode} onSnapLinesChange={(snaplines) => drawLines(snaplines)} />
-                                })}
-                                {mode === EditorModes.attractors && activeAttractorPoint && cursorPosition && (
-                                    <>
-                                        <Circle
-                                            width={10 / stage.scale}
-                                            height={10 / stage.scale}
-                                            x={activeAttractorPoint.x}
-                                            y={activeAttractorPoint.y}
-                                            fill="orange"
-                                        />
-                                        <Line
-                                            points={[
-                                                activeAttractorPoint.x,
-                                                activeAttractorPoint.y,
-                                                cursorPosition.x,
-                                                cursorPosition.y,
-                                            ]}
-                                            stroke="orange"
-                                            strokeWidth={5 / stage.scale}
-                                            dash={[5, 5]}
-                                            listening={false}
-                                        />
-                                        <Circle
-                                            width={10 / stage.scale}
-                                            height={10 / stage.scale}
-                                            x={cursorPosition.x}
-                                            y={cursorPosition.y}
-                                            fill="orange"
-                                            listening={false}
-                                        />
-                                    </>
-                                )}
-                            </Group>*/}
-                            {/*
-                -------------------------
                 Group: Subdomains
                 -------------------------
                 */}
@@ -1027,28 +854,6 @@ function PolygonCanvas({
                                     />
                                 )}
                             </Group>
-                            {/*
-                -------------------------
-                Group: Start Areas
-                -------------------------
-                */}
-                            {/*     <Group ref={konvaRefs.startareaGroup}>
-                                {startAreas.map((startArea, index) => (
-                                    <CanvasStartArea key={index} draggable={mode === EditorModes.startAreas} scale={stage.scale} startarea={startArea} onChange={onStartareaMove} onDelete={onDeleteStartArea} highlighted={mode === EditorModes.startAreas} />
-                                ))}
-                            </Group>
-                            <Group>
-                                {isDragging && (
-                                    <Rect
-                                        x={startRectPosition.x}
-                                        y={startRectPosition.y}
-                                        width={currentRectPosition.x - startRectPosition.x}
-                                        height={currentRectPosition.y - startRectPosition.y}
-                                        stroke="orange"
-                                        strokeWidth={2 / stage.scale}
-                                    />
-                                )}
-                            </Group>*/}
                         </Layer>
                     </Stage>
                 </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import Button from "components/Button";
 import PlanEditor from "components/planEditor/PlanEditor";
 import PlanTab from "components/planEditor/PlanTab";
 import { IBackgroundImagePosition } from "interfaces/edit/IBackgroundImagePosition";
@@ -13,8 +12,13 @@ import { EditorModes } from "lib/edit/EditorModes";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
 import { useState } from "react";
-import { connectPoints, getBounds } from "utils/edit/utils";
+import {
+	areConfigsDifferent, connectPoints, getBounds, horiztontalDistanceBetweenOuterPoints,
+	transformPointlistsToDomainpolygon, transformToConfigSubdomains } from "utils/edit/utils";
+import { IeFlowFile } from "interfaces/edit/IeFlowFile";
+import DefaultParameter from "lib/edit/DefaultParameter";
 
+const stageHeight = 1000
 
 type Pair<K, V> = [K, V];
 function RadioGroup<T>(
@@ -47,30 +51,12 @@ function RadioGroup<T>(
 	];
 }
 
-const validatePlan = (polygonCorners: IPolygon, doors: IDoor[], referenceLine: IReferenceLine): boolean => {
-	if (polygonCorners.closed === true && doors.length !== 0 && referenceLine.a.x !== referenceLine.b.x) {
-		return true;
-	} else {
-		return false;
-	}
-};
-
 export default function Editor() {
 	// States for all eflow.json parameter
-	/*const [defaultParams, setDefaultParams] = useState<IeFlowFile>(DefaultParameter)
+	const [defaultParams, setDefaultParams] = useState<IeFlowFile>(DefaultParameter)
 	const [activeConfig, setActiveConfig] = useState<IeFlowFile | null>(null)
 	const [name, setName] = useState<string>(defaultParams.name)
-	const [scenario, setScenario] = useState<IScenarioParameter>(defaultParams.Scenario)
-	const [infection, setInfection] = useState<IInfectionParameter>(denormalizeInfectionValues(defaultParams.Infection))
-	const [fundamentaldiagramm, setFundamentaldiagramm] = useState<number>(defaultParams.Fundamentaldiagramm)
-	const [infectionDisabled, setInfectionDisabled] = useState(false)
-	const [agentsOn, setAgentsOn] = useState(false)
-
-	// save entrances as doors when loading config
-	const [attractors, setAttractors] = useState<IAttractor[]>([])
-	const [refinement, setRefinement] = useState<IRefinement>(defaultParams.Refinement)
-	// const [granularity, setGranularity] = useState<number>(defaultParams.Granularity)
-	const [grid, setGrid] = useState<any>(defaultParams.Grid)*/
+	const [grid, setGrid] = useState<any>(defaultParams.Grid)
 
 	// canvas States
 	// here are states that represent the same things as entrances/exits!
@@ -83,10 +69,8 @@ export default function Editor() {
 
 	const [subdomains, setSubdomains] = useState<ISubdomain[]>([])
 	const [checkouts, setCheckouts] = useState<ICheckout[]>([])
-	//const [startAreas, setStartAreas] = useState<IStartArea[]>([])
 	const [doors, setDoors] = useState<IDoor[]>([])
 	const [referenceLine, setReferenceLine] = useState<IReferenceLine>({ a: new Point(100, 100), b: new Point(200, 100), width: 10 }); // [start, end
-	//const [measurementLines, setMeasurementLines] = useState<Vector[]>([]);
 
 	// set simulateMode to false when Editor should be shown
 	const [tab, setTab] = useState<string>("Plan");
@@ -96,26 +80,37 @@ export default function Editor() {
 	const defaultImagePosition: IBackgroundImagePosition = { name: "default", x: 0, y: 0, width: 0, height: 0, rotation: 0, scaleX: 1, scaleY: 1 }
 	const [backgroundImagePosition, setBackgroundImagePosition] = useState<IBackgroundImagePosition>(defaultImagePosition)
 
-	const calculateScale = () => {
-		const bounds = getBounds(polygonCorners)
-		const width = bounds.maxX - bounds.minX
-		const height = bounds.maxY - bounds.minY
-		const scale = width / height
-		return scale
-	}
+	const computeConfig = (newName: string,
+						   newPolygonCorners: IPolygon,
+						   newHoleCorners: IPolygon[],
+						   newDoors: IDoor[],
+						   newGrid: any,
+						   newSubdomains: ISubdomain[],
+						   backgroundImagePosition: IBackgroundImagePosition
+	) => {
+		let configSubdomains = transformToConfigSubdomains(newSubdomains, stageHeight)
+		const configDoors = doors // TO DO
+		const configDomainpolygon = transformPointlistsToDomainpolygon(newPolygonCorners, newHoleCorners, stageHeight)
+		
+		const config: IeFlowFile = {
+			name: newName,
+			Door: configDoors,
+			SubdomainsFD: configSubdomains,
+			Domainpolygon: configDomainpolygon,
+			Grid: newGrid,
+			PolygonCorners: newPolygonCorners,
+			HoleCorners: newHoleCorners,
+			BackgroundImagePosition: backgroundImagePosition
+		}
+		return config
+	};
 
-	const scale = calculateScale()
+	const configFile: IeFlowFile = computeConfig(name,
+		polygonCorners, holePolygons, grid, doors, subdomains, backgroundImagePosition)
 
-	const planValid = validatePlan(polygonCorners, doors, referenceLine)
-
-	const handleDoorChange = ({ index, newValue }: { index: number, newValue: IDoor }) => {
-		if (!doors) { return }
-		let newState = [...doors]
-		newState[index] = newValue
-		setDoors(newState)
-	}
-
-	const handleReset = () => {
+	const refetchPossible = areConfigsDifferent(configFile, activeConfig)
+	
+	/*const handleReset = () => {
 		if (tab === "Plan") {
 			setPolygonCorners({corners: [], closed: false});
 			setHolePolygons([]);
@@ -123,7 +118,7 @@ export default function Editor() {
 			setSubdomains([]);
 			setCheckouts([])
 		}
-	};
+	};*/
 
 	let [buttons, selected] = RadioGroup([
 		["W&auml;nde", () => 1],
@@ -137,7 +132,12 @@ export default function Editor() {
 				<div>
 					<p className="mx-6 border-t-2 border-t-buttonBorderColor font-semibold text-buttonBorderColor"></p>
 					<h2 className="m-2 text-center text-lg text-buttonBorderColor">
-						Dein Layout
+						<input className='text-center mx-4 mb-1 text-lg rounded bg-[--header-color]'
+							   name="simulationname"
+							   type="text"
+							   value={name}
+							   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+						/>
 					</h2>
 					<div className="space-y-2 border-y-2 border-black">
 						<div className="mx-6 flex flex-col space-y-3 py-4">
@@ -153,21 +153,11 @@ export default function Editor() {
 						<h2 className="my-6 ms-4 text-lg font-medium">
 							Architektur
 						</h2>
-						<PlanTab editorMode={editorMode} onModeChange={setEditorMode} />
+						<PlanTab editorMode={editorMode} onModeChange={setEditorMode} configFile={configFile}/>
 					</div>
 				</div>
-				<div className="bottom-0 z-50 flex flex-col items-center border-t-2 border-black p-4">
-					<Button
-						onClick={() => {
-							console.log(selected()());
-						}}
-						className="w-3/4 py-1 text-center"
-					>
-						Speichern
-					</Button>
-				</div>
 			</div>
-			<div className={`flex-grow justify-between h-full items-center w-auto`}>
+			<div className= {`flex-grow justify-between h-full items-center w-auto`}>
 				<PlanEditor
 					backgroundImage={backgroundImage}
 					mode={editorMode}
@@ -176,8 +166,6 @@ export default function Editor() {
 					zoom={tab === "Plan"}
 					onModeChange={setEditorMode}
 					referenceLine={referenceLine}
-					//measurementLines={measurementLines}
-					//attractors={attractors}
 					polygonCorners={polygonCorners}
 					holePolygons={holePolygons}
 					walls={walls}
@@ -188,17 +176,12 @@ export default function Editor() {
 					handleReferenceLineChange={(newReferenceLine) => {
 						setReferenceLine(newReferenceLine)
 					}}
-					//handleMeasurementLinesChange={(newMeasurementLines) => { setMeasurementLines(newMeasurementLines) }}
-					//handleAttractorsChange={(newAttractors) => { setAttractors(newAttractors) }}
 					doors={doors}
 					handleDoorChange={(newDoors) => setDoors(newDoors)}
 					subdomains={subdomains}
 					checkouts={checkouts}
-					//startAreas={startAreas}
-					//scenario={scenario}
 					handleSubdomainsChange={(newSubdomain) => setSubdomains(newSubdomain)}
 					handleCheckoutsChange={(newCheckout) => setCheckouts(newCheckout)}
-					//handleStartAreasChange={(newStartArea) => setStartAreas(newStartArea)}
 					handleImageMoved={(newBackgroundImagePosition) => { setBackgroundImagePosition(newBackgroundImagePosition) }}
 				/>
 			</div>

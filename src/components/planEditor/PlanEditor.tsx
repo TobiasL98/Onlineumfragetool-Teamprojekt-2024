@@ -26,25 +26,18 @@ export interface IPlanEditorProps {
     grid: boolean,
     zoom: boolean,
     referenceLine: IReferenceLine,
-    // measurementLines: Vector[],
-    //attractors: IAttractor[],
     doors: IDoor[],
     walls: Vector[],
     backgroundImagePosition: IBackgroundImagePosition,
     holeWallsList: Vector[][],
     subdomains: ISubdomain[],
     checkouts: ICheckout[],
-   // startAreas: IStartArea[],
-    //scenario: IScenarioParameter
     onModeChange: (newMode: EditorModes) => (void),
     handleCornerChange: (newObjects: IPolygon[]) => (void),
     handleHoleCornerChange: (newObjects: IPolygon[]) => (void),
     handleReferenceLineChange: (newReferenceLine: IReferenceLine) => (void),
-    //handleMeasurementLinesChange: (newMeasurementLines: Vector[]) => (void),
-    //handleAttractorsChange: (newAtrractors: IAttractor[]) => (void),
     handleSubdomainsChange: (newObjects: ISubdomain[]) => void,
     handleCheckoutsChange: (newObjects: ICheckout[]) => void,
-    //handleStartAreasChange: (newObjects: IStartArea[]) => void,
     handleDoorChange: (doors: IDoor[]) => (void)
     handleImageMoved: (imagePosition: IBackgroundImagePosition) => void
 }
@@ -63,26 +56,17 @@ function PlanEditor({
                         holeWallsList,
                         subdomains,
                         checkouts,
-                       //scenario,
-                       // startAreas,
                         referenceLine,
-                        // measurementLines,
-                        //attractors,
                         backgroundImagePosition,
                         handleReferenceLineChange,
-                        // handleMeasurementLinesChange,
-                        //handleAttractorsChange,
                         handleCornerChange,
                         handleHoleCornerChange,
                         handleDoorChange,
                         handleSubdomainsChange,
                         handleCheckoutsChange,
-                       // handleStartAreasChange,
                         handleImageMoved
                     }: IPlanEditorProps) {
     const [activeDoorPoint, setActiveDoorPoint] = useState<{ point: Point, vector: Vector } | null>(null);
-    // const [activeMeasurementPoint, setActiveMeasurementPoint] = useState<Point | null>(null);
-   // const [activeAttractorPoint, setActiveAttractorPoint] = useState<Point | null>(null);
     const [globalSelectedItems, setGlobalSelectedItems] = useState<string[]>([]);
     const [clickedLine, setClickedLine] = useState<string | null>(null);
     const [contextMenu, setContextMenu] = useState<{
@@ -196,30 +180,6 @@ function PlanEditor({
         });
         handleDoorChange([...newDoors]);
     }
-
-   /* const handleDeleteMeasurementLine = (lineToDelete: Vector) => {
-        const newMeasurementLines = measurementLines.filter((line) => {
-            if (lineToDelete.id === line.id) {
-                return false
-            }
-            return true
-        });
-        handleMeasurementLinesChange([...newMeasurementLines]);
-    }*/
-
-    /*const handleDeleteAttractor = (attractorToDelete: IAttractor) => {
-        if (mode !== EditorModes.attractors) {
-            console.warn("The EditorMode does not support deleting attractors");
-            return
-        }
-        const newAttractors = attractors.filter((attractor) => {
-            if (attractorToDelete.vector.id === attractor.vector.id) {
-                return false
-            }
-            return true
-        });
-        handleAttractorsChange([...newAttractors]);
-    }*/
 
     const handleChangeDoor = (newDoor: IDoor) => {
         const newDoors = doors.map((door) => {
@@ -634,9 +594,6 @@ function PlanEditor({
             case EditorModes.checkouts:
                 handleAddCheckout(newObject)
                 break;
-           /* case EditorModes.startAreas:
-                handleAddStartArea(newObject)
-                break;*/
             default:
                 break;
         }
@@ -667,36 +624,23 @@ function PlanEditor({
                 holePolygons={holePolygons}
                 doors={doors}
                 activeDoorPoint={activeDoorPoint}
-                //activeMeasurementPoint={activeMeasurementPoint}
-                //activeAttractorPoint={activeAttractorPoint}
                 walls={walls}
                 holeWalls={holeWallsList}
                 subdomains={subdomains}
                 checkouts={checkouts}
-               // startAreas={startAreas}
                 referenceLine={referenceLine}
-                //measurementLines={measurementLines}
-                //attractors={attractors}
                 backgroundImagePosition={backgroundImagePosition}
                 onReferenceLineChange={handleReferenceLineChange}
                 onWallClick={handleWallClickWrapper}
                 onAddObject={handleAddObjectWrapper}
                 onDeleteDoors={handleDeleteDoors}
                 onChangeDoor={handleChangeDoor}
-                //onChangeMeasurementLine={handleMoveMeasurementLine}
-                // onCreateMeasurementLine={handleCreateMeasurementLine}
-                // onDeleteMeasurementLine={handleDeleteMeasurementLine}
-               // onChangeAttractor={handleMoveAttractor}
-                //onCreateAttractor={handleCreateAttractor}
-                //onDeleteAttractor={handleDeleteAttractor}
                 onDeleteCorner={handleDeleteCornerWrapper}
                 onDeleteSubdomain={handleDeleteSubdomain}
                 onDeleteCheckout={handleDeleteCheckout}
-                //onDeleteStartArea={handleDeleteStartArea}
                 onSubdomainMove={handleMoveSubdomain}
                 onCheckoutMove={handleMoveCheckout}
                 onSubdomainClick={handleClickSubdomain}
-                //onStartareaMove={handleMoveStartarea}
                 onAddPoint={handleAddPointWrapper}
                 onCornerMove={handleMoveCornerWrapper}
                 onImageUpdate={handleImageMoved}

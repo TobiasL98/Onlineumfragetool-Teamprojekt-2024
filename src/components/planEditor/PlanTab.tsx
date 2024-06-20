@@ -1,10 +1,12 @@
 import PlanButton from "components/button/PlanButton";
+import SaveButton from "components/button/SaveButton";
 import { IconDoors } from "components/icons/IconDoors";
 import { IconObjectsPlan } from "components/icons/IconObjectsPlan";
 import { IconWalls } from "components/icons/IconWalls";
+import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import { EditorModes } from "lib/edit/EditorModes";
 
-const PlanTab = ({ editorMode, onModeChange }: { editorMode: EditorModes, onModeChange: (editorMode: EditorModes) => void }) => {
+const PlanTab = ({configFile, editorMode, onModeChange }: { configFile: IeFlowFile, editorMode: EditorModes, onModeChange: (editorMode: EditorModes) => void }) => {
     return (
         <div className=" flex flex-col h-full justify-between text-center">
             <div className="pb-8">
@@ -83,8 +85,10 @@ const PlanTab = ({ editorMode, onModeChange }: { editorMode: EditorModes, onMode
                     </div>
                 </div>
             </div>
+            <div className="bottom-0 z-50 flex justify-center items-center border-t-2 border-black p-4">
+                <SaveButton className="w-3/4 py-1 text-center" jsonConfig={configFile}/>
+            </div>
         </div>
-
     )
 }
 
