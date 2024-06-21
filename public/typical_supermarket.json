@@ -1,0 +1,435 @@
+{
+  "name": "Typische Vorlage",
+  "Door": [
+    {
+      "type": "exit",
+      "wallId": "Qg8Jh3VwHx7jXUgayXnP9_c6Ik62_DeSVsrRyRpKF_",
+      "name": "door",
+      "vector": {
+        "id": "LZJqfPeNCrW5K2HFFcfq1rFOsOHQnYQGn57wOjGKwa",
+        "a": {
+          "id": "LZJqfPeNCrW5K2HFFcfq1",
+          "x": 1119.1894484244435,
+          "y": 435.48226664333436
+        },
+        "b": {
+          "id": "rFOsOHQnYQGn57wOjGKwa",
+          "x": 1119.1894484244435,
+          "y": 531.5741204248828
+        },
+        "angle": 90,
+        "length": 96.09185378154848,
+        "v_x": 0,
+        "v_y": 96.09185378154848,
+        "midPoint": {
+          "id": "WaZ5ZN6nlLIlrQjfgKOHl",
+          "x": 1119.1894484244435,
+          "y": 483.5281935341086
+        }
+      },
+      "weight": 1,
+      "hover": false
+    }
+  ],
+  "Subdomains": [
+    {
+      "name": "subdom1",
+      "id": "YtaCm1DXirMttANL3WB9i",
+      "polygon": {
+        "x": 1001.0598063652823,
+        "y": 598.8373919750769,
+        "width": 120.372348595463,
+        "height": 193.86283510637725
+      },
+      "hover": false,
+      "text": "Brot",
+      "selectedItems": [
+        "Brot"
+      ]
+    },
+    {
+      "name": "subdom1",
+      "id": "xY-mAH4DnuKtDw72bZjCm",
+      "polygon": {
+        "x": 840.0788852982525,
+        "y": -104.49524868239484,
+        "width": 83.28967540699125,
+        "height": 405.34308698069066
+      },
+      "hover": false,
+      "text": "Gemüse",
+      "selectedItems": [
+        "Gemüse"
+      ],
+      "textPosition": {
+        "x": 850.0788852982525,
+        "y": -94.49524868239484
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "Q8iWp2cjdMFX2nZKYHh60",
+      "polygon": {
+        "x": 347.89307951838634,
+        "y": -109.12967225487614,
+        "width": 487.1856986724507,
+        "height": 84.32060169330879
+      },
+      "hover": false,
+      "text": "Käse",
+      "selectedItems": [
+        "Käse"
+      ],
+      "textPosition": {
+        "x": 357.89307951838634,
+        "y": -99.12967225487614
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "LbdIFakkl7HlS6AxaJVVv",
+      "polygon": {
+        "x": -70.58694370025738,
+        "y": -106.00668700697571,
+        "width": 412.23405272284293,
+        "height": 78.07463119750815
+      },
+      "hover": false,
+      "text": "Fleisch",
+      "selectedItems": [
+        "Fleisch"
+      ],
+      "textPosition": {
+        "x": -60.58694370025738,
+        "y": -96.00668700697571
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "sDlYMNQNVcMOqY4JlAkcC",
+      "polygon": {
+        "x": -67.46395845235708,
+        "y": -24.809070561567353,
+        "width": 96.8125426849101,
+        "height": 390.37315598754077
+      },
+      "hover": false,
+      "text": "Fisch",
+      "selectedItems": [
+        "Fisch"
+      ],
+      "textPosition": {
+        "x": -57.463958452357076,
+        "y": -14.809070561567353
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "pYdWeTca-rknc5n6KWVz1",
+      "polygon": {
+        "x": 188.62083187546966,
+        "y": 75.12645737124313,
+        "width": 103.05851318071075,
+        "height": 256.0847903278267
+      },
+      "hover": false,
+      "text": "Milch",
+      "selectedItems": [
+        "Milch"
+      ],
+      "textPosition": {
+        "x": 198.62083187546966,
+        "y": 85.12645737124313
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "HeKDRhDdUYdQk6C3Du9iL",
+      "polygon": {
+        "x": 391.614872988991,
+        "y": 75.1264573712429,
+        "width": 103.05851318071075,
+        "height": 252.96180507992642
+      },
+      "hover": false,
+      "text": "Haushalt",
+      "selectedItems": [
+        "Haushalt"
+      ],
+      "textPosition": {
+        "x": 401.614872988991,
+        "y": 85.1264573712429
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "rk0H2jHustTOv31WrNdc9",
+      "polygon": {
+        "x": 394.73785823689116,
+        "y": 409.2858788965779,
+        "width": 106.18149842861112,
+        "height": 143.65732140341504
+      },
+      "hover": false,
+      "text": "Pflegeartikel",
+      "selectedItems": [
+        "Pflegeartikel"
+      ],
+      "textPosition": {
+        "x": 404.73785823689116,
+        "y": 419.2858788965779
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "RNpzZxc-UqYfl4tCjy0TY",
+      "polygon": {
+        "x": 185.49784662756937,
+        "y": 409.2858788965779,
+        "width": 109.30448367651141,
+        "height": 196.74807061772043
+      },
+      "hover": false,
+      "text": "Snacks",
+      "selectedItems": [
+        "Snacks"
+      ],
+      "textPosition": {
+        "x": 195.49784662756937,
+        "y": 419.2858788965779
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "1cc1pHgS252hPIunF85Vn",
+      "polygon": {
+        "x": 611.0246039607953,
+        "y": 74.84951600678113,
+        "width": 91.90361655222114,
+        "height": 358.2365461525354
+      },
+      "hover": false,
+      "text": "Obst",
+      "selectedItems": [
+        "Obst"
+      ],
+      "textPosition": {
+        "x": 621.0246039607953,
+        "y": 84.84951600678113
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "pmZcP5_ECE3y2iDJspDWn",
+      "polygon": {
+        "x": 34.06740199467035,
+        "y": 717.9823095837737,
+        "width": 496.86933940134895,
+        "height": 73.06902050019858
+      },
+      "hover": false,
+      "text": "Getränke",
+      "selectedItems": [],
+      "textPosition": {
+        "x": 44.06740199467035,
+        "y": 727.9823095837737
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "NSYeR-v1oOaB0xfT8TDDA",
+      "polygon": {
+        "x": -68.72644363153779,
+        "y": 503.25924797208665,
+        "width": 101.41096663503077,
+        "height": 288.2206420153507
+      },
+      "hover": false,
+      "text": "Alkohol",
+      "selectedItems": [
+        "Alkohol"
+      ],
+      "textPosition": {
+        "x": -58.72644363153779,
+        "y": 513.2592479720867
+      }
+    }
+  ],
+  "Domainpolygon": {
+    "numberPoints": 6,
+    "segmentPoints": [
+      -73.88082993504509,
+      1105.773370003557,
+      -73.88082993504509,
+      206,
+      1119.1894484244435,
+      206,
+      1119.1894484244435,
+      616,
+      927,
+      616,
+      927,
+      1105.773370003557
+    ],
+    "numberSegments": 6,
+    "pointOrder": [
+      0,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      0
+    ],
+    "numberHoles": 0,
+    "holes": []
+  },
+  "Grid": [
+    {
+      "type": "exit",
+      "wallId": "Qg8Jh3VwHx7jXUgayXnP9_c6Ik62_DeSVsrRyRpKF_",
+      "name": "door",
+      "vector": {
+        "id": "LZJqfPeNCrW5K2HFFcfq1rFOsOHQnYQGn57wOjGKwa",
+        "a": {
+          "id": "LZJqfPeNCrW5K2HFFcfq1",
+          "x": 1119.1894484244435,
+          "y": 435.48226664333436
+        },
+        "b": {
+          "id": "rFOsOHQnYQGn57wOjGKwa",
+          "x": 1119.1894484244435,
+          "y": 531.5741204248828
+        },
+        "angle": 90,
+        "length": 96.09185378154848,
+        "v_x": 0,
+        "v_y": 96.09185378154848,
+        "midPoint": {
+          "id": "WaZ5ZN6nlLIlrQjfgKOHl",
+          "x": 1119.1894484244435,
+          "y": 483.5281935341086
+        }
+      },
+      "weight": 1,
+      "hover": false
+    }
+  ],
+  "PolygonCorners": {
+    "corners": [
+      {
+        "id": "F9RuoNGFw3Oy9WltiguOp",
+        "x": -73.88082993504509,
+        "y": -105.7733700035568
+      },
+      {
+        "id": "LfNZiAnOCKLYFt59_EQDJ",
+        "x": -73.88082993504509,
+        "y": 794
+      },
+      {
+        "id": "Qg8Jh3VwHx7jXUgayXnP9",
+        "x": 1119.1894484244435,
+        "y": 794
+      },
+      {
+        "id": "_c6Ik62_DeSVsrRyRpKF_",
+        "x": 1119.1894484244435,
+        "y": 384
+      },
+      {
+        "id": "z_3cNX53iunavKXw6h6bq",
+        "x": 927,
+        "y": 384
+      },
+      {
+        "id": "HA7sS5FqZvKzeBaziWP1s",
+        "x": 927,
+        "y": -105.7733700035568
+      }
+    ],
+    "closed": true
+  },
+  "HoleCorners": [],
+  "BackgroundImagePosition": {
+    "name": "default",
+    "x": 0,
+    "y": 0,
+    "width": 0,
+    "height": 0,
+    "rotation": 0,
+    "scaleX": 1,
+    "scaleY": 1
+  },
+  "Checkouts": [
+    {
+      "name": "checkout1",
+      "id": "_L7EiDeuXwHZUg8yWFcB6",
+      "polygon": {
+        "x": 627.2419559757905,
+        "y": 543.2168051001063,
+        "width": 236.32358541999713,
+        "height": 54.39193632682475
+      },
+      "hover": false,
+      "text": "Kasse",
+      "textPosition": {
+        "x": 637.2419559757905,
+        "y": 553.2168051001063
+      }
+    },
+    {
+      "name": "checkout1",
+      "id": "kVDmzavh7c51-YawU55N1",
+      "polygon": {
+        "x": 625.9241955280086,
+        "y": 645.027055432806,
+        "width": 238.19916943126702,
+        "height": 54.39193632682475
+      },
+      "hover": false,
+      "text": "Kasse",
+      "textPosition": {
+        "x": 635.9241955280086,
+        "y": 655.027055432806
+      }
+    },
+    {
+      "name": "checkout1",
+      "id": "6I9lO8UKzCGWEhhIGheXU",
+      "polygon": {
+        "x": 622.5634772547851,
+        "y": 741.12255735886,
+        "width": 245.1034432874353,
+        "height": 52.71041791127641
+      },
+      "hover": false,
+      "text": "Kasse",
+      "textPosition": {
+        "x": 632.5634772547851,
+        "y": 751.12255735886
+      }
+    },
+    {
+      "name": "checkout1",
+      "id": "kniEFQBCCFRywct_mdqaZ",
+      "polygon": {
+        "x": 627.736168256723,
+        "y": 432.8592253390907,
+        "width": 235.86378099966657,
+        "height": 61.66373359468412
+      },
+      "hover": false,
+      "text": "Kasse",
+      "textPosition": {
+        "x": 637.736168256723,
+        "y": 442.8592253390907
+      }
+    }
+  ]
+}

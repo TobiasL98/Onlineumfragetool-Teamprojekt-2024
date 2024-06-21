@@ -1,0 +1,287 @@
+{
+  "name": "Ihr Layout",
+  "Door": [
+    {
+      "type": "exit",
+      "wallId": "U-vpC-D8X_Eha2NwcbQadwJqMTnYbONG3-mZcYyTxS",
+      "name": "door",
+      "vector": {
+        "id": "e-mz5Wb9QGnWITxSec-y7BexOhZoHGQXxW33Kq6oc_",
+        "a": {
+          "id": "e-mz5Wb9QGnWITxSec-y7",
+          "x": 701.5,
+          "y": 217.5
+        },
+        "b": {
+          "id": "ubiz684xfXPO34k2VmVcH",
+          "x": 701.5,
+          "y": 262.5
+        },
+        "angle": 90,
+        "length": 45,
+        "v_x": 0,
+        "v_y": 45,
+        "midPoint": {
+          "id": "NpKefMjeLbVHRKsVd_uc4",
+          "x": 701.5,
+          "y": 240
+        }
+      },
+      "weight": 1,
+      "hover": false
+    }
+  ],
+  "Subdomains": [
+    {
+      "name": "subdom1",
+      "id": "R2ysMHagghzdWZpXsrG2M",
+      "polygon": {
+        "x": 97.69230769230768,
+        "y": 188.84615384615384,
+        "width": 233.75,
+        "height": 52.5
+      },
+      "hover": false,
+      "text": "Milch",
+      "selectedItems": [
+        "Milch"
+      ],
+      "textPosition": {
+        "x": 107.69230769230768,
+        "y": 198.84615384615384
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "HGu7apdlHu4bFCOmjEQiH",
+      "polygon": {
+        "x": 100,
+        "y": 456.25000000000006,
+        "width": 81.25,
+        "height": 145
+      },
+      "hover": false,
+      "text": "Fisch",
+      "selectedItems": [
+        "Fisch"
+      ],
+      "textPosition": {
+        "x": 110,
+        "y": 466.25000000000006
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "VzlzfImBFVOFze1EvC57_",
+      "polygon": {
+        "x": 96.25,
+        "y": 242.5,
+        "width": 87.5,
+        "height": 211.25
+      },
+      "hover": false,
+      "text": "Käse",
+      "selectedItems": [
+        "Käse"
+      ]
+    },
+    {
+      "name": "subdom1",
+      "id": "_IVHzRvbFxdpfiIhO8H3h",
+      "polygon": {
+        "x": 182.54807692307693,
+        "y": 533.7980769230769,
+        "width": 250,
+        "height": 65
+      },
+      "hover": false,
+      "text": "Fleisch",
+      "selectedItems": [
+        "Fleisch"
+      ],
+      "textPosition": {
+        "x": 192.54807692307693,
+        "y": 543.7980769230769
+      }
+    },
+    {
+      "name": "subdom1",
+      "id": "zTrzQz3MzsFT6STG2WsOR",
+      "polygon": {
+        "x": 345,
+        "y": 292.5,
+        "width": 257.5,
+        "height": 62.5
+      },
+      "hover": false,
+      "text": "Obst",
+      "selectedItems": [
+        "Obst"
+      ]
+    },
+    {
+      "name": "subdom1",
+      "id": "N5x41H9vEfGOKqUecI06V",
+      "polygon": {
+        "x": 336.1298076923077,
+        "y": 188.4615384615385,
+        "width": 280.04807692307685,
+        "height": 54.08653846153845
+      },
+      "hover": false,
+      "text": "Gemüse",
+      "selectedItems": [
+        "Gemüse"
+      ]
+    },
+    {
+      "name": "subdom1",
+      "id": "mPBlBxkCh92SvK079BLzF",
+      "polygon": {
+        "x": 344.54326923076917,
+        "y": 359.13461538461536,
+        "width": 256.00961538461536,
+        "height": 48.076923076923094
+      },
+      "hover": false,
+      "text": "Brot",
+      "selectedItems": [
+        "Brot"
+      ]
+    },
+    {
+      "name": "subdom1",
+      "id": "EAf-RxmzJD83E8VWY8Tem",
+      "polygon": {
+        "x": 437.0913461538461,
+        "y": 534.6153846153845,
+        "width": 265.625,
+        "height": 62.5
+      },
+      "hover": false,
+      "text": "Getränke",
+      "selectedItems": [
+        "Getränke"
+      ]
+    }
+  ],
+  "Domainpolygon": {
+    "numberPoints": 4,
+    "segmentPoints": [
+      99,
+      808.5,
+      701.5,
+      808.5,
+      701.5,
+      398.5,
+      99,
+      398.5
+    ],
+    "numberSegments": 4,
+    "pointOrder": [
+      0,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      0
+    ],
+    "numberHoles": 0,
+    "holes": []
+  },
+  "Grid": [
+    {
+      "type": "exit",
+      "wallId": "U-vpC-D8X_Eha2NwcbQadwJqMTnYbONG3-mZcYyTxS",
+      "name": "door",
+      "vector": {
+        "id": "e-mz5Wb9QGnWITxSec-y7BexOhZoHGQXxW33Kq6oc_",
+        "a": {
+          "id": "e-mz5Wb9QGnWITxSec-y7",
+          "x": 701.5,
+          "y": 217.5
+        },
+        "b": {
+          "id": "ubiz684xfXPO34k2VmVcH",
+          "x": 701.5,
+          "y": 262.5
+        },
+        "angle": 90,
+        "length": 45,
+        "v_x": 0,
+        "v_y": 45,
+        "midPoint": {
+          "id": "NpKefMjeLbVHRKsVd_uc4",
+          "x": 701.5,
+          "y": 240
+        }
+      },
+      "weight": 1,
+      "hover": false
+    }
+  ],
+  "PolygonCorners": {
+    "corners": [
+      {
+        "id": "gMUqzzH-lDO8Nrmd3hx7x",
+        "x": 99,
+        "y": 191.50000000000003
+      },
+      {
+        "id": "U-vpC-D8X_Eha2NwcbQad",
+        "x": 701.5,
+        "y": 191.50000000000003
+      },
+      {
+        "id": "wJqMTnYbONG3-mZcYyTxS",
+        "x": 701.5,
+        "y": 601.5
+      },
+      {
+        "id": "waavSnNMHYIUX1f8qwqO8",
+        "x": 99,
+        "y": 601.5
+      }
+    ],
+    "closed": true
+  },
+  "HoleCorners": [],
+  "BackgroundImagePosition": {
+    "name": "default",
+    "x": 0,
+    "y": 0,
+    "width": 0,
+    "height": 0,
+    "rotation": 0,
+    "scaleX": 1,
+    "scaleY": 1
+  },
+  "Checkouts": [
+    {
+      "name": "checkout1",
+      "id": "KawWEbVI_VA9oupTB0AyE",
+      "polygon": {
+        "x": 499.5913461538461,
+        "y": 443.2692307692308,
+        "width": 110.5769230769231,
+        "height": 27.644230769230717
+      },
+      "hover": false,
+      "text": "Kasse"
+    },
+    {
+      "name": "checkout1",
+      "id": "yVMoQ_h_HsbwSvdmIKDXn",
+      "polygon": {
+        "x": 498.389423076923,
+        "y": 487.7403846153846,
+        "width": 111.77884615384619,
+        "height": 26.44230769230768
+      },
+      "hover": false,
+      "text": "Kasse"
+    }
+  ]
+}
