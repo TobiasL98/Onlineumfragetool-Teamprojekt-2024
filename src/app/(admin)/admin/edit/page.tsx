@@ -11,12 +11,15 @@ import { ICheckout } from "interfaces/edit/ICheckout";
 import { EditorModes } from "lib/edit/EditorModes";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
-import { useState } from "react";
+import {useState } from "react";
 import {
 	areConfigsDifferent, connectPoints, getBounds, horiztontalDistanceBetweenOuterPoints,
 	transformPointlistsToDomainpolygon, transformToConfigSubdomains } from "utils/edit/utils";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import DefaultParameter from "lib/edit/DefaultParameter";
+import FileUploadButton from "components/button/FileUploadButton";
+import TypicalSupermarketButton from "components/button/TypicalSupermarketButton";
+
 
 const stageHeight = 1000
 
@@ -66,7 +69,6 @@ export default function Editor() {
 	const [holePolygons, setHolePolygons] = useState<IPolygon[]>([]);
 	// const innerWalls = connectPoints(holeCorners)
 	const innerWallsList = holePolygons.map((corners) => connectPoints(corners));
-
 	const [subdomains, setSubdomains] = useState<ISubdomain[]>([])
 	const [checkouts, setCheckouts] = useState<ICheckout[]>([])
 	const [doors, setDoors] = useState<IDoor[]>([])
@@ -75,7 +77,7 @@ export default function Editor() {
 	// set simulateMode to false when Editor should be shown
 	const [tab, setTab] = useState<string>("Plan");
 	const [editorMode, setEditorMode] = useState<EditorModes>(EditorModes.walls)
-	//const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+	const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 	const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null)
 	const defaultImagePosition: IBackgroundImagePosition = { name: "default", x: 0, y: 0, width: 0, height: 0, rotation: 0, scaleX: 1, scaleY: 1 }
 	const [backgroundImagePosition, setBackgroundImagePosition] = useState<IBackgroundImagePosition>(defaultImagePosition)
@@ -86,29 +88,79 @@ export default function Editor() {
 						   newDoors: IDoor[],
 						   newGrid: any,
 						   newSubdomains: ISubdomain[],
-						   backgroundImagePosition: IBackgroundImagePosition
+						   backgroundImagePosition: IBackgroundImagePosition,
+						   newCheckouts: ICheckout[]
 	) => {
-		let configSubdomains = transformToConfigSubdomains(newSubdomains, stageHeight)
+		//let configSubdomains = transformToConfigSubdomains(newSubdomains, stageHeight)
 		const configDoors = doors // TO DO
 		const configDomainpolygon = transformPointlistsToDomainpolygon(newPolygonCorners, newHoleCorners, stageHeight)
 		
 		const config: IeFlowFile = {
 			name: newName,
 			Door: configDoors,
-			SubdomainsFD: configSubdomains,
+			Subdomains: subdomains,
 			Domainpolygon: configDomainpolygon,
 			Grid: newGrid,
 			PolygonCorners: newPolygonCorners,
 			HoleCorners: newHoleCorners,
-			BackgroundImagePosition: backgroundImagePosition
+			BackgroundImagePosition: backgroundImagePosition,
+			Checkouts: newCheckouts,
 		}
 		return config
 	};
 
 	const configFile: IeFlowFile = computeConfig(name,
-		polygonCorners, holePolygons, grid, doors, subdomains, backgroundImagePosition)
+		polygonCorners, holePolygons, grid, doors, subdomains, backgroundImagePosition, checkouts)
 
-	const refetchPossible = areConfigsDifferent(configFile, activeConfig)
+	//const refetchPossible = areConfigsDifferent(configFile, activeConfig)
+
+	const handleFileUpload = (file: File) => {
+		setUploadedFile(file)
+		const reader = new FileReader();
+		reader.onload = () => {
+			const fileContent = reader.result as string;
+
+			if (file.name.endsWith('.json')) {
+				const layoutData = JSON.parse(fileContent);
+				setPolygonCorners(layoutData.PolygonCorners);
+				setHolePolygons(layoutData.HoleCorners);
+				setDoors(layoutData.Door);
+				setSubdomains(layoutData.Subdomains);
+				setBackgroundImagePosition(layoutData.BackgroundImagePosition);
+				setCheckouts(layoutData.Checkouts);
+			}
+		};
+		reader.readAsText(file);
+	};
+	
+	const handleSupermarketUpload  = async () => {
+		try {
+			const response = await fetch('/api/getSupermarket');
+			if (!response.ok) {
+				throw new Error('Failed to fetch config data');
+			}
+			const layoutData: IeFlowFile = await response.json();
+			setPolygonCorners(layoutData.PolygonCorners);
+			setHolePolygons(layoutData.HoleCorners);
+			setDoors(layoutData.Door);
+			setSubdomains(layoutData.Subdomains);
+			setBackgroundImagePosition(layoutData.BackgroundImagePosition);
+			setCheckouts(layoutData.Checkouts);
+		} catch (error) {
+			console.error('Error fetching config:', error);
+		}
+	};
+
+	const handleFileClear = () => { 
+		setUploadedFile(null)
+		setBackgroundImage(null)
+		setBackgroundImagePosition({ ...backgroundImagePosition, name: "reset" })
+		setPolygonCorners({ corners: [], closed: false });
+		setHolePolygons([]);
+		setDoors([]);
+		setSubdomains([]);
+		setCheckouts([])
+	};
 	
 	/*const handleReset = () => {
 		if (tab === "Plan") {
@@ -127,8 +179,8 @@ export default function Editor() {
 		["Kassen", () => 4],
 	]);
 	return (
-		<div className="flex grow self-stretch">
-			<div className="flex basis-1/6 flex-col justify-between bg-[--header-color] text-inputBorderColor border-r border-r-[--header-footer-separator-color]">
+		<div className="flex grow self-stretch h-screen">
+			<div id={"plantab"} className="flex basis-1/6 flex-col justify-between bg-[--header-color] text-inputBorderColor border-r border-r-[--header-footer-separator-color] h-full">
 				<div>
 					<p className="mx-6 border-t-2 border-t-buttonBorderColor font-semibold text-buttonBorderColor"></p>
 					<h2 className="m-2 text-center text-lg text-buttonBorderColor">
@@ -141,12 +193,8 @@ export default function Editor() {
 					</h2>
 					<div className="space-y-2 border-y-2 border-black">
 						<div className="mx-6 flex flex-col space-y-3 py-4">
-							<button className="border-2 border-inputBorderColor bg-inputBackgroundColor">
-								Eigenes Layout laden
-							</button>
-							<button className="border-2 border-inputBorderColor bg-inputBackgroundColor">
-								Typische Vorlage laden
-							</button>
+							<FileUploadButton onFileUpload={handleFileUpload} onFileClear={handleFileClear} uploadedFile={uploadedFile} editorMode={editorMode} onClick={() => setEditorMode(EditorModes.image)} />
+							<TypicalSupermarketButton onFileUpload={handleSupermarketUpload} onFileClear={handleFileClear} editorMode={editorMode} onClick={() => setEditorMode(EditorModes.image)} />
 						</div>
 					</div>
 					<div>

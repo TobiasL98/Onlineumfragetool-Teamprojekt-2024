@@ -4,9 +4,8 @@ import { Point } from "lib/geometry/point";
 export interface ISubdomain {
     name: string,
     id: string,
-    //velocity: number,
     polygon: IRect,
-    hover: Boolean,
+    hover?: Boolean,
     text: string;
     textPosition?: { x: number, y: number };
     selectedItems: string[];

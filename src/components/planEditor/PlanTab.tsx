@@ -43,7 +43,7 @@ const PlanTab = ({configFile, editorMode, onModeChange }: { configFile: IeFlowFi
                     active={editorMode === EditorModes.checkouts}
                 />
             </div>
-            <div id="erklärung" className={"px-4 border-t-2 border-black"}>
+            <div id="erklärung" className={"px-4 border-t-2 border-black flex-grow"}>
                 <div className="w-full flex flex-row  mt-3 mb-1">
                     {editorMode === EditorModes.walls && (
                         <p className={"text-white text-[13px] font-bold"}>Wände</p>
@@ -85,7 +85,7 @@ const PlanTab = ({configFile, editorMode, onModeChange }: { configFile: IeFlowFi
                     </div>
                 </div>
             </div>
-            <div className="bottom-0 z-50 flex justify-center items-center border-t-2 border-black p-4">
+            <div className="mt-auto bottom-0 z-50 flex justify-center items-center border-t-2 border-black p-4">
                 <SaveButton className="w-3/4 py-1 text-center" jsonConfig={configFile}/>
             </div>
         </div>

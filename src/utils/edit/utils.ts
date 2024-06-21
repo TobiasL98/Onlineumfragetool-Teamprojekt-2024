@@ -186,7 +186,22 @@ export const mergeExitNEntreesToDoors = ({ exits, entrances, stageHeight }: { ex
     return mergedDoors
 }
 
+/*export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomain[] => {
+    return subdomains.map((subdomain) => {
+        const { polygon, name, id, text, selectedItems } = subdomain;
+
+        return {
+            name: name,
+            polygon: polygon,
+            id: id,
+            text: text,
+            selectedItems: selectedItems,
+        };
+    });
+};*/
+
 export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomainFD[] => {
+    console.log("subdomain" + subdomains)
     return subdomains.map((subdomain) => {
         const { polygon, name } = subdomain;
         const { x, y, width, height } = polygon;
@@ -204,6 +219,20 @@ export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeigh
         };
     });
 };
+
+/*export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomain[] => {
+    return subdomains.map((subdomain) => {
+        const { polygon, name, id, text, selectedItems } = subdomain;
+
+        return {
+            name: name,
+            polygon: polygon,
+            id: id,
+            text: text,
+            selectedItems: selectedItems,
+        };
+    });
+};*/
 
 export function transformFromConfigSubdomains(subdomainsFD: ISubdomainFD[], stageHeight: number): ISubdomain[] {
     return subdomainsFD.map((subdomainFD: ISubdomainFD) => {
