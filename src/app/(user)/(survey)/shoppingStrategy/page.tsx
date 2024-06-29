@@ -7,7 +7,7 @@ import Headline from "components/Headline";
 import LayoutSurvey from "components/layoutSurvey/LayoutSurvey";
 import { EditorModes } from "lib/edit/EditorModes";
 import { IBackgroundImagePosition } from "interfaces/edit/IBackgroundImagePosition";
-import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { IShelf } from "interfaces/edit/IShelf";
 import { ICheckout } from "interfaces/edit/ICheckout";
 import { IDoor } from "interfaces/edit/IDoor";
 import { IReferenceLine } from "interfaces/edit/IReferenceLine";
@@ -26,7 +26,7 @@ export default function ShoppingStrategyPage() {
 	const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null)
 	const defaultImagePosition: IBackgroundImagePosition = { name: "default", x: 0, y: 0, width: 0, height: 0, rotation: 0, scaleX: 1, scaleY: 1 }
 	const [backgroundImagePosition, setBackgroundImagePosition] = useState<IBackgroundImagePosition>(defaultImagePosition)
-	const [subdomains, setSubdomains] = useState<ISubdomain[]>([])
+	const [shelfs, setShelfs] = useState<IShelf[]>([])
 	const [checkouts, setCheckouts] = useState<ICheckout[]>([])
 	const [doors, setDoors] = useState<IDoor[]>([])
 	const [referenceLine, setReferenceLine] = useState<IReferenceLine>({ a: new Point(100, 100), b: new Point(200, 100), width: 10 }); // [start, end
@@ -59,7 +59,7 @@ if (configFile && configFile.name !== undefined) {
 			setPolygonCorners(configFile.PolygonCorners);
 			setHolePolygons(configFile.HoleCorners);
 			setDoors(configFile.Door);
-			setSubdomains(configFile.Subdomains);
+			setShelfs(configFile.Shelfs);
 			setBackgroundImagePosition(configFile.BackgroundImagePosition);
 			setCheckouts(configFile.Checkouts);
 		}
@@ -70,6 +70,10 @@ if (configFile && configFile.name !== undefined) {
 				<Headline className="w-full flex-grow">
 					<h1 className="text-4xl font-medium">Einkaufsstrategie</h1>
 				</Headline>
+				<div className="mb-3 italic text-center">
+					Stellen Sie sich im Geiste vor Sie machen gerade
+					Ihren Einkauf...
+				</div>
 				<div className="h-65 flex">
 					<div className="w-25-percent m-5 ml-7 flex flex-col justify-between">
 						{/*<form className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor jjustify-space-around m-5 ml-8">
@@ -121,14 +125,17 @@ if (configFile && configFile.name !== undefined) {
 							</div>
 						</form>*/}
 						<div className="flex flex-col rounded-3xl bg-borderBackgroundColor p-4">
-							<div className="mb-5 italic">
-								Stellen Sie sich im Geiste vor Sie machen gerade
-								Ihren Einkauf...
+							<div className="mt-2 mb-2 font-small">
+								Mit einem Klick können Sie Schritt für Schritt Ihre
+								Einkaufsreihenfolge auswählen und wie lange Sie jeweils an
+								den Bereichen verweilen.
 							</div>
-							<div className="mt-5">
-								Wählen Sie per Rechtsklick Schritt für Schritt Ihre
-								Einkaufsreihenfolge aus und wie lange Sie jeweils an
-								den Bereichen verweilen
+							<div className="mt-2 mb-2 font-small">
+								Per Rechtsklick auf das jeweilige Regal,
+								können Sie Ihre Auswahl wiederrufen.
+							</div>
+							<div className="mt-2 mb-2 font-small">
+								Bitte wählen Sie eine Kasse als letztes aus.
 							</div>
 						</div>
 						<Link
@@ -152,7 +159,7 @@ if (configFile && configFile.name !== undefined) {
 								holeWallsList={innerWallsList}
 								backgroundImagePosition={backgroundImagePosition}
 								doors={doors}
-								subdomains={subdomains}
+								shelfs={shelfs}
 								checkouts={checkouts}
 							/>
 						) : null}

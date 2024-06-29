@@ -8,4 +8,5 @@ export interface ICheckout {
     hover: Boolean,
     text: string;
     textPosition?: { x: number, y: number };
+    shoppingOrder?: string
 }

@@ -1,4 +1,4 @@
-export const IconTrash = ({ fill, onClick }: { fill: string; onClick: () => void }) => {
+export const IconTrash = ({ fill, onClick }: { fill: string; onClick: (event: React.MouseEvent) => void; }) => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClick}>
             <path d="M7 6H6V12H7V6Z" fill={fill} />

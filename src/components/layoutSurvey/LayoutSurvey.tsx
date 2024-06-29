@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import ContextMenu from "components/planEditor/polygonCanvas/ContextMenu"
-import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { IShelf } from "interfaces/edit/IShelf";
 import { ICheckout } from "interfaces/edit/ICheckout";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { EditorModes } from "lib/edit/EditorModes";
@@ -24,11 +24,11 @@ export interface IPlanEditorProps {
     walls: Vector[],
     backgroundImagePosition: IBackgroundImagePosition,
     holeWallsList: Vector[][],
-    subdomains: ISubdomain[],
+    shelfs: IShelf[],
     checkouts: ICheckout[],
 }
 
-function PlanEditor({
+function LayoutSurvey({
                         backgroundImage,
                         mode,
                         polygonCorners,
@@ -38,31 +38,35 @@ function PlanEditor({
                         fit,
                         grid,
                         holeWallsList,
-                        subdomains,
+                        shelfs,
                         checkouts,
                         referenceLine,
                         backgroundImagePosition,
                     }: IPlanEditorProps) {
     const [activeDoorPoint, setActiveDoorPoint] = useState<{ point: Point, vector: Vector } | null>(null);
-    const [globalSelectedItems, setGlobalSelectedItems] = useState<string[]>([]);
+    const [globalSelectedShoppingTimes, setGlobalSelectedShoppingTimes] = useState<string[]>([]);
+    const [shoppingOrderIndex, setShoppingOrderIndex] = useState<number>(0);
+
     const [contextMenu, setContextMenu] = useState<{
         visible: boolean;
         x: number;
         y: number;
-        subdomain: ISubdomain | null;
+        shelf: IShelf | null;
     }>({
         visible: false,
         x: 0,
         y: 0,
-        subdomain: null,
+        shelf: null,
     });
 
     useEffect(() => {
         const handleContextMenu = (e: MouseEvent) => {
-            if (e.button === 2) {
-                // Do something when the right mouse button is clicked
-                //handleRightClick(mode);
-            }
+            /*if (e.button === 2 && selectedShelf) {
+                setShoppinOrderIndex(shoppinOrderIndex - 1)
+                selectedShelf.shoppingOrder = shoppinOrderIndex.toString();
+                selectedShelf.shoppingTime = undefined;
+                //selectedShelf.selectedShoppingTimes.push(undefined);
+            }*/
         };
 
         window.addEventListener("contextmenu", handleContextMenu);
@@ -72,12 +76,16 @@ function PlanEditor({
         };
     }, [mode]); // the mode as dependency is important, otherwise the event listeners are not updated when the mode changes
 
-    const handleClickSubdomain = (e: any, subdomain: ISubdomain) => {
-        if (mode !== EditorModes.subdomains) {
-            console.warn("The EditorMode does not support clicking subdomains");
+    const handleClickShelf = (e: any, shelf: IShelf) => {
+        if (shelf.text === '') {
             return
         }
+        if (checkouts.some(checkout => checkout.shoppingOrder !== undefined)) {
+            return;
+        }
 
+        handleCloseContextMenu()
+        console.log("huh???")
         const stage = e.target.getStage();
         const mousePos = stage.getPointerPosition();
         const stageBox = stage.container().getBoundingClientRect();
@@ -86,24 +94,87 @@ function PlanEditor({
             visible: true,
             x: mousePos.x + stageBox.left,
             y: mousePos.y + stageBox.top,
-            subdomain: subdomain
+            shelf: shelf
         });
+    };
+
+    const handleClickCheckout = (e: any, checkout: ICheckout) => {
+        if (checkouts.some(checkout => checkout.shoppingOrder !== undefined)) {
+            return;
+        }
+        if (mode === EditorModes.image && checkout) {
+            if (checkout.shoppingOrder === undefined   ) {
+                checkouts.forEach(checkout => {
+                    const order = parseInt(checkout.shoppingOrder!);
+                    if (order !== undefined) {
+                        return
+                    }
+                });
+                setShoppingOrderIndex(prevIndex => {
+                    const newIndex = prevIndex + 1;
+                    console.log(newIndex); // Now it should print the updated value
+                    checkout.shoppingOrder = newIndex.toString();
+                    return newIndex;
+                });
+                checkout.shoppingOrder = undefined
+            }
+        }
     };
 
     const handleCloseContextMenu = () => {
         setContextMenu({ ...contextMenu, visible: false });
     };
 
-    const handleMenuItemClick = (itemText: string, selectedSubdomain: ISubdomain | null) => {
-        if (selectedSubdomain) {
-            selectedSubdomain.selectedItems = [];
-            setGlobalSelectedItems([]);
-
-            if (itemText !== selectedSubdomain.text) {
-                selectedSubdomain.text = itemText;
-                selectedSubdomain.selectedItems.push(itemText);
-                setGlobalSelectedItems(prevItems => [...prevItems, itemText]);
+    const handleMenuItemClick = (itemText: string, selectedShelf: IShelf | null) => {
+         if (mode === EditorModes.image && selectedShelf) {
+            if (itemText !== selectedShelf.shoppingTime) {
+                if (selectedShelf.shoppingTime === undefined   ) {
+                    setShoppingOrderIndex(prevIndex => {
+                        const newIndex = prevIndex + 1;
+                        console.log(newIndex); // Now it should print the updated value
+                        selectedShelf.shoppingOrder = newIndex.toString();
+                        return newIndex;
+                    });
+                    selectedShelf.shoppingOrder = shoppingOrderIndex.toString();
+                }
+                if (selectedShelf.selectedShoppingTimes) {
+                    setGlobalSelectedShoppingTimes(prevItems => prevItems.filter(item => item !== selectedShelf.shoppingTime));
+                }
+                selectedShelf.shoppingTime = itemText;
+                selectedShelf.selectedShoppingTimes.push(itemText);
+                setGlobalSelectedShoppingTimes(prevItems => [...prevItems, itemText]);
             }
+        }
+    };
+
+    const handleShelfRightClick = (selectedShelf: IShelf | null) => {
+        if (mode === EditorModes.image && selectedShelf) {
+            const selectedOrder = parseInt(selectedShelf.shoppingOrder!);
+            shelfs.forEach(shelf => {
+                const order = parseInt(shelf.shoppingOrder!);
+                if (order > selectedOrder) {
+                    shelf.shoppingOrder = (order - 1).toString();
+                }
+            });
+            checkouts.forEach(checkout => {
+                const order = parseInt(checkout.shoppingOrder!);
+                if (order > selectedOrder) {
+                    checkout.shoppingOrder = (order - 1).toString();
+                }
+            });
+            selectedShelf.shoppingOrder = undefined;
+            selectedShelf.shoppingTime = undefined;
+            setShoppingOrderIndex(prevIndex => prevIndex - 1);
+        }
+    };
+
+    const handleCheckoutRightClick = (selectedCheckout: ICheckout | null) => {
+        if (mode === EditorModes.image && selectedCheckout && selectedCheckout.shoppingOrder !== undefined) {
+            setShoppingOrderIndex(prevIndex => {
+                const newIndex = prevIndex - 1;
+                return newIndex;
+            });
+            selectedCheckout.shoppingOrder = undefined
         }
     };
 
@@ -121,23 +192,26 @@ function PlanEditor({
                 doors={doors}
                 walls={walls}
                 holeWalls={holeWallsList}
-                subdomains={subdomains}
+                shelfs={shelfs}
                 checkouts={checkouts}
                 backgroundImagePosition={backgroundImagePosition}
-                onSubdomainClick={handleClickSubdomain}
-                // TO DO:also implement on checkoutclick or differenciate between modes and implement checkout click logic in handleClickSubdomain
+                onShelfClick={handleClickShelf}
+                onDeleteShelf={handleShelfRightClick}
+                onCheckoutClick={handleClickCheckout}
+                onDeleteCheckout={handleCheckoutRightClick}
             />
             <ContextMenu
+                mode={mode}
                 visible={contextMenu.visible}
                 x={contextMenu.x}
                 y={contextMenu.y}
-                subdomain={contextMenu.subdomain}
+                shelf={contextMenu.shelf}
                 onClose={handleCloseContextMenu}
-                onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.subdomain)}
-                globalSelectedItems={globalSelectedItems}
+                onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.shelf)}
+                globalSelectedShoppingTimes={globalSelectedShoppingTimes}
             />
         </>
     );
 }
 
-export default PlanEditor;
+export default LayoutSurvey;

@@ -2,7 +2,7 @@ export enum EditorModes {
     walls = "walls",
     doors = "doors",
     objects = "objects",
-    subdomains = "subdomains",
+    shelfs = "shelfs",
     startAreas = "startAreas",
     view = "view",
     referenceLine = "referenceLine",

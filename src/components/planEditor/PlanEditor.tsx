@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { IRect } from "konva/lib/types";
 
 import ContextMenu from "components/planEditor/polygonCanvas/ContextMenu"
-import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { IShelf } from "interfaces/edit/IShelf";
 import { ICheckout } from "interfaces/edit/ICheckout";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { EditorModes } from "lib/edit/EditorModes";
@@ -30,13 +30,13 @@ export interface IPlanEditorProps {
     walls: Vector[],
     backgroundImagePosition: IBackgroundImagePosition,
     holeWallsList: Vector[][],
-    subdomains: ISubdomain[],
+    shelfs: IShelf[],
     checkouts: ICheckout[],
     onModeChange: (newMode: EditorModes) => (void),
     handleCornerChange: (newObjects: IPolygon[]) => (void),
     handleHoleCornerChange: (newObjects: IPolygon[]) => (void),
     handleReferenceLineChange: (newReferenceLine: IReferenceLine) => (void),
-    handleSubdomainsChange: (newObjects: ISubdomain[]) => void,
+    handleShelfsChange: (newObjects: IShelf[]) => void,
     handleCheckoutsChange: (newObjects: ICheckout[]) => void,
     handleDoorChange: (doors: IDoor[]) => (void)
     handleImageMoved: (imagePosition: IBackgroundImagePosition) => void
@@ -54,7 +54,7 @@ function PlanEditor({
                         grid,
                         zoom,
                         holeWallsList,
-                        subdomains,
+                        shelfs,
                         checkouts,
                         referenceLine,
                         backgroundImagePosition,
@@ -62,7 +62,7 @@ function PlanEditor({
                         handleCornerChange,
                         handleHoleCornerChange,
                         handleDoorChange,
-                        handleSubdomainsChange,
+                        handleShelfsChange,
                         handleCheckoutsChange,
                         handleImageMoved
                     }: IPlanEditorProps) {
@@ -73,12 +73,12 @@ function PlanEditor({
         visible: boolean;
         x: number;
         y: number;
-        subdomain: ISubdomain | null;
+        shelf: IShelf | null;
     }>({
         visible: false,
         x: 0,
         y: 0,
-        subdomain: null,
+        shelf: null,
     });
 
     useEffect(() => {
@@ -334,7 +334,8 @@ function PlanEditor({
     };
 
     const handleAddCheckout = (newObject: IRect) => {
-        const newCheckout: ICheckout = { name: "checkout1", id: nanoid(), polygon: newObject, hover: false, text: "Kasse"}
+        const id = nanoid()
+        const newCheckout: ICheckout = { name: id,  id: id, polygon: newObject, hover: false, text: "Kasse"}
         const newObjects = [...checkouts, newCheckout]
         handleCheckoutsChange(newObjects)
     }
@@ -345,7 +346,7 @@ function PlanEditor({
             return
         }
 
-        const newCheckouts = checkouts.filter((subdom) => checkoutDelete !== subdom);
+        const newCheckouts = checkouts.filter((shelf) => checkoutDelete !== shelf);
         handleCheckoutsChange(newCheckouts);
     };
 
@@ -361,40 +362,41 @@ function PlanEditor({
         handleCheckoutsChange(newCheckouts);
     };
 
-    const handleAddSubdomain = (newObject: IRect) => {
-        const newSubdomain: ISubdomain = { name: "subdom1", id: nanoid(), polygon: newObject, hover: false, text: "", selectedItems: [] }
-        const newObjects = [...subdomains, newSubdomain]
-        handleSubdomainsChange(newObjects)
+    const handleAddShelf = (newObject: IRect) => {
+        const id = nanoid()
+        const newShelf: IShelf = { name: id, id: id, polygon: newObject, hover: false, text: "", selectedItems: [], selectedShoppingTimes: [] }
+        const newObjects = [...shelfs, newShelf]
+        handleShelfsChange(newObjects)
     }
 
-    const handleDeleteSubdomain = (subdomainDelete: ISubdomain) => {
-        if (mode !== EditorModes.subdomains) {
-            console.warn("The EditorMode does not support deleting subdomains");
+    const handleDeleteShelf = (shelfDelete: IShelf) => {
+        if (mode !== EditorModes.shelfs) {
+            console.warn("The EditorMode does not support deleting shelfs");
             return
         }
-        const newGlobalSelectedItems = globalSelectedItems.filter(item => !subdomainDelete.selectedItems.includes(item));
+        const newGlobalSelectedItems = globalSelectedItems.filter(item => !shelfDelete.selectedItems.includes(item));
         setGlobalSelectedItems(newGlobalSelectedItems);
 
-        const newSubdomains = subdomains.filter((subdom) => subdomainDelete !== subdom);
-        handleSubdomainsChange(newSubdomains);
+        const newShelfs = shelfs.filter((shelf) => shelfDelete !== shelf);
+        handleShelfsChange(newShelfs);
     };
 
-    const handleMoveSubdomain = (movedSubdomain: ISubdomain) => {
+    const handleMoveShelf = (movedShelf: IShelf) => {
          if (mode != EditorModes.walls) { return }
-        const newSubdomains = subdomains.map((subdom) => {
-            if (movedSubdomain.id === subdom.id) {
-                subdom.textPosition = { x: movedSubdomain.polygon.x, y: movedSubdomain.polygon.y };
-                return movedSubdomain
+        const newShelfs = shelfs.map((shelf) => {
+            if (movedShelf.id === shelf.id) {
+                shelf.textPosition = { x: movedShelf.polygon.x, y: movedShelf.polygon.y };
+                return movedShelf
             }
-            return subdom
+            return shelf
         });
 
-        handleSubdomainsChange(newSubdomains);
+        handleShelfsChange(newShelfs);
     };
 
-    const handleClickSubdomain = (e: any, subdomain: ISubdomain) => {
-        if (mode !== EditorModes.subdomains) {
-            console.warn("The EditorMode does not support clicking subdomains");
+    const handleClickShelf = (e: any, shelf: IShelf) => {
+        if (mode !== EditorModes.shelfs) {
+            console.warn("The EditorMode does not support clicking shelfs");
             return
         }
 
@@ -406,7 +408,7 @@ function PlanEditor({
             visible: true,
             x: mousePos.x + stageBox.left,
             y: mousePos.y + stageBox.top,
-            subdomain: subdomain
+            shelf: shelf
         });
     };
 
@@ -588,8 +590,8 @@ function PlanEditor({
     // Handler for clicking on a line
     const handleAddObjectWrapper = (newObject: IRect) => {
         switch (mode) {
-            case EditorModes.subdomains:
-                handleAddSubdomain(newObject)
+            case EditorModes.shelfs:
+                handleAddShelf(newObject)
                 break;
             case EditorModes.checkouts:
                 handleAddCheckout(newObject)
@@ -599,15 +601,23 @@ function PlanEditor({
         }
     }
 
-    const handleMenuItemClick = (itemText: string, selectedSubdomain: ISubdomain | null) => {
-        if (selectedSubdomain) {
-            selectedSubdomain.selectedItems = [];
-            setGlobalSelectedItems([]);
+    const handleMenuItemClick = (itemText: string, selectedShelf: IShelf | null) => {
+        console.log("success")
+        if (selectedShelf) {
+            if (mode === EditorModes.shelfs) {
+                if (selectedShelf.text) {
+                    setGlobalSelectedItems(prevItems => prevItems.filter(item => item !== selectedShelf.text));
+                }
 
-            if (itemText !== selectedSubdomain.text) {
-                selectedSubdomain.text = itemText;
-                selectedSubdomain.selectedItems.push(itemText);
-                setGlobalSelectedItems(prevItems => [...prevItems, itemText]);
+                const isItemSelectedInOtherShelf = shelfs.some(shelf =>
+                    shelf.id !== selectedShelf.id && shelf.selectedItems.includes(itemText)
+                );
+
+                if (itemText !== selectedShelf.text && !isItemSelectedInOtherShelf) {
+                    selectedShelf.text = itemText;
+                    selectedShelf.selectedItems.push(itemText);
+                    setGlobalSelectedItems(prevItems => [...prevItems, itemText]);
+                }
             }
         }
     };
@@ -626,7 +636,7 @@ function PlanEditor({
                 activeDoorPoint={activeDoorPoint}
                 walls={walls}
                 holeWalls={holeWallsList}
-                subdomains={subdomains}
+                shelfs={shelfs}
                 checkouts={checkouts}
                 referenceLine={referenceLine}
                 backgroundImagePosition={backgroundImagePosition}
@@ -636,22 +646,23 @@ function PlanEditor({
                 onDeleteDoors={handleDeleteDoors}
                 onChangeDoor={handleChangeDoor}
                 onDeleteCorner={handleDeleteCornerWrapper}
-                onDeleteSubdomain={handleDeleteSubdomain}
+                onDeleteShelf={handleDeleteShelf}
                 onDeleteCheckout={handleDeleteCheckout}
-                onSubdomainMove={handleMoveSubdomain}
+                onShelfMove={handleMoveShelf}
                 onCheckoutMove={handleMoveCheckout}
-                onSubdomainClick={handleClickSubdomain}
+                onShelfClick={handleClickShelf}
                 onAddPoint={handleAddPointWrapper}
                 onCornerMove={handleMoveCornerWrapper}
                 onImageUpdate={handleImageMoved}
             />
             <ContextMenu
+                mode={mode}
                 visible={contextMenu.visible}
                 x={contextMenu.x}
                 y={contextMenu.y}
-                subdomain={contextMenu.subdomain}
+                shelf={contextMenu.shelf}
                 onClose={handleCloseContextMenu}
-                onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.subdomain)}
+                onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.shelf)}
                 globalSelectedItems={globalSelectedItems} 
             />
         </>

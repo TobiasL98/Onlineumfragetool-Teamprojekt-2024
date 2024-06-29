@@ -6,7 +6,7 @@ import { IBackgroundImagePosition } from "interfaces/edit/IBackgroundImagePositi
 import { IDoor } from "interfaces/edit/IDoor";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { IReferenceLine } from "interfaces/edit/IReferenceLine";
-import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { IShelf } from "interfaces/edit/IShelf";
 import { ICheckout } from "interfaces/edit/ICheckout";
 import { EditorModes } from "lib/edit/EditorModes";
 import { Point } from "lib/geometry/point";
@@ -14,11 +14,12 @@ import { Vector } from "lib/geometry/vector";
 import {useState } from "react";
 import {
 	areConfigsDifferent, connectPoints, getBounds, horiztontalDistanceBetweenOuterPoints,
-	transformPointlistsToDomainpolygon, transformToConfigSubdomains } from "utils/edit/utils";
+	transformPointlistsToDomainpolygon, transformToConfigShelfs } from "utils/edit/utils";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import DefaultParameter from "lib/edit/DefaultParameter";
 import FileUploadButton from "components/button/FileUploadButton";
 import TypicalSupermarketButton from "components/button/TypicalSupermarketButton";
+import SaveButton from "components/button/SaveButton";
 
 
 const stageHeight = 1000
@@ -69,7 +70,7 @@ export default function Editor() {
 	const [holePolygons, setHolePolygons] = useState<IPolygon[]>([]);
 	// const innerWalls = connectPoints(holeCorners)
 	const innerWallsList = holePolygons.map((corners) => connectPoints(corners));
-	const [subdomains, setSubdomains] = useState<ISubdomain[]>([])
+	const [shelfs, setShelfs] = useState<IShelf[]>([])
 	const [checkouts, setCheckouts] = useState<ICheckout[]>([])
 	const [doors, setDoors] = useState<IDoor[]>([])
 	const [referenceLine, setReferenceLine] = useState<IReferenceLine>({ a: new Point(100, 100), b: new Point(200, 100), width: 10 }); // [start, end
@@ -87,18 +88,18 @@ export default function Editor() {
 						   newHoleCorners: IPolygon[],
 						   newDoors: IDoor[],
 						   newGrid: any,
-						   newSubdomains: ISubdomain[],
+						   newShelfs: IShelf[],
 						   backgroundImagePosition: IBackgroundImagePosition,
 						   newCheckouts: ICheckout[]
 	) => {
-		//let configSubdomains = transformToConfigSubdomains(newSubdomains, stageHeight)
+		//let configShelfs = transformToConfigShelfs(newShelfs, stageHeight)
 		const configDoors = doors // TO DO
 		const configDomainpolygon = transformPointlistsToDomainpolygon(newPolygonCorners, newHoleCorners, stageHeight)
-		
+
 		const config: IeFlowFile = {
 			name: newName,
 			Door: configDoors,
-			Subdomains: subdomains,
+			Shelfs: shelfs,
 			Domainpolygon: configDomainpolygon,
 			Grid: newGrid,
 			PolygonCorners: newPolygonCorners,
@@ -110,7 +111,7 @@ export default function Editor() {
 	};
 
 	const configFile: IeFlowFile = computeConfig(name,
-		polygonCorners, holePolygons, grid, doors, subdomains, backgroundImagePosition, checkouts)
+		polygonCorners, holePolygons, grid, doors, shelfs, backgroundImagePosition, checkouts)
 
 	//const refetchPossible = areConfigsDifferent(configFile, activeConfig)
 
@@ -122,17 +123,18 @@ export default function Editor() {
 
 			if (file.name.endsWith('.json')) {
 				const layoutData = JSON.parse(fileContent);
+
 				setPolygonCorners(layoutData.PolygonCorners);
 				setHolePolygons(layoutData.HoleCorners);
 				setDoors(layoutData.Door);
-				setSubdomains(layoutData.Subdomains);
+				setShelfs(layoutData.Shelfs);
 				setBackgroundImagePosition(layoutData.BackgroundImagePosition);
 				setCheckouts(layoutData.Checkouts);
 			}
 		};
 		reader.readAsText(file);
 	};
-	
+
 	const handleSupermarketUpload  = async () => {
 		try {
 			const response = await fetch('/api/getSupermarket');
@@ -143,7 +145,7 @@ export default function Editor() {
 			setPolygonCorners(layoutData.PolygonCorners);
 			setHolePolygons(layoutData.HoleCorners);
 			setDoors(layoutData.Door);
-			setSubdomains(layoutData.Subdomains);
+			setShelfs(layoutData.Shelfs);
 			setBackgroundImagePosition(layoutData.BackgroundImagePosition);
 			setCheckouts(layoutData.Checkouts);
 		} catch (error) {
@@ -151,26 +153,29 @@ export default function Editor() {
 		}
 	};
 
-	const handleFileClear = () => { 
+	const handleFileClear = () => {
 		setUploadedFile(null)
 		setBackgroundImage(null)
 		setBackgroundImagePosition({ ...backgroundImagePosition, name: "reset" })
 		setPolygonCorners({ corners: [], closed: false });
 		setHolePolygons([]);
 		setDoors([]);
-		setSubdomains([]);
+		setShelfs([]);
 		setCheckouts([])
 	};
-	
-	/*const handleReset = () => {
-		if (tab === "Plan") {
-			setPolygonCorners({corners: [], closed: false});
-			setHolePolygons([]);
-			setDoors([]);
-			setSubdomains([]);
-			setCheckouts([])
-		}
-	};*/
+
+	const handleReset = () => {
+		setPolygonCorners({ corners: [], closed: false });
+		setHolePolygons([]);
+		setShelfs([]);
+		setCheckouts([]);
+		setDoors([]);
+		setTab("Plan");
+		setEditorMode(EditorModes.walls);
+		setUploadedFile(null);
+		setBackgroundImage(null);
+		setBackgroundImagePosition({ ...backgroundImagePosition, name: "reset" })
+	};
 
 	let [buttons, selected] = RadioGroup([
 		["W&auml;nde", () => 1],
@@ -181,7 +186,6 @@ export default function Editor() {
 	return (
 		<div className="flex grow self-stretch h-screen">
 			<div id={"plantab"} className="flex basis-1/6 flex-col justify-between bg-[--header-color] text-inputBorderColor border-r border-r-[--header-footer-separator-color] h-full">
-				<div>
 					<p className="mx-6 border-t-2 border-t-buttonBorderColor font-semibold text-buttonBorderColor"></p>
 					<h2 className="m-2 text-center text-lg text-buttonBorderColor">
 						<input className='text-center mx-4 mb-1 text-lg rounded bg-[--header-color]'
@@ -194,7 +198,7 @@ export default function Editor() {
 					<div className="space-y-2 border-y-2 border-black">
 						<div className="mx-6 flex flex-col space-y-3 py-4">
 							<FileUploadButton onFileUpload={handleFileUpload} onFileClear={handleFileClear} uploadedFile={uploadedFile} editorMode={editorMode} onClick={() => setEditorMode(EditorModes.image)} />
-							<TypicalSupermarketButton onFileUpload={handleSupermarketUpload} onFileClear={handleFileClear} editorMode={editorMode} onClick={() => setEditorMode(EditorModes.image)} />
+							<TypicalSupermarketButton onFileUpload={handleSupermarketUpload} onFileClear={handleReset} editorMode={editorMode} onClick={() => setEditorMode(EditorModes.image)} />
 						</div>
 					</div>
 					<div>
@@ -203,7 +207,9 @@ export default function Editor() {
 						</h2>
 						<PlanTab editorMode={editorMode} onModeChange={setEditorMode} configFile={configFile}/>
 					</div>
-				</div>
+					<div className="mt-auto bottom-0 z-50 flex justify-center items-center border-t-2 border-black p-4">
+						<SaveButton className="w-3/4 py-1 text-center" jsonConfig={configFile}/>
+					</div>
 			</div>
 			<div className= {`flex-grow justify-between h-full items-center w-auto`}>
 				<PlanEditor
@@ -226,9 +232,9 @@ export default function Editor() {
 					}}
 					doors={doors}
 					handleDoorChange={(newDoors) => setDoors(newDoors)}
-					subdomains={subdomains}
+					shelfs={shelfs}
 					checkouts={checkouts}
-					handleSubdomainsChange={(newSubdomain) => setSubdomains(newSubdomain)}
+					handleShelfsChange={(newShelf) => setShelfs(newShelf)}
 					handleCheckoutsChange={(newCheckout) => setCheckouts(newCheckout)}
 					handleImageMoved={(newBackgroundImagePosition) => { setBackgroundImagePosition(newBackgroundImagePosition) }}
 				/>

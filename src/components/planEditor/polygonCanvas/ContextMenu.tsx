@@ -1,18 +1,28 @@
-import { ISubdomain } from 'interfaces/edit/ISubdomain';
+import { IShelf } from 'interfaces/edit/IShelf';
+import { EditorModes } from 'lib/edit/EditorModes';
 import React from 'react';
 
 interface ContextMenuProps {
+    mode: EditorModes;
     visible: boolean;
     x: number;
     y: number;
-    subdomain: ISubdomain | null;
+    shelf: IShelf | null;
     onClose: () => void;
-    onMenuItemClick: (itemText: string, subdomain: ISubdomain | null) => void;
-    globalSelectedItems: string[];
+    onMenuItemClick: (itemText: string, shelf: IShelf | null) => void;
+    globalSelectedItems?: string[];
+    globalSelectedShoppingTimes?: string[];
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({ visible, x, y, subdomain, onClose, onMenuItemClick, globalSelectedItems }) => {
-    const menuItems = ['Fisch', 'Fleisch', 'Käse', 'Milch', 'Brot', 'Obst', 'Gemüse', 'Getränke', 'Alkohol', 'Pflegeartikel', 'Haushalt', 'Snacks', 'Kasse'];
+const ContextMenu: React.FC<ContextMenuProps> = ({ mode, visible, x, y, shelf, onClose, onMenuItemClick, globalSelectedItems, globalSelectedShoppingTimes }) => {
+    const menuItems = ['Fisch (Theke)', 'Fleisch (Theke)', 'Käse (Theke)',
+        'Käse', 'Milchprodukte', 'Milch',  'Wurst', 'Brot (Theke)', 'Obst', 'Gemüse', 'Getränke', 'Getränke (gekühlt)',
+        'Alkohol', 'Pflegeartikel', 'Haushalt', 'Snacks (salzig)', 'Snacks (süß)', 'Tiefkühler (Fleisch/Fisch)'
+        , 'Tiefkühler (Obst/Gemüse)', 'Tiefkühler (Fertiggerichte)', 'Tiefkühler (Eis)', 'Tiefkühler (Pizza)', 'Tiefkühler (Brot/Gebäck)',
+        'Tiefkühler (Kuchen)', 'Konserven', 'Nudeln/Reis', 'Fertigprodukte/Soßen'
+    ];
+
+    const shoppingTimes = ['kurz', 'mittel', 'lang'];
 
     if (!visible) {
         return null;
@@ -54,20 +64,25 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ visible, x, y, subdomain, onC
             </style>
             <div className="context-menu" onClick={onClose}>
                 <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                    {menuItems.map(item =>
-                        subdomain && subdomain.selectedItems.includes(item) ?
-                            <li 
-                                onClick={() => onMenuItemClick(item, subdomain)}
-                                className={globalSelectedItems.includes(item) ? 'selected-item' : ''}
+                    { mode == EditorModes.image  && shelf && shoppingTimes.map(item =>
+                            <li
+                                onClick={() => onMenuItemClick(item, shelf)}
+                                className={ shelf.shoppingTime === item ? 'selected-item' : ''}
+                            >{item}</li>
+                )}
+                    {mode === EditorModes.shelfs && menuItems.map(item =>
+                        shelf && shelf.selectedItems.includes(item) ?
+                            <li
+                                onClick={() => onMenuItemClick(item, shelf)}
+                                className={globalSelectedItems?.includes(item) ? 'selected-item' : ''}
                             >{item}</li>
                             :
                             <li
-                                onClick={() => !globalSelectedItems.includes(item) && onMenuItemClick(item, subdomain)}
-                                className={globalSelectedItems.includes(item) ? 'disabled' : ''}
+                                onClick={() => !globalSelectedItems?.includes(item) && onMenuItemClick(item, shelf)}
+                                className={globalSelectedItems?.includes(item) ? 'disabled' : ''}
                             >
                                 {item}
                             </li>
-
                     )}
                 </ul>
             </div>

@@ -13,9 +13,11 @@ interface TypicalSupermarketButtonProps {
 
 const TypicalSupermarketButton: React.FC<TypicalSupermarketButtonProps> = ({ onClick, onFileUpload, onFileClear, editorMode }) => {
     const [isClicked, setIsClicked] = useState(false); // New state variable
-    
-    const handleClearImage = () => {
+
+    const handleClearImage = (event: React.MouseEvent) => {
+        event.stopPropagation();
         onFileClear();
+        setIsClicked(false);
     };
 
     const handleClick = () => {
@@ -36,7 +38,7 @@ const TypicalSupermarketButton: React.FC<TypicalSupermarketButtonProps> = ({ onC
                             <span>{"Typischer Supermarkt"}</span>
                         </div>
                         <div className="ml-auto">
-                            <IconTrash onClick={handleClearImage} fill={getComputedStyle(document.documentElement).getPropertyValue('--hover-color')} />
+                            <IconTrash onClick={(event) => handleClearImage(event)} fill={getComputedStyle(document.documentElement).getPropertyValue('--hover-color')} />
                         </div>
                     </>
                 ) : (

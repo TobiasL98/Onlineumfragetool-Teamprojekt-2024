@@ -16,7 +16,7 @@ import { EditorModes } from "lib/edit/EditorModes";
 import { IDoor } from "interfaces/edit/IDoor";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
-import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { IShelf } from "interfaces/edit/IShelf";
 import { ICheckout } from "interfaces/edit/ICheckout";
 import { IBackgroundImagePosition } from "interfaces/edit/IBackgroundImagePosition";
 //import { IRect } from "interfaces/canvas/IRect";
@@ -28,7 +28,7 @@ import CanvasGridDots from "./canvasElements/CanvasGridDots";
 import CanvasReferenceLine from "./canvasElements/CanvasRererenceLine";
 import CanvasWall from "./canvasElements/CanvasWall";
 import CanvasDoor from "./canvasElements/CanvasDoor";
-import CanvasSubdomain from "./canvasElements/CanvasSubdomain";
+import CanvasShelf from "./canvasElements/CanvasShelf";
 import Slider from "../Slider";
 export interface IStage {
     scale: number,
@@ -64,7 +64,7 @@ interface CanvasProps {
     //activeAttractorPoint: Point | null
     walls: Vector[];
     holeWalls: Vector[][];
-    subdomains: ISubdomain[];
+    shelfs: IShelf[];
     checkouts: ICheckout[];
     referenceLine: IReferenceLine;
     backgroundImagePosition: IBackgroundImagePosition;
@@ -73,13 +73,14 @@ interface CanvasProps {
     onAddPoint?: (newPoint: Point) => void;
     onDeleteDoors?: (doors: IDoor[]) => void;
     onChangeDoor?: (doors: IDoor) => void;
-    onDeleteSubdomain?: (subdomain: ISubdomain) => void;
+    onDeleteShelf?: (shelf: IShelf) => void;
     onDeleteCheckout?: (checkout: ICheckout) => void;
     onCornerMove?: (point: Point) => void;
     onAddObject?: (newObjects: IRect) => void;
-    onSubdomainMove?: (subdomain: ISubdomain) => void;
-    onSubdomainClick?: (evt: KonvaEventObject<MouseEvent>, subdomain: ISubdomain) => void;
+    onShelfMove?: (shelf: IShelf) => void;
+    onShelfClick?: (evt: KonvaEventObject<MouseEvent>, shelf: IShelf) => void;
     onCheckoutMove?: (checkout: ICheckout) => void;
+    onCheckoutClick?: (evt: KonvaEventObject<MouseEvent>, checkout: ICheckout) => void;
     onWallClick?: (evt: KonvaEventObject<MouseEvent>, id: string) => void
     onImageUpdate?: (imagePosition: IBackgroundImagePosition) => void;
 }
@@ -92,7 +93,7 @@ function PolygonCanvas({
                            walls,
                            holeWalls,
                            doors,
-                           subdomains,
+                           shelfs,
                            checkouts,
                            referenceLine,
                            activeDoorPoint,
@@ -104,11 +105,12 @@ function PolygonCanvas({
                            onDeleteDoors = () => { return },
                            onChangeDoor = () => { return },
                            onDeleteCorner = () => { return },
-                           onDeleteSubdomain = () => { return },
+                           onDeleteShelf = () => { return },
                            onDeleteCheckout = () => { return },
-                           onSubdomainMove = () => { return },
-                           onSubdomainClick = () => { return },
+                           onShelfMove = () => { return },
+                           onShelfClick = () => { return },
                            onCheckoutMove = () => { return },
+                           onCheckoutClick = () => { return },
                            onAddPoint = () => { return },
                            onCornerMove = () => { return },
                            onAddObject = () => { return },
@@ -159,7 +161,7 @@ function PolygonCanvas({
             }
             return null
         }
-        if (mode === EditorModes.subdomains) {
+        if (mode === EditorModes.shelfs) {
             if (polygonCorners.corners.length > 0 && !polygonCorners.closed) {
                 return polygonCorners.corners[polygonCorners.corners.length - 1]
             }
@@ -177,7 +179,7 @@ function PolygonCanvas({
 
     const konvaRefs = {
         wallGroup: useRef<Konva.Group>(null),
-        subdomainGroup: useRef<Konva.Group | null>(null),
+        shelfGroup: useRef<Konva.Group | null>(null),
         checkoutGroup: useRef<Konva.Group | null>(null),
         doorGroup: useRef<Konva.Group | null>(null),
         holeGroup: useRef<Konva.Group>(null),
@@ -200,11 +202,19 @@ function PolygonCanvas({
             const { clientWidth, clientHeight } = parentRef.current;
             setParentWidth(clientWidth);
             setParentHeight(clientHeight);
-            setStage({
-                scale: 0.8,
-                x: 0,
-                y: 0
-            })
+            if (mode === EditorModes.image) {
+                setStage({
+                    scale: 0.7,
+                    x: 80,
+                    y: -80
+                })
+            } else {
+                setStage({
+                    scale: 0.8,
+                    x: 0,
+                    y: 0
+                })
+            }
         }
     };
 
@@ -310,15 +320,15 @@ function PolygonCanvas({
     const projectedCursorPosition: Point | null = activeDoorPoint && projectPointToLineSegment(cursorPosition, activeDoorPoint.vector);
 
     const fixGroupOrder = (mode: EditorModes) => {
-        const { wallGroup, subdomainGroup, doorGroup, checkoutGroup, holeGroup, referenceLine, floorplan } = konvaRefs;
+        const { wallGroup, shelfGroup, doorGroup, checkoutGroup, holeGroup, referenceLine, floorplan } = konvaRefs;
 
         switch (mode) {
             case EditorModes.walls:
                 wallGroup.current?.moveToTop();
                 doorGroup.current?.moveToTop();
                 break;
-            case EditorModes.subdomains:
-                subdomainGroup.current?.moveToTop();
+            case EditorModes.shelfs:
+                shelfGroup.current?.moveToTop();
                 break;
             case EditorModes.checkouts:
                 checkoutGroup.current?.moveToTop();
@@ -335,7 +345,7 @@ function PolygonCanvas({
                 break
             case EditorModes.image:
                 console.log("moved to top")
-                floorplan.current?.moveToTop()
+                //floorplan.current?.moveToTop()
                 break
         }
     }
@@ -438,7 +448,7 @@ function PolygonCanvas({
     const handleCanvasClick = (e: KonvaEventObject<MouseEvent>) => {
         const isRightClick = e.evt.button === 2;
         let clickPosition = cursorPosition
-        
+
         switch (mode) {
             case EditorModes.walls:
                 if (checkObjectForLine(e.target.attrs) || isRightClick) {
@@ -452,7 +462,13 @@ function PolygonCanvas({
                 }
                 handleAddPoint(clickPosition)
                 break;
-            case EditorModes.subdomains:
+            case EditorModes.shelfs:
+                if (checkObjectForLine(e.target.attrs) || isRightClick) {
+                    break;
+                }
+                handleAddPoint(clickPosition)
+                break;
+            case EditorModes.image:
                 if (checkObjectForLine(e.target.attrs) || isRightClick) {
                     break;
                 }
@@ -472,11 +488,15 @@ function PolygonCanvas({
 
     const handleCanvasMouseDown = (e: KonvaEventObject<MouseEvent>) => {
         switch (mode) {
-            case EditorModes.subdomains:
+            case EditorModes.shelfs:
                 if (e.target instanceof Konva.Rect) { break; }
                 handleRectCanvasMouseDown(e)
                 break;
             case EditorModes.checkouts:
+                if (e.target instanceof Konva.Rect) { break; }
+                handleRectCanvasMouseDown(e)
+                break;
+            case EditorModes.image:
                 if (e.target instanceof Konva.Rect) { break; }
                 handleRectCanvasMouseDown(e)
                 break;
@@ -542,6 +562,7 @@ function PolygonCanvas({
         <div className="flex flex-col flex-grow relative h-[95%] w-auto ml-10 cursor-pointer">
             <div className="flex flex-grow w-auto ">
                 <div ref={parentRef} className="flex flex-grow h-full w-auto">
+                    {mode !== EditorModes.image && (
                     <Stage
                         width={parentWidth}
                         height={parentHeight}>
@@ -549,6 +570,7 @@ function PolygonCanvas({
                             {grid && CanvasAxis({ polygonCorners, referenceLine, stage, stageAxisOffset, parentHeight, parentWidth })}
                         </Layer>
                     </Stage>
+                    )}
                     <Stage
                         className={`absolute overflow-hidden w-auto pl-10`}
                         ref={stageRef}
@@ -576,10 +598,10 @@ function PolygonCanvas({
                         </Layer>
                         <Layer>
                             {verticalLines.map((line, index) => {
-                                return <Line key={index} {...line} />
+                               return <Line key={index} {...line} />
                             })}
                             {horizontalLines.map((line, index) => {
-                                return <Line key={index} {...line} />
+                              return <Line key={index} {...line} />
                             })}
                         </Layer>
                         <Layer>
@@ -647,7 +669,6 @@ function PolygonCanvas({
                                                        highlighted={mode === "walls"} />;
                                 })}
                                 {polygonCorners.corners.map((point, index) => {
-                                    // Render the corner points
                                     return (
                                         <Group key={index}>
                                             {index === 0 && !polygonCorners.closed && mode === EditorModes.walls &&
@@ -801,22 +822,22 @@ function PolygonCanvas({
                             </Group>
                             {/*
                 -------------------------
-                Group: Subdomains
+                Group: Shelfs
                 -------------------------
                 */}
-                            <Group ref={konvaRefs.subdomainGroup}>
-                                {subdomains && subdomains.map((subdom, index) => {
-                                    return <CanvasSubdomain
+                            <Group ref={konvaRefs.shelfGroup}>
+                                {shelfs && shelfs.map((subdom, index) => {
+                                    return <CanvasShelf
                                         key={index}
                                         scale={stage.scale}
-                                        subdomain={subdom}
-                                        onChange={onSubdomainMove}
-                                        onClick={onSubdomainClick}
-                                        onDelete={onDeleteSubdomain}
+                                        shelf={subdom}
+                                        onChange={onShelfMove}
+                                        onClick={onShelfClick}
+                                        onDelete={onDeleteShelf}
                                         mode={mode}
                                     />;
                                 })}
-                                {isDragging && (
+                                {isDragging && mode === EditorModes.shelfs &&  (
                                     <Rect
                                         x={startRectPosition.x}
                                         y={startRectPosition.y}
@@ -839,11 +860,12 @@ function PolygonCanvas({
                                         scale={stage.scale}
                                         checkout={checkout}
                                         onChange={onCheckoutMove}
+                                        onClick={onCheckoutClick}
                                         onDelete={onDeleteCheckout}
                                         mode={mode}
                                     />
                                 })}
-                                {isDragging && (
+                                {isDragging && mode === EditorModes.checkouts &&  (
                                     <Rect
                                         x={startRectPosition.x}
                                         y={startRectPosition.y}

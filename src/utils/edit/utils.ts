@@ -5,12 +5,12 @@ import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
 import { calculatePointInsidePolygon } from "../geometry/utils";
 import {IDoor, IEntrance, IExit } from "interfaces/edit/IDoor";
-import { ISubdomain } from "interfaces/edit/ISubdomain";
+import { IShelf } from "interfaces/edit/IShelf";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { IDomainPolygon } from "interfaces/edit/IDomainPolygon";
 import { IConfigExit } from "interfaces/edit/IConfigExit";
 import { IConfigEntrance } from "interfaces/edit/IConfigEntrance";
-import { ISubdomainFD } from "interfaces/edit/ISubdomainFD";
+import { IShelfFD } from "interfaces/edit/IShelfFD";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 
 
@@ -186,9 +186,9 @@ export const mergeExitNEntreesToDoors = ({ exits, entrances, stageHeight }: { ex
     return mergedDoors
 }
 
-/*export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomain[] => {
-    return subdomains.map((subdomain) => {
-        const { polygon, name, id, text, selectedItems } = subdomain;
+/*export const transformToConfigShelfs = (shelfs: IShelf[], stageHeight: number): IShelf[] => {
+    return shelfs.map((shelf) => {
+        const { polygon, name, id, text, selectedItems } = shelf;
 
         return {
             name: name,
@@ -200,10 +200,10 @@ export const mergeExitNEntreesToDoors = ({ exits, entrances, stageHeight }: { ex
     });
 };*/
 
-export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomainFD[] => {
-    console.log("subdomain" + subdomains)
-    return subdomains.map((subdomain) => {
-        const { polygon, name } = subdomain;
+export const transformToConfigShelfs = (shelfs: IShelf[], stageHeight: number): IShelfFD[] => {
+    console.log("shelf" + shelfs)
+    return shelfs.map((shelf) => {
+        const { polygon, name } = shelf;
         const { x, y, width, height } = polygon;
         const coordinates: number[] =
             [
@@ -220,9 +220,9 @@ export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeigh
     });
 };
 
-/*export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeight: number): ISubdomain[] => {
-    return subdomains.map((subdomain) => {
-        const { polygon, name, id, text, selectedItems } = subdomain;
+/*export const transformToConfigShelfs = (shelfs: IShelf[], stageHeight: number): IShelf[] => {
+    return shelfs.map((shelf) => {
+        const { polygon, name, id, text, selectedItems } = shelf;
 
         return {
             name: name,
@@ -234,25 +234,25 @@ export const transformToConfigSubdomains = (subdomains: ISubdomain[], stageHeigh
     });
 };*/
 
-export function transformFromConfigSubdomains(subdomainsFD: ISubdomainFD[], stageHeight: number): ISubdomain[] {
-    return subdomainsFD.map((subdomainFD: ISubdomainFD) => {
+export function transformFromConfigShelfs(shelfsFD: IShelfFD[], stageHeight: number): IShelf[] {
+    return shelfsFD.map((shelfFD: IShelfFD) => {
         const polygon: IRect = {
-            x: subdomainFD.Polygon[0],
-            y: stageHeight - subdomainFD.Polygon[1] - (subdomainFD.Polygon[5] - subdomainFD.Polygon[1]),
-            width: subdomainFD.Polygon[2] - subdomainFD.Polygon[0],
-            height: subdomainFD.Polygon[5] - subdomainFD.Polygon[1],
+            x: shelfFD.Polygon[0],
+            y: stageHeight - shelfFD.Polygon[1] - (shelfFD.Polygon[5] - shelfFD.Polygon[1]),
+            width: shelfFD.Polygon[2] - shelfFD.Polygon[0],
+            height: shelfFD.Polygon[5] - shelfFD.Polygon[1],
         };
 
-        const subdomain: ISubdomain = {
-            text: subdomainFD.Name,
+        const shelf: IShelf = {
+            text: shelfFD.Name,
             selectedItems: [],
-            name: subdomainFD.Name,
+            name: shelfFD.Name,
             id: nanoid(),
-            //velocity: subdomainFD.Velocity,
+            //velocity: shelfFD.Velocity,
             polygon: polygon,
             hover: false
         };
-        return subdomain;
+        return shelf;
     });
 }
 

@@ -31,8 +31,8 @@ const PlanTab = ({configFile, editorMode, onModeChange }: { configFile: IeFlowFi
                     Component={IconObjectsPlan}
                     fill="#7996A3"
                     hoverFill="white"
-                    onClick={() => onModeChange(EditorModes.subdomains)}
-                    active={editorMode === EditorModes.subdomains}
+                    onClick={() => onModeChange(EditorModes.shelfs)}
+                    active={editorMode === EditorModes.shelfs}
                 />
                 <PlanButton
                     label={"Kassen"}
@@ -51,7 +51,7 @@ const PlanTab = ({configFile, editorMode, onModeChange }: { configFile: IeFlowFi
                     {editorMode === EditorModes.doors && (
                         <p className={"text-white text-[13px] font-bold"}>Eingang</p>
                     )}
-                    {editorMode === EditorModes.subdomains && (
+                    {editorMode === EditorModes.shelfs && (
                         <p className={"text-white text-[13px] font-bold"}>Regale</p>
                     )}
                     {editorMode === EditorModes.checkouts && (
@@ -70,7 +70,7 @@ const PlanTab = ({configFile, editorMode, onModeChange }: { configFile: IeFlowFi
                                 Die Personen betreten die Simulation durch Türen. Türen können mit der rechten Maustaste wieder gelöscht werden.
                             </p>
                         )}
-                        {editorMode === EditorModes.subdomains && (
+                        {editorMode === EditorModes.shelfs && (
                             <p className={"text-white text-[11px]"}>
                                 Regale sind Teile innerhalb eines Plans, die zur Aufbewahrung und Organisation von Produkten dienen. Eingestellte Regale können mit der linken Maustaste einem Bereich zugeordnet werden. Jedes Regal muss einem Bereich zugeordnet werden und jeder Bereich kann auch nur einmalig ausgewählt werden.
                                 Eingestellte Eckpunkte können mit der rechten Maustaste gelöscht werden.
@@ -84,9 +84,6 @@ const PlanTab = ({configFile, editorMode, onModeChange }: { configFile: IeFlowFi
                         )}
                     </div>
                 </div>
-            </div>
-            <div className="mt-auto bottom-0 z-50 flex justify-center items-center border-t-2 border-black p-4">
-                <SaveButton className="w-3/4 py-1 text-center" jsonConfig={configFile}/>
             </div>
         </div>
     )

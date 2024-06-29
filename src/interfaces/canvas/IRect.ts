@@ -4,4 +4,5 @@ export interface IRect {
     y: number;
     width: number;
     height: number;
+    rotation?: number;
 }

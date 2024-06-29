@@ -1,12 +1,15 @@
 import { IRect } from "interfaces/canvas/IRect";
-import { Point } from "lib/geometry/point";
 
-export interface ISubdomain {
+export interface IShelf {
     name: string,
     id: string,
     polygon: IRect,
-    hover?: Boolean,
+    hover: Boolean,
     text: string;
+    shoppingTime?: string;
     textPosition?: { x: number, y: number };
     selectedItems: string[];
+    selectedShoppingTimes: string[];
+    shoppingOrder?: string
 }
+

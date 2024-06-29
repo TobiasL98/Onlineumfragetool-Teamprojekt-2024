@@ -2,12 +2,12 @@ import { IBackgroundImagePosition } from "./IBackgroundImagePosition";
 import { ICheckout } from "./ICheckout";
 import { IDoor } from "./IDoor";
 import { IPolygon } from "./IPolygon";
-import { ISubdomain } from "./ISubdomain";
+import { IShelf } from "./IShelf";
 
 export interface IeFlowFile {
     name: string;
     Door: IDoor[];
-    Subdomains: ISubdomain[];
+    Shelfs: IShelf[];
     Domainpolygon?: any;
     Grid?: any;
     PolygonCorners: IPolygon;
