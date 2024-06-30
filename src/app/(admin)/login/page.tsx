@@ -9,7 +9,11 @@ export default function Page() {
 			<Headline className="mt-2 w-full grow">
 				<h1 className="text-4xl font-medium">Admin Login </h1>
 			</Headline>
-			<form className="mt-4 w-3/5 flex-grow" name="login" id="login">
+			<form
+				className="mt-4 flex w-3/5 flex-grow flex-col items-center"
+				name="login"
+				id="login"
+			>
 				<Input className="mb-4 px-2 py-1" placeholder="admin" />
 				<br></br>
 				<Input placeholder="password" className="px-2 py-1" />
