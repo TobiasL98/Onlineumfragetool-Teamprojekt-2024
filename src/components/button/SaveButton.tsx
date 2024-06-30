@@ -1,80 +1,73 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { IconFileDownload } from 'components/icons/IconFileDownload';
-import { IeFlowFile } from 'interfaces/edit/IeFlowFile';
+import { useState } from "react";
+import { IconFileDownload } from "components/icons/IconFileDownload";
+import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 
-const SaveButton = ({ className, jsonConfig }: { className: string | undefined, jsonConfig: IeFlowFile | null }) => {
-    const [isHovered, setIsHovered] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+const SaveButton = ({
+	className,
+	jsonConfig,
+}: {
+	className: string | undefined;
+	jsonConfig: IeFlowFile | null;
+}) => {
+	const [error, setError] = useState<string | null>(null);
 
-    const handleSaveConfig = async (newConfig: IeFlowFile) => {
-        try {
-            const response = await fetch('/api/saveConfig', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ newConfig })
-            });
+	const handleSaveConfig = async (newConfig: IeFlowFile) => {
+		try {
+			const response = await fetch("/api/saveConfig", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ newConfig }),
+			});
 
-            if (!response.ok) {
-                throw new Error('Failed to save config');
-            }
-        } catch (error) {
-            console.error('Error saving config:', error);
-            setError('Failed to save config');
-        }
-    };
+			if (!response.ok) {
+				throw new Error("Failed to save config");
+			}
+		} catch (error) {
+			console.error("Error saving config:", error);
+			setError("Failed to save config");
+		}
+	};
 
-    const handleMouseOver = () => {
-        if (!jsonConfig) {
-            return;
-        }
-        setIsHovered(true);
-    };
+	return (
+		<button
+			className={`flex cursor-pointer items-center justify-center border-2 border-buttonBorderColor bg-buttonBackgroundColor pl-2 text-buttonBorderColor hover:border-[--hover-color] hover:text-[--hover-color] ${className}`}
+			type="button"
+			onClick={() => {
+				if (jsonConfig !== null) {
+					const formattedJsonStr = JSON.stringify(
+						jsonConfig,
+						null,
+						2,
+					);
+					const blob = new Blob([formattedJsonStr], {
+						type: "application/json",
+					});
 
-    const handleMouseOut = () => {
-        if (!jsonConfig) {
-            return;
-        }
-        setIsHovered(false);
-    };
+					const link = document.createElement("a");
+					link.href = URL.createObjectURL(blob);
+					link.download = jsonConfig.name + ".json";
+					link.click();
 
-    const currentFill = isHovered ? '#7996A3' : '#FFD111';
+					handleSaveConfig(jsonConfig);
 
-    return (
-        <button
-            className={`flex justify-center pl-2 items-center cursor-pointer border-2 border-buttonBorderColor bg-buttonBackgroundColor text-buttonBorderColor hover:border-[--hover-color] hover:text-[--hover-color] ${className}`}
-            type="button"
-            onClick={() => {
-                if (jsonConfig !== null) {
-                    const formattedJsonStr = JSON.stringify(jsonConfig, null, 2)
-                    const blob = new Blob([formattedJsonStr], { type: 'application/json' });
-
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = jsonConfig.name + '.json';
-                    link.click();
-
-                    handleSaveConfig(jsonConfig);
-
-                    setTimeout(() => {
-                        URL.revokeObjectURL(link.href);
-                    }, 500);
-                }
-            }}
-            disabled={jsonConfig === null}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-        >
-            Speichern
-            <div className="p-2">
-                <IconFileDownload fill={currentFill} />
-            </div>
-            {error && <div className="text-red-500 mt-2">{error}</div>}
-        </button>
-    );
+					setTimeout(() => {
+						URL.revokeObjectURL(link.href);
+					}, 500);
+				}
+			}}
+			disabled={jsonConfig === null}
+		>
+			Speichern
+			<div className="p-2">
+				<IconFileDownload fill="currentColor" />
+			</div>
+			{error && <div className="mt-2 text-red-500">{error}</div>}
+		</button>
+	);
 };
 
 export default SaveButton;
