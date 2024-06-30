@@ -63,7 +63,7 @@ export const buyingFor = [
 	["nobody", "Keine"],
 ].map(formObjectMapper);
 
-const defaultFormState = {
+export const defaultFormState = {
 	monday: false,
 	tuesday: false,
 	wednesday: false,
