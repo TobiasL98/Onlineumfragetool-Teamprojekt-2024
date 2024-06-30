@@ -11,18 +11,22 @@ import { ICheckout } from "interfaces/edit/ICheckout";
 import { EditorModes } from "lib/edit/EditorModes";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
-import {useState } from "react";
+import { useState } from "react";
 import {
-	areConfigsDifferent, connectPoints, getBounds, horiztontalDistanceBetweenOuterPoints,
-	transformPointlistsToDomainpolygon, transformToConfigShelfs } from "utils/edit/utils";
+	areConfigsDifferent,
+	connectPoints,
+	getBounds,
+	horiztontalDistanceBetweenOuterPoints,
+	transformPointlistsToDomainpolygon,
+	transformToConfigShelfs,
+} from "utils/edit/utils";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import DefaultParameter from "lib/edit/DefaultParameter";
 import FileUploadButton from "components/button/FileUploadButton";
 import TypicalSupermarketButton from "components/button/TypicalSupermarketButton";
 import SaveButton from "components/button/SaveButton";
 
-
-const stageHeight = 1000
+const stageHeight = 1000;
 
 type Pair<K, V> = [K, V];
 function RadioGroup<T>(
@@ -57,44 +61,72 @@ function RadioGroup<T>(
 
 export default function Editor() {
 	// States for all eflow.json parameter
-	const [defaultParams, setDefaultParams] = useState<IeFlowFile>(DefaultParameter)
-	const [activeConfig, setActiveConfig] = useState<IeFlowFile | null>(null)
-	const [name, setName] = useState<string>(defaultParams.name)
-	const [grid, setGrid] = useState<any>(defaultParams.Grid)
+	const [defaultParams, setDefaultParams] =
+		useState<IeFlowFile>(DefaultParameter);
+	const [activeConfig, setActiveConfig] = useState<IeFlowFile | null>(null);
+	const [name, setName] = useState<string>(defaultParams.name);
+	const [grid, setGrid] = useState<any>(defaultParams.Grid);
 
 	// canvas States
 	// here are states that represent the same things as entrances/exits!
-	const [polygonCorners, setPolygonCorners] = useState<IPolygon>({ corners: [], closed: false });
-	const walls = connectPoints(polygonCorners)
+	const [polygonCorners, setPolygonCorners] = useState<IPolygon>({
+		corners: [],
+		closed: false,
+	});
+	const walls = connectPoints(polygonCorners);
 
 	const [holePolygons, setHolePolygons] = useState<IPolygon[]>([]);
 	// const innerWalls = connectPoints(holeCorners)
-	const innerWallsList = holePolygons.map((corners) => connectPoints(corners));
-	const [shelfs, setShelfs] = useState<IShelf[]>([])
-	const [checkouts, setCheckouts] = useState<ICheckout[]>([])
-	const [doors, setDoors] = useState<IDoor[]>([])
-	const [referenceLine, setReferenceLine] = useState<IReferenceLine>({ a: new Point(100, 100), b: new Point(200, 100), width: 10 }); // [start, end
+	const innerWallsList = holePolygons.map((corners) =>
+		connectPoints(corners),
+	);
+	const [shelfs, setShelfs] = useState<IShelf[]>([]);
+	const [checkouts, setCheckouts] = useState<ICheckout[]>([]);
+	const [doors, setDoors] = useState<IDoor[]>([]);
+	const [referenceLine, setReferenceLine] = useState<IReferenceLine>({
+		a: new Point(100, 100),
+		b: new Point(200, 100),
+		width: 10,
+	}); // [start, end
 
 	// set simulateMode to false when Editor should be shown
 	const [tab, setTab] = useState<string>("Plan");
-	const [editorMode, setEditorMode] = useState<EditorModes>(EditorModes.walls)
-	const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-	const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null)
-	const defaultImagePosition: IBackgroundImagePosition = { name: "default", x: 0, y: 0, width: 0, height: 0, rotation: 0, scaleX: 1, scaleY: 1 }
-	const [backgroundImagePosition, setBackgroundImagePosition] = useState<IBackgroundImagePosition>(defaultImagePosition)
+	const [editorMode, setEditorMode] = useState<EditorModes>(
+		EditorModes.walls,
+	);
+	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+	const [backgroundImage, setBackgroundImage] =
+		useState<HTMLImageElement | null>(null);
+	const defaultImagePosition: IBackgroundImagePosition = {
+		name: "default",
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0,
+		rotation: 0,
+		scaleX: 1,
+		scaleY: 1,
+	};
+	const [backgroundImagePosition, setBackgroundImagePosition] =
+		useState<IBackgroundImagePosition>(defaultImagePosition);
 
-	const computeConfig = (newName: string,
-						   newPolygonCorners: IPolygon,
-						   newHoleCorners: IPolygon[],
-						   newDoors: IDoor[],
-						   newGrid: any,
-						   newShelfs: IShelf[],
-						   backgroundImagePosition: IBackgroundImagePosition,
-						   newCheckouts: ICheckout[]
+	const computeConfig = (
+		newName: string,
+		newPolygonCorners: IPolygon,
+		newHoleCorners: IPolygon[],
+		newDoors: IDoor[],
+		newGrid: any,
+		newShelfs: IShelf[],
+		backgroundImagePosition: IBackgroundImagePosition,
+		newCheckouts: ICheckout[],
 	) => {
 		//let configShelfs = transformToConfigShelfs(newShelfs, stageHeight)
-		const configDoors = doors // TO DO
-		const configDomainpolygon = transformPointlistsToDomainpolygon(newPolygonCorners, newHoleCorners, stageHeight)
+		const configDoors = doors; // TO DO
+		const configDomainpolygon = transformPointlistsToDomainpolygon(
+			newPolygonCorners,
+			newHoleCorners,
+			stageHeight,
+		);
 
 		const config: IeFlowFile = {
 			name: newName,
@@ -106,22 +138,30 @@ export default function Editor() {
 			HoleCorners: newHoleCorners,
 			BackgroundImagePosition: backgroundImagePosition,
 			Checkouts: newCheckouts,
-		}
-		return config
+		};
+		return config;
 	};
 
-	const configFile: IeFlowFile = computeConfig(name,
-		polygonCorners, holePolygons, grid, doors, shelfs, backgroundImagePosition, checkouts)
+	const configFile: IeFlowFile = computeConfig(
+		name,
+		polygonCorners,
+		holePolygons,
+		grid,
+		doors,
+		shelfs,
+		backgroundImagePosition,
+		checkouts,
+	);
 
 	//const refetchPossible = areConfigsDifferent(configFile, activeConfig)
 
 	const handleFileUpload = (file: File) => {
-		setUploadedFile(file)
+		setUploadedFile(file);
 		const reader = new FileReader();
 		reader.onload = () => {
 			const fileContent = reader.result as string;
 
-			if (file.name.endsWith('.json')) {
+			if (file.name.endsWith(".json")) {
 				const layoutData = JSON.parse(fileContent);
 
 				setPolygonCorners(layoutData.PolygonCorners);
@@ -135,11 +175,11 @@ export default function Editor() {
 		reader.readAsText(file);
 	};
 
-	const handleSupermarketUpload  = async () => {
+	const handleSupermarketUpload = async () => {
 		try {
-			const response = await fetch('/api/getSupermarket');
+			const response = await fetch("/api/getSupermarket");
 			if (!response.ok) {
-				throw new Error('Failed to fetch config data');
+				throw new Error("Failed to fetch config data");
 			}
 			const layoutData: IeFlowFile = await response.json();
 			setPolygonCorners(layoutData.PolygonCorners);
@@ -149,19 +189,22 @@ export default function Editor() {
 			setBackgroundImagePosition(layoutData.BackgroundImagePosition);
 			setCheckouts(layoutData.Checkouts);
 		} catch (error) {
-			console.error('Error fetching config:', error);
+			console.error("Error fetching config:", error);
 		}
 	};
 
 	const handleFileClear = () => {
-		setUploadedFile(null)
-		setBackgroundImage(null)
-		setBackgroundImagePosition({ ...backgroundImagePosition, name: "reset" })
+		setUploadedFile(null);
+		setBackgroundImage(null);
+		setBackgroundImagePosition({
+			...backgroundImagePosition,
+			name: "reset",
+		});
 		setPolygonCorners({ corners: [], closed: false });
 		setHolePolygons([]);
 		setDoors([]);
 		setShelfs([]);
-		setCheckouts([])
+		setCheckouts([]);
 	};
 
 	const handleReset = () => {
@@ -174,7 +217,10 @@ export default function Editor() {
 		setEditorMode(EditorModes.walls);
 		setUploadedFile(null);
 		setBackgroundImage(null);
-		setBackgroundImagePosition({ ...backgroundImagePosition, name: "reset" })
+		setBackgroundImagePosition({
+			...backgroundImagePosition,
+			name: "reset",
+		});
 	};
 
 	let [buttons, selected] = RadioGroup([
@@ -184,34 +230,60 @@ export default function Editor() {
 		["Kassen", () => 4],
 	]);
 	return (
-		<div className="flex grow self-stretch h-screen">
-			<div id={"plantab"} className="flex basis-1/6 flex-col justify-between bg-[--header-color] text-inputBorderColor border-r border-r-[--header-footer-separator-color] h-full">
-					<p className="mx-6 border-t-2 border-t-buttonBorderColor font-semibold text-buttonBorderColor"></p>
-					<h2 className="m-2 text-center text-lg text-buttonBorderColor">
-						<input className='text-center mx-4 mb-1 text-lg rounded bg-[--header-color]'
-							   name="simulationname"
-							   type="text"
-							   value={name}
-							   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+		<div className="flex grow self-stretch">
+			<div
+				id={"plantab"}
+				className="flex h-full basis-1/6 flex-col justify-between border-r border-r-[--header-footer-separator-color] bg-[--header-color] text-inputBorderColor"
+			>
+				<p className="mx-6 border-t-2 border-t-buttonBorderColor font-semibold text-buttonBorderColor"></p>
+				<h2 className="m-2 text-center text-lg text-buttonBorderColor">
+					<input
+						className="mx-4 mb-1 rounded bg-[--header-color] text-center text-lg"
+						name="simulationname"
+						type="text"
+						value={name}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							setName(e.target.value)
+						}
+					/>
+				</h2>
+				<div className="space-y-2 border-y-2 border-black">
+					<div className="mx-6 flex flex-col space-y-3 py-4">
+						<FileUploadButton
+							onFileUpload={handleFileUpload}
+							onFileClear={handleFileClear}
+							uploadedFile={uploadedFile}
+							editorMode={editorMode}
+							onClick={() => setEditorMode(EditorModes.image)}
 						/>
+						<TypicalSupermarketButton
+							onFileUpload={handleSupermarketUpload}
+							onFileClear={handleReset}
+							editorMode={editorMode}
+							onClick={() => setEditorMode(EditorModes.image)}
+						/>
+					</div>
+				</div>
+				<div>
+					<h2 className="my-6 ms-4 text-lg font-medium">
+						Architektur
 					</h2>
-					<div className="space-y-2 border-y-2 border-black">
-						<div className="mx-6 flex flex-col space-y-3 py-4">
-							<FileUploadButton onFileUpload={handleFileUpload} onFileClear={handleFileClear} uploadedFile={uploadedFile} editorMode={editorMode} onClick={() => setEditorMode(EditorModes.image)} />
-							<TypicalSupermarketButton onFileUpload={handleSupermarketUpload} onFileClear={handleReset} editorMode={editorMode} onClick={() => setEditorMode(EditorModes.image)} />
-						</div>
-					</div>
-					<div>
-						<h2 className="my-6 ms-4 text-lg font-medium">
-							Architektur
-						</h2>
-						<PlanTab editorMode={editorMode} onModeChange={setEditorMode} configFile={configFile}/>
-					</div>
-					<div className="mt-auto bottom-0 z-50 flex justify-center items-center border-t-2 border-black p-4">
-						<SaveButton className="w-3/4 py-1 text-center" jsonConfig={configFile}/>
-					</div>
+					<PlanTab
+						editorMode={editorMode}
+						onModeChange={setEditorMode}
+						configFile={configFile}
+					/>
+				</div>
+				<div className="bottom-0 z-50 mt-auto flex items-center justify-center border-t-2 border-black p-4">
+					<SaveButton
+						className="w-3/4 py-1 text-center"
+						jsonConfig={configFile}
+					/>
+				</div>
 			</div>
-			<div className= {`flex-grow justify-between h-full items-center w-auto`}>
+			<div
+				className={`h-full w-auto flex-grow items-center justify-between`}
+			>
 				<PlanEditor
 					backgroundImage={backgroundImage}
 					mode={editorMode}
@@ -225,22 +297,28 @@ export default function Editor() {
 					walls={walls}
 					holeWallsList={innerWallsList}
 					backgroundImagePosition={backgroundImagePosition}
-					handleCornerChange={(newPolygons) => { setPolygonCorners(newPolygons[0]) }}
-					handleHoleCornerChange={(newPolygons) => { setHolePolygons(newPolygons) }}
+					handleCornerChange={(newPolygons) => {
+						setPolygonCorners(newPolygons[0]);
+					}}
+					handleHoleCornerChange={(newPolygons) => {
+						setHolePolygons(newPolygons);
+					}}
 					handleReferenceLineChange={(newReferenceLine) => {
-						setReferenceLine(newReferenceLine)
+						setReferenceLine(newReferenceLine);
 					}}
 					doors={doors}
 					handleDoorChange={(newDoors) => setDoors(newDoors)}
 					shelfs={shelfs}
 					checkouts={checkouts}
 					handleShelfsChange={(newShelf) => setShelfs(newShelf)}
-					handleCheckoutsChange={(newCheckout) => setCheckouts(newCheckout)}
-					handleImageMoved={(newBackgroundImagePosition) => { setBackgroundImagePosition(newBackgroundImagePosition) }}
+					handleCheckoutsChange={(newCheckout) =>
+						setCheckouts(newCheckout)
+					}
+					handleImageMoved={(newBackgroundImagePosition) => {
+						setBackgroundImagePosition(newBackgroundImagePosition);
+					}}
 				/>
 			</div>
 		</div>
 	);
 }
-
-
