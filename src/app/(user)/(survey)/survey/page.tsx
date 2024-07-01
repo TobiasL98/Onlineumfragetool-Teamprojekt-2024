@@ -1,6 +1,5 @@
 "use client";
 import Bordered from "components/Bordered";
-import Button from "components/Button";
 import Input from "components/Input";
 import Label from "components/Label";
 import Select from "components/Select";
@@ -22,9 +21,7 @@ import {
 	buyingFor,
 	occupation,
 } from "../FormContext";
-import { RedirectType, redirect } from "next/navigation";
 import Link from "next/link";
-
 const Error = forwardRef<HTMLDivElement, { text: string }>((props, ref) => {
 	return (
 		<div
@@ -56,7 +53,6 @@ const caretDown = { degree: "rotate(45deg)", marginTop: "0.25rem" };
 const caretUp = { degree: "rotate(225deg)", marginTop: "0.5rem" };
 export default function Survey() {
 	const { formState, onChange } = useForm();
-
 	const caretRef = useRef<HTMLParagraphElement>(null);
 	const optionalQuestionsRef = useRef<HTMLDivElement>(null);
 	const daysRequiredErrorRef = useRef<HTMLDivElement>(null);
@@ -75,7 +71,11 @@ export default function Survey() {
 			</option>
 		);
 	};
-	const checkboxMapper = (name: string, changer?: ChangeEventHandler) => {
+	const checkboxMapper = (
+		name: string,
+		changer?: ChangeEventHandler,
+		disabled: boolean = false,
+	) => {
 		return (x: FormObject) => {
 			return (
 				<Label className="flex items-center" key={x.value}>
@@ -86,6 +86,7 @@ export default function Survey() {
 						name={name}
 						value={x.value}
 						onChange={changer}
+						disabled={disabled}
 						checked={(formState as any)[x.value]}
 					/>
 					{x.label}
@@ -307,6 +308,9 @@ export default function Survey() {
 													>
 														{x.label}
 														<Input
+															disabled={
+																formState.nobody
+															}
 															onChange={onChange}
 															name={x.value}
 															value={
@@ -346,10 +350,6 @@ export default function Survey() {
 																	updateState[
 																		x.name
 																	] = "";
-																	x.disabled =
-																		true;
-																	x.readOnly =
-																		true;
 																},
 															);
 															onChange(
@@ -357,14 +357,6 @@ export default function Survey() {
 																updateState,
 															);
 														} else {
-															others.forEach(
-																(x) => {
-																	x.disabled =
-																		false;
-																	x.readOnly =
-																		false;
-																},
-															);
 															onChange(e);
 														}
 													},
@@ -389,6 +381,7 @@ export default function Survey() {
 													checkboxMapper(
 														"allergies",
 														onChange,
+														formState.noAllergies,
 													),
 												)}
 										</div>
@@ -422,16 +415,8 @@ export default function Survey() {
 																	] = false;
 																	x.checked =
 																		false;
-																	x.readOnly =
-																		true;
-																	x.disabled =
-																		true;
 																},
 															);
-															otherAllergies.disabled =
-																true;
-															otherAllergies.readOnly =
-																true;
 															updateState[
 																"otherAllergies"
 															] = "";
@@ -440,18 +425,6 @@ export default function Survey() {
 																updateState,
 															);
 														} else {
-															allergies.forEach(
-																(x) => {
-																	x.readOnly =
-																		false;
-																	x.disabled =
-																		false;
-																},
-															);
-															otherAllergies.readOnly =
-																false;
-															otherAllergies.disabled =
-																false;
 															onChange(e);
 														}
 													},
@@ -473,6 +446,9 @@ export default function Survey() {
 															type="text"
 															value={
 																formState.otherAllergies
+															}
+															disabled={
+																formState.noAllergies
 															}
 															pattern="(\w* ?)*"
 															name="otherAllergies"
