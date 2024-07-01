@@ -297,11 +297,7 @@ export default function Survey() {
 										<Select
 											name="diet"
 											className="ml-2 p-2"
-											defaultValue={
-												formState.diet.length == 0
-													? ""
-													: formState.diet
-											}
+											defaultValue={formState.diet}
 											onChange={onChange}
 										>
 											<option value="">
@@ -316,11 +312,7 @@ export default function Survey() {
 										<Select
 											name="occupation"
 											className="ml-2 p-2"
-											defaultValue={
-												formState.occupation.length == 0
-													? ""
-													: formState.occupation
-											}
+											defaultValue={formState.occupation}
 											onChange={onChange}
 										>
 											<option value="">
