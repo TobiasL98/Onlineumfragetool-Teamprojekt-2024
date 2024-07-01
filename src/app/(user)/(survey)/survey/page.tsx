@@ -299,12 +299,12 @@ export default function Survey() {
 											className="ml-2 p-2"
 											defaultValue={
 												formState.diet.length == 0
-													? "X"
+													? ""
 													: formState.diet
 											}
 											onChange={onChange}
 										>
-											<option disabled value="X">
+											<option value="">
 												Bitte w&auml;hlen
 											</option>
 											{diet.map(optionMapper)}
@@ -318,12 +318,12 @@ export default function Survey() {
 											className="ml-2 p-2"
 											defaultValue={
 												formState.occupation.length == 0
-													? "X"
+													? ""
 													: formState.occupation
 											}
 											onChange={onChange}
 										>
-											<option disabled value="X">
+											<option value="">
 												Bitte w&auml;hlen
 											</option>
 											{occupation.map(optionMapper)}
