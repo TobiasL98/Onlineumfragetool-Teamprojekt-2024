@@ -30,10 +30,9 @@ export default function checkForm(form: typeof defaultFormState): Error[] {
 		}
 	};
 
-	error(
-		time.some((x) => form.time == x.value),
-		Error.time,
-	);
+	// does it have a valid time? does it have a time? empty string means it is not selected, it is not part of the time array so no need to check
+	error(!time.map((x) => x.value).includes(form.time), Error.time);
+
 	error(
 		days.every((x) => {
 			return !(form as any)[x.value];
