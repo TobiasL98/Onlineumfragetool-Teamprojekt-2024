@@ -62,7 +62,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ mode, visible, x, y, shelf, o
                     }
                 `}
             </style>
-            <div className="context-menu" onClick={onClose}>
+            <div className="context-menu" onClick={(e) => { e.stopPropagation(); onClose(); }}>
                 <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
                     { mode == EditorModes.image  && shelf && shoppingTimes.map(item =>
                             <li

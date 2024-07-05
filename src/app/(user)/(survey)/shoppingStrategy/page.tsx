@@ -86,7 +86,7 @@ export default function ShoppingStrategyPage() {
 		//console.log("configFile updated:", configFile?.name);
 		if (configFile && configFile.name !== undefined) {
 			setPolygonCorners(configFile.PolygonCorners);
-			setHolePolygons(configFile.HoleCorners);
+			//setHolePolygons(configFile.HoleCorners);
 			setDoors(configFile.Door);
 			setShelfs(configFile.Shelfs);
 			setBackgroundImagePosition(configFile.BackgroundImagePosition);

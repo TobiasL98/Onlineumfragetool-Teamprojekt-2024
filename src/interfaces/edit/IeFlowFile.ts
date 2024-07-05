@@ -9,9 +9,9 @@ export interface IeFlowFile {
     Door: IDoor[];
     Shelfs: IShelf[];
     Domainpolygon?: any;
-    Grid?: any;
+    //Grid?: any;
     PolygonCorners: IPolygon;
-    HoleCorners: IPolygon[];
+   // HoleCorners: IPolygon[];
     BackgroundImagePosition: IBackgroundImagePosition;
     Checkouts: ICheckout[];
 }

@@ -23,8 +23,8 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
     const iconRef = useRef<Konva.Group | null>(null);
     const pathRef = useRef<Konva.Path | null>(null);
     const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
-    const [refreshIconWidth, setRefreshIconWidth] = useState(0);
-    const [refreshIconHeight, setRefreshIconHeight] = useState(0);
+    const [iconWidth, setRefreshIconWidth] = useState(0);
+    const [iconHeight, setRefreshIconHeight] = useState(0);
     const [hover, setHover] = useState(false);
     const highlighted = (mode === EditorModes.shelfs) || ((mode === EditorModes.image) && shelf.text !== "" && hover == true);
 
@@ -47,7 +47,7 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
         e.cancelBubble = true;
     }
 
-    const handleRotateMove = (e: Konva.KonvaEventObject<DragEvent>) => {
+    /*const handleRotateMove = (e: Konva.KonvaEventObject<DragEvent>) => {
         e.cancelBubble = true;
 
         const icon = e.target as Konva.Group;
@@ -88,8 +88,8 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
         const rotatedIconY = centerY + radius * Math.sin(angleInRadians);
 
         if (iconRef.current) {
-            iconRef.current.offsetX(refreshIconWidth)
-            iconRef.current.offsetY(refreshIconHeight * 2)
+            iconRef.current.offsetX(iconWidth)
+            iconRef.current.offsetY(iconHeight * 2)
             iconRef.current.position({
                 x: rotatedIconX,
                 y: rotatedIconY
@@ -107,6 +107,49 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
         }
 
         onChange(shelf);
+    };*/
+
+    const handleRotateMove = (e: Konva.KonvaEventObject<DragEvent>) => {
+        e.cancelBubble = true;
+
+        const icon = e.target as Konva.Group;
+        const stage = icon.getStage();
+
+        if (!stage) return;
+
+        const shelfRect = icon.getParent()!.getChildren().find(child => child.name() === shelf.name);
+        const mousePos = stage.getPointerPosition();
+
+        if (!mousePos || !shelfRect) return;
+
+        shelfRect.id(shelf.id)
+
+        const dx = mousePos.x - shelfRect.x();
+        const dy = mousePos.y - shelfRect.y();
+        const newRotation = Math.atan2(dy, dx) * 180 / Math.PI;
+
+        shelf.polygon.rotation = newRotation;
+        shelfRect.rotation(newRotation);
+
+        if (iconRef.current) {
+            iconRef.current.position({
+                x: shelf.polygon.x,
+                y: shelf.polygon.y
+            });
+            iconRef.current.rotation(newRotation);
+            iconRef.current.offsetX(- shelf.polygon.width / 2 + iconWidth);
+            iconRef.current.offsetY(iconHeight * 2);
+        }
+
+        if (textRef.current) {
+            textRef.current.rotation(newRotation);
+        }
+
+        const textX = shelf.polygon.x
+        const textY = shelf.polygon.y
+        shelf.textPosition = { x: textX, y: textY};
+
+        onChange(shelf);
     };
 
     const handleDragStart = (e: Konva.KonvaEventObject<DragEvent>) => {
@@ -114,7 +157,7 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
         setInitialPosition(initPos);
     }
 
-    const handleDragMove = (e: Konva.KonvaEventObject<DragEvent>) => {
+    /*const handleDragMove = (e: Konva.KonvaEventObject<DragEvent>) => {
         const shelfRect = e.target as Konva.Rect;
         const stage = shelfRect.getStage();
 
@@ -140,8 +183,8 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
 
             if (iconRef.current) {
                 iconRef.current.position({
-                    x: rotatedCircleX - shelf.polygon.width / 2 - refreshIconWidth,
-                    y: rotatedCircleY + shelf.polygon.height / 2 - refreshIconHeight *2,
+                    x: rotatedCircleX - shelf.polygon.width / 2 - iconWidth,
+                    y: rotatedCircleY + shelf.polygon.height / 2 - iconHeight *2,
                 });
                 iconRef.current.rotation(shelf.polygon.rotation!)
             }
@@ -163,13 +206,13 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
 
             if (iconRef.current) {
                 // beeinflusst Position des Icons wenn drag zu ende
-                //iconRef.current.offsetX(shelf.polygon.width / 2)// + refreshIconWidth/2 );
-                //iconRef.current.offsetY(shelf.polygon.height / 4  )//- refreshIconHeight);
+                //iconRef.current.offsetX(shelf.polygon.width / 2)// + iconWidth/2 );
+                //iconRef.current.offsetY(shelf.polygon.height / 4  )//- iconHeight);
 
                 // beeinflusst Position des Icons während des drags
                 iconRef.current.position({
-                    x: rotatedCircleX,// - refreshIconWidth,
-                    y: rotatedCircleY// + shelf.polygon.height / 2// - refreshIconHeight
+                    x: rotatedCircleX,// - iconWidth,
+                    y: rotatedCircleY// + shelf.polygon.height / 2// - iconHeight
                 });
                 iconRef.current.rotation(shelf.polygon.rotation!);
             }
@@ -187,6 +230,58 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
                 textRef.current.offsetY(shelf.polygon.height / 2);
                 textRef.current.position(shelf.textPosition);
             }
+        }
+
+        onChange(shelf);
+    };*/
+
+    const handleDragMove = (e: Konva.KonvaEventObject<DragEvent>) => {
+        const shelfRect = e.target as Konva.Rect;
+        const stage = shelfRect.getStage();
+
+        if (!stage) return;
+
+        const { restrictedPointX, restrictedPointY } = restrictPoints({ ev: e, initialPosition });
+
+        shelf.polygon.x = restrictedPointX;
+        shelf.polygon.y = restrictedPointY;
+
+        const radius = shelfRect.height() / 2
+        const angleInRadians = Konva.Util.degToRad(shelfRect.rotation() - 90);
+        const cosTheta = Math.cos(angleInRadians);
+        const sinTheta = Math.sin(angleInRadians);
+
+        let centerX: number
+        let centerY: number
+
+        if (shelf.polygon.rotation === 0) {
+            centerX = shelf.polygon.x + shelf.polygon.width;
+            centerY = shelf.polygon.y
+
+            const rotatedCircleX = centerX + radius * cosTheta;
+            const rotatedCircleY = centerY + radius * sinTheta;
+
+            if (iconRef.current) {
+                iconRef.current.position({
+                    x: rotatedCircleX - shelf.polygon.width / 2 - iconWidth,
+                    y: rotatedCircleY + shelf.polygon.height / 2 - iconHeight *2,
+                });
+                iconRef.current.rotation(shelf.polygon.rotation!)
+            }
+        } else {
+            if (iconRef.current) {
+                iconRef.current.position({
+                    x: restrictedPointX,
+                    y: restrictedPointY
+                });
+                iconRef.current.rotation(shelf.polygon.rotation!);
+            }
+
+        }
+        shelf.textPosition = {x: restrictedPointX, y: restrictedPointY};
+
+        if (textRef.current && shelf.textPosition) {
+            textRef.current.position(shelf.textPosition);
         }
 
         onChange(shelf);
@@ -210,8 +305,6 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
                         onClick(e, shelf);
                     }
                 }}
-                //offsetX={shelf.polygon.width / 2}
-                //offsetY={shelf.polygon.height / 2}
                 onDragStart={handleDragStart}
                 onDragMove={handleDragMove}
                 strokeWidth={2 / scale}
@@ -226,8 +319,8 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
             {mode === EditorModes.shelfs && (
                 <Group
                     ref={iconRef}
-                    x={shelf.polygon.x + shelf.polygon.width / 2 - refreshIconWidth}
-                    y={shelf.polygon.y - refreshIconHeight * 2}
+                    x={shelf.polygon.x + shelf.polygon.width / 2 - iconWidth}
+                    y={shelf.polygon.y - iconHeight * 2}
                     draggable
                     dragOnTop={false}
                     onDragStart={handleRotateStart}
@@ -253,20 +346,21 @@ export default function CanvasShelf({ shelf, scale, onDelete = () => { return },
                 width={shelf.polygon.width}
                 height={shelf.polygon.height}
                 listening={false}
+                rotation={shelf.polygon.rotation}
             />
             {mode === EditorModes.image && shelf.shoppingTime !== undefined && shelf.shoppingOrder !== undefined  && (
                 <Text
                     ref={textRef}
                     x={shelf.polygon.x}
-                    y={shelf.polygon.y + 20}
+                    y={shelf.polygon.y}
                     text={`${shelf.shoppingOrder}. (${shelf.shoppingTime})`}
                     fontSize={14}
                     fill={highlighted ? "white" : "orange"}
-                    align='center'
-                    verticalAlign='middle'
                     width={shelf.polygon.width}
                     height={shelf.polygon.height}
                     listening={false}
+                    padding={7}
+                    rotation={shelf.polygon.rotation}
                 />
             )}
         </>

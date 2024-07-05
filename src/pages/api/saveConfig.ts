@@ -12,6 +12,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
         try {
             const filePath = path.join(process.cwd(), 'public', 'current_layout.json');
+           // to update the typical supermarket json, use the filePath below
+           // const filePath = path.join(process.cwd(), 'public', 'typical_supermarket.json');
             fs.writeFileSync(filePath, JSON.stringify(newConfig, null, 2));
             return res.status(200).json({ message: 'Config saved successfully' });
         } catch (error) {

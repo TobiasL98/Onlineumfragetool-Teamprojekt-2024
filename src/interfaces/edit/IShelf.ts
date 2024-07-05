@@ -8,8 +8,8 @@ export interface IShelf {
     text: string;
     shoppingTime?: string;
     textPosition?: { x: number, y: number };
-    selectedItems: string[];
-    selectedShoppingTimes: string[];
+    selectedItems?: string[];
+    selectedShoppingTimes?: string[];
     shoppingOrder?: string
 }
 

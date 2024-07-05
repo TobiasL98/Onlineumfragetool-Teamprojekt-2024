@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import ContextMenu from "components/planEditor/polygonCanvas/ContextMenu"
 import { IShelf } from "interfaces/edit/IShelf";
@@ -46,7 +46,6 @@ function LayoutSurvey({
     const [activeDoorPoint, setActiveDoorPoint] = useState<{ point: Point, vector: Vector } | null>(null);
     const [globalSelectedShoppingTimes, setGlobalSelectedShoppingTimes] = useState<string[]>([]);
     const [shoppingOrderIndex, setShoppingOrderIndex] = useState<number>(0);
-
     const [contextMenu, setContextMenu] = useState<{
         visible: boolean;
         x: number;
@@ -59,23 +58,6 @@ function LayoutSurvey({
         shelf: null,
     });
 
-    useEffect(() => {
-        const handleContextMenu = (e: MouseEvent) => {
-            /*if (e.button === 2 && selectedShelf) {
-                setShoppinOrderIndex(shoppinOrderIndex - 1)
-                selectedShelf.shoppingOrder = shoppinOrderIndex.toString();
-                selectedShelf.shoppingTime = undefined;
-                //selectedShelf.selectedShoppingTimes.push(undefined);
-            }*/
-        };
-
-        window.addEventListener("contextmenu", handleContextMenu);
-
-        return () => {
-            window.removeEventListener("contextmenu", handleContextMenu);
-        };
-    }, [mode]); // the mode as dependency is important, otherwise the event listeners are not updated when the mode changes
-
     const handleClickShelf = (e: any, shelf: IShelf) => {
         if (shelf.text === '') {
             return
@@ -85,7 +67,6 @@ function LayoutSurvey({
         }
 
         handleCloseContextMenu()
-        console.log("huh???")
         const stage = e.target.getStage();
         const mousePos = stage.getPointerPosition();
         const stageBox = stage.container().getBoundingClientRect();
@@ -112,7 +93,6 @@ function LayoutSurvey({
                 });
                 setShoppingOrderIndex(prevIndex => {
                     const newIndex = prevIndex + 1;
-                    console.log(newIndex); // Now it should print the updated value
                     checkout.shoppingOrder = newIndex.toString();
                     return newIndex;
                 });
@@ -131,7 +111,6 @@ function LayoutSurvey({
                 if (selectedShelf.shoppingTime === undefined   ) {
                     setShoppingOrderIndex(prevIndex => {
                         const newIndex = prevIndex + 1;
-                        console.log(newIndex); // Now it should print the updated value
                         selectedShelf.shoppingOrder = newIndex.toString();
                         return newIndex;
                     });
@@ -180,6 +159,19 @@ function LayoutSurvey({
 
     return (
         <>
+            {contextMenu.visible && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 4,
+                    }}
+                    onClick={handleCloseContextMenu}
+                />
+            )}
             <PolygonCanvas
                 activeDoorPoint={activeDoorPoint}
                 referenceLine={referenceLine}
@@ -200,16 +192,20 @@ function LayoutSurvey({
                 onCheckoutClick={handleClickCheckout}
                 onDeleteCheckout={handleCheckoutRightClick}
             />
-            <ContextMenu
-                mode={mode}
-                visible={contextMenu.visible}
-                x={contextMenu.x}
-                y={contextMenu.y}
-                shelf={contextMenu.shelf}
-                onClose={handleCloseContextMenu}
-                onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.shelf)}
-                globalSelectedShoppingTimes={globalSelectedShoppingTimes}
-            />
+            <div
+                style={{zIndex: 5}}
+            >
+                <ContextMenu
+                    mode={mode}
+                    visible={contextMenu.visible}
+                    x={contextMenu.x}
+                    y={contextMenu.y}
+                    shelf={contextMenu.shelf}
+                    onClose={handleCloseContextMenu}
+                    onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.shelf)}
+                    globalSelectedShoppingTimes={globalSelectedShoppingTimes}
+                />
+            </div>
         </>
     );
 }

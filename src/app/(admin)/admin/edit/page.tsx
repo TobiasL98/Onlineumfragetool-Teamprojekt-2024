@@ -11,7 +11,7 @@ import { ICheckout } from "interfaces/edit/ICheckout";
 import { EditorModes } from "lib/edit/EditorModes";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
-import { useState } from "react";
+import {useEffect, useRef, useState } from "react";
 import {
 	areConfigsDifferent,
 	connectPoints,
@@ -60,12 +60,45 @@ function RadioGroup<T>(
 }
 
 export default function Editor() {
+	const [triggerUpload, setTriggerUpload] = useState(false);
+	const fileUploadButtonRef = useRef<HTMLButtonElement>(null);
+	const [triggerSupermarket, setTriggerSupermarket] = useState(false);
+	const typicalSupermarketButtonRef = useRef<HTMLButtonElement>(null);
+
+	useEffect(() => {
+		const urlParams = new URLSearchParams(window.location.search);
+		const shouldUpload = urlParams.get('upload') === 'true';
+		const shouldSupermarket = urlParams.get('supermarket') === 'true';
+
+		if (shouldUpload) {
+			setTriggerUpload(true);
+		}
+
+		if (shouldSupermarket) {
+			setTriggerSupermarket(true);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (triggerUpload && fileUploadButtonRef.current) {
+			fileUploadButtonRef.current.click();
+			setTriggerUpload(false);
+		}
+	}, [triggerUpload]);
+
+	useEffect(() => {
+		if (triggerSupermarket && typicalSupermarketButtonRef.current) {
+			typicalSupermarketButtonRef.current.click();
+			setTriggerSupermarket(false);
+		}
+	}, [triggerSupermarket]);
+
 	// States for all eflow.json parameter
 	const [defaultParams, setDefaultParams] =
 		useState<IeFlowFile>(DefaultParameter);
 	const [activeConfig, setActiveConfig] = useState<IeFlowFile | null>(null);
 	const [name, setName] = useState<string>(defaultParams.name);
-	const [grid, setGrid] = useState<any>(defaultParams.Grid);
+	//const [grid, setGrid] = useState<any>(defaultParams.Grid);
 
 	// canvas States
 	// here are states that represent the same things as entrances/exits!
@@ -113,9 +146,9 @@ export default function Editor() {
 	const computeConfig = (
 		newName: string,
 		newPolygonCorners: IPolygon,
-		newHoleCorners: IPolygon[],
+		//newHoleCorners: IPolygon[],
 		newDoors: IDoor[],
-		newGrid: any,
+		//newGrid: any,
 		newShelfs: IShelf[],
 		backgroundImagePosition: IBackgroundImagePosition,
 		newCheckouts: ICheckout[],
@@ -124,7 +157,7 @@ export default function Editor() {
 		const configDoors = doors; // TO DO
 		const configDomainpolygon = transformPointlistsToDomainpolygon(
 			newPolygonCorners,
-			newHoleCorners,
+			newShelfs,
 			stageHeight,
 		);
 
@@ -133,9 +166,9 @@ export default function Editor() {
 			Door: configDoors,
 			Shelfs: shelfs,
 			Domainpolygon: configDomainpolygon,
-			Grid: newGrid,
+			//Grid: newGrid,
 			PolygonCorners: newPolygonCorners,
-			HoleCorners: newHoleCorners,
+			//HoleCorners: newHoleCorners,
 			BackgroundImagePosition: backgroundImagePosition,
 			Checkouts: newCheckouts,
 		};
@@ -145,8 +178,8 @@ export default function Editor() {
 	const configFile: IeFlowFile = computeConfig(
 		name,
 		polygonCorners,
-		holePolygons,
-		grid,
+		//holePolygons,
+		//grid,
 		doors,
 		shelfs,
 		backgroundImagePosition,
@@ -183,7 +216,7 @@ export default function Editor() {
 			}
 			const layoutData: IeFlowFile = await response.json();
 			setPolygonCorners(layoutData.PolygonCorners);
-			setHolePolygons(layoutData.HoleCorners);
+			//setHolePolygons(layoutData.HoleCorners);
 			setDoors(layoutData.Door);
 			setShelfs(layoutData.Shelfs);
 			setBackgroundImagePosition(layoutData.BackgroundImagePosition);
@@ -223,12 +256,14 @@ export default function Editor() {
 		});
 	};
 
+
 	let [buttons, selected] = RadioGroup([
 		["W&auml;nde", () => 1],
 		["Eingang", () => 2],
 		["Regale", () => 3],
 		["Kassen", () => 4],
 	]);
+
 	return (
 		<div className="flex grow self-stretch">
 			<div
@@ -250,6 +285,7 @@ export default function Editor() {
 				<div className="space-y-2 border-y-2 border-black">
 					<div className="mx-6 flex flex-col space-y-3 py-4">
 						<FileUploadButton
+							ref={fileUploadButtonRef}
 							onFileUpload={handleFileUpload}
 							onFileClear={handleFileClear}
 							uploadedFile={uploadedFile}
@@ -257,6 +293,7 @@ export default function Editor() {
 							onClick={() => setEditorMode(EditorModes.image)}
 						/>
 						<TypicalSupermarketButton
+							ref={typicalSupermarketButtonRef}
 							onFileUpload={handleSupermarketUpload}
 							onFileClear={handleReset}
 							editorMode={editorMode}
