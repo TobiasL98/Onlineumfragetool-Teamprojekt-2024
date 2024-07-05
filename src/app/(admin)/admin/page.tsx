@@ -18,13 +18,13 @@ export default function AdminHome() {
 				</p>
 			</div>
 			<div className="flex items-center justify-center space-x-16">
-				<Link href="/admin/edit" className="h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
+				<Link href="/admin/edit" className="flex h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
 					Neues Layout erstellen
 				</Link>
-				<Link href="/admin/edit?upload=true" className="h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
+				<Link href="/admin/edit?upload=true" className="flex h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
 					Eigene Vorlage hochladen
 				</Link>
-				<Link href="/admin/edit?supermarket=true" className="h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
+				<Link href="/admin/edit?supermarket=true" className="flex h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
 					Mit typischer Vorlage starten
 				</Link>
 			</div>

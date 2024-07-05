@@ -4,7 +4,7 @@
 
 @layer components {
 	.link-button {
-		@apply cursor-pointer border-2 border-buttonBorderColor bg-buttonBackgroundColor p-1 px-3 px-4  font-mono text-buttonBorderColor hover:border-[--hover-color] hover:text-[--hover-color];
+		@apply cursor-pointer border-2 border-buttonBorderColor bg-buttonBackgroundColor p-1 px-4  font-mono text-buttonBorderColor hover:border-[--hover-color] hover:text-[--hover-color];
 	}
 }
 
