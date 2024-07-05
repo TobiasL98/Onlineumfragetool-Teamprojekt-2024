@@ -5,7 +5,10 @@ import Headline from "components/Headline";
 function Button({ text }: { text: string }) {
 	if (text === "Neues Layout erstellen") {
 		return (
-			<Link href="/admin/edit" className="h-32 w-40 flex items-center text-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2">
+			<Link
+				href="/admin/edit"
+				className="flex h-32 w-40 items-center whitespace-normal text-wrap rounded-3xl border-2 border-borderSeparatorColor bg-borderBackgroundColor p-2 text-center"
+			>
 				{text}
 			</Link>
 		);
@@ -39,7 +42,7 @@ export default function AdminHome() {
 			</div>
 			<div className="flex items-center justify-center space-x-16">
 				{buttons.map((e) => {
-					return <Button text={e} />;
+					return <Button key={e} text={e} />;
 				})}
 			</div>
 		</div>
