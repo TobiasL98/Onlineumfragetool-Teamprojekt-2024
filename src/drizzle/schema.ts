@@ -1,4 +1,3 @@
-import { diet } from "app/(user)/(survey)/FormContext";
 import { pgTable, uuid, varchar, time, numeric, integer, jsonb } from "drizzle-orm/pg-core";
 
 export const UserTable = pgTable("user", {

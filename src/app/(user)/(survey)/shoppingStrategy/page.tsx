@@ -105,54 +105,6 @@ export default function ShoppingStrategyPage() {
 			</div>
 			<div className="h-65 flex">
 				<div className="w-25-percent m-5 ml-7 flex flex-col justify-between">
-					{/*<form className="p-4 flex flex-col rounded-3xl bg-borderBackgroundColor jjustify-space-around m-5 ml-8">
-							<div className="flex flex-col my-3">
-								<h3 className="font-mono mb-3 font-semibold font-semibold text-center">
-									Aufenthaltsdauer
-								</h3>
-								<p className="mb-3 flex-grow border-b border-b-borderSeparatorColor"></p>
-								<div className="flex flex-col">
-									<small className="m-2">
-										<label className="flex items-center">
-											<input
-												type="radio"
-												name="short"
-												value="short"
-												checked={selectedTime === "short"}
-												onClick={() => setSelectedTime(prev => prev === "short" ? "" : "short")}
-												className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-											/>
-											Kurz (&lt; 2min)
-										</label>
-									</small>
-									<small className="m-2">
-										<label className="flex items-center">
-											<input
-												type="radio"
-												name="middle"
-												value="middle"
-												checked={selectedTime === "middle"}
-												onClick={() => setSelectedTime(prev => prev === "middle" ? "" : "middle")}
-												className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-											/>
-											Mittel (2 - 5min)
-										</label>
-									</small>
-									<small className="m-2">
-										<label className="flex items-center">
-											<input
-												type="radio"
-												name="long"
-												value="long"
-												checked={selectedTime === "long"}
-												onClick={() => setSelectedTime(prev => prev === "long" ? "" : "long")}
-												className="mr-2 rounded-lg border border-inputBorderColor bg-inputBackgroundColor text-inputBorderColor focus:outline-none"
-											/> Lang (5min &lt;)
-										</label>
-									</small>
-								</div>
-							</div>
-						</form>*/}
 					<div className="flex flex-col rounded-3xl bg-borderBackgroundColor p-4">
 						<div className="font-small mb-2 mt-2">
 							Mit einem Klick können Sie Schritt für Schritt Ihre
