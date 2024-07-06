@@ -21,7 +21,7 @@ import {
   buyingFor,
   occupation,
 } from "../FormContext";
-import Link from "next/link";
+import { useRouter } from "next/navigation"; // Import useRouter from next/navigation
 
 const Error = forwardRef<HTMLDivElement, { text: string }>((props, ref) => {
   return (
@@ -40,10 +40,7 @@ function Separator({
   ...rest
 }: HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p
-      className="w-full border-t border-t-borderSeparatorColor"
-      {...rest}
-    ></p>
+    <p className="w-full border-t border-t-borderSeparatorColor" {...rest}></p>
   );
 }
 
@@ -67,6 +64,7 @@ export default function Survey() {
   const allergiesRef = useRef<HTMLDivElement>(null);
   const typedAllergiesRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter(); // Initialize useRouter
 
   const optionMapper = (x: FormObject) => {
     return (
@@ -121,12 +119,54 @@ export default function Survey() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Perform validation
+    const time = selectedTimeRef.current!;
+    let timeError = timeRequiredErrorRef.current!;
+    const error = <T extends HTMLElement>(cond: boolean, element?: T) => {
+      if (cond) {
+        element && (element.style.display = "block");
+        e.preventDefault();
+      }
+    };
+    error(time.selectedIndex === 0, timeError);
+    error(
+      days.every((x) => {
+        return !(formState as any)[x.value];
+      }),
+      daysRequiredErrorRef.current!
+    );
+    const typedAllergies = typedAllergiesRef.current!.querySelector("input")!;
+    const typedAllergyFormat = typedAllergiesFormatErrorRef.current!;
+    error(!typedAllergies.checkValidity(), typedAllergyFormat);
+    error(!formRef.current!.checkValidity());
+
+    // If validation fails, return
+    if (
+      time.selectedIndex === 0 ||
+      days.every((x) => !(formState as any)[x.value]) ||
+      !typedAllergies.checkValidity() ||
+      !formRef.current!.checkValidity()
+    ) {
+      return;
+    }
+
+    // Prepare form data
     const formData = {
-      days: days.filter((day) => (formState as any)[day.value]).map((day) => day.value),
+      days: days.filter(day => (formState as any)[day.value]).map(day => day.value),
       time: formState.time,
-      // Füge hier weitere Felder hinzu, die du speichern möchtest
+      age: formState.age,
+      sex: formState.sex,
+      diet: formState.diet,
+      occupation: formState.occupation,
+      buyingFor: buyingFor.filter(item => (formState as any)[item.value]).map(item => ({
+        type: item.value,
+        count: (formState as any)[item.value],
+      })),
+      allergies: allergies.filter(item => (formState as any)[item.value]).map(item => item.value),
+      otherAllergies: formState.otherAllergies,
     };
 
+    // Submit form data
     const response = await fetch('/api/saveSurvey', {
       method: 'POST',
       headers: {
@@ -136,7 +176,7 @@ export default function Survey() {
     });
 
     if (response.ok) {
-      alert('Data saved successfully!');
+      router.push('/shoppingStrategy'); // Redirect to the next page
     } else {
       alert('Failed to save data.');
     }
@@ -165,40 +205,15 @@ export default function Survey() {
                 text="* Bitte wählen Sie mindestens eine Option."
               />
               <small className="mb-5 mt-3 flex flex-wrap pl-5 pr-8 text-center">
-                {(() => {
-                  let dayCheckboxes = days.slice(0, -1).map(
-                    checkboxMapper(
-                      "days",
-                      (e: ChangeEvent<HTMLInputElement>) => {
-                        daysRequiredErrorRef.current!.style.display = "none";
-                        onChange(e);
-                      },
-                      formState.noPreferredDay
-                    )
-                  );
-                  let noPreferredDay = days.slice(-1).map(
-                    checkboxMapper(
-                      "days",
-                      (e: ChangeEvent<HTMLInputElement>) => {
-                        const self = e.target as HTMLInputElement;
-                        if (self.checked) {
-                          let updateState: any = {
-                            ...formState,
-                          };
-                          dayCheckboxes.forEach((x) => {
-                            let boxProps = x.props.children[0].props as React.InputHTMLAttributes<HTMLInputElement>;
-                            updateState[boxProps.value as string] = false;
-                          });
-                          onChange(e, updateState);
-                        } else {
-                          onChange(e);
-                        }
-                        daysRequiredErrorRef.current!.style.display = "none";
-                      }
-                    )
-                  );
-                  return dayCheckboxes.concat(noPreferredDay);
-                })()}
+                {days.map(
+                  checkboxMapper(
+                    "days",
+                    (e: ChangeEvent<HTMLInputElement>) => {
+                      daysRequiredErrorRef.current!.style.display = "none";
+                      onChange(e);
+                    },
+                  ),
+                )}
               </small>
               <div className="hint flex p-1 pl-5 text-left opacity-30">
                 <p className="mr-1 font-bold">Hinweis: </p>
@@ -301,10 +316,12 @@ export default function Survey() {
                     <Select
                       name="diet"
                       className="ml-2 p-2"
-                      defaultValue={formState.diet}
+                      defaultValue={formState.diet.length == 0 ? "X" : formState.diet}
                       onChange={onChange}
                     >
-                      <option value="">Bitte w&auml;hlen</option>
+                      <option disabled value="X">
+                        Bitte w&auml;hlen
+                      </option>
                       {diet.map(optionMapper)}
                     </Select>
                   </Label>
@@ -314,10 +331,12 @@ export default function Survey() {
                     <Select
                       name="occupation"
                       className="ml-2 p-2"
-                      defaultValue={formState.occupation}
+                      defaultValue={formState.occupation.length == 0 ? "X" : formState.occupation}
                       onChange={onChange}
                     >
-                      <option value="">Bitte w&auml;hlen</option>
+                      <option disabled value="X">
+                        Bitte w&auml;hlen
+                      </option>
                       {occupation.map(optionMapper)}
                     </Select>
                   </Label>
@@ -381,7 +400,9 @@ export default function Survey() {
                       )}
                     </div>
                     <div>
-                      {[allergies[allergies.length - 2]].map(
+                      {[
+                        allergies[allergies.length - 2],
+                      ].map(
                         checkboxMapper(
                           "allergies",
                           (e: ChangeEvent<HTMLInputElement>) => {
@@ -431,37 +452,13 @@ export default function Survey() {
       </form>
       <div className="m-5 flex w-4/5 grow justify-between">
         <div></div>
-        <Link
-          href="/shoppingStrategy"
+        <button
+          type="submit"
           className="link-button"
-          onClick={(e) => {
-            formRef.current!.requestSubmit();
-            const time = selectedTimeRef.current!;
-            let timeError = timeRequiredErrorRef.current!;
-            const error = <T extends HTMLElement>(
-              cond: boolean,
-              element?: T
-            ) => {
-              if (cond) {
-                element && (element.style.display = "block");
-                e.preventDefault();
-              }
-            };
-            error(time.selectedIndex === 0, timeError);
-            error(
-              days.every((x) => {
-                return !(formState as any)[x.value];
-              }),
-              daysRequiredErrorRef.current!
-            );
-            const typedAllergies = typedAllergiesRef.current!.querySelector("input")!;
-            const typedAllergyFormat = typedAllergiesFormatErrorRef.current!;
-            error(!typedAllergies.checkValidity(), typedAllergyFormat);
-            error(!formRef.current!.checkValidity());
-          }}
+          onClick={handleSubmit}
         >
           Weiter
-        </Link>
+        </button>
       </div>
     </div>
   );

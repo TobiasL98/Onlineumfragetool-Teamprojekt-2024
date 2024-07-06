@@ -1,12 +1,18 @@
-import { pgTable, uuid, varchar, time, numeric } from "drizzle-orm/pg-core";
+import { diet } from "app/(user)/(survey)/FormContext";
+import { pgTable, uuid, varchar, time, numeric, integer, jsonb } from "drizzle-orm/pg-core";
 
 export const UserTable = pgTable("user", {
-  userID: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 255 }).notNull(), 
-  days: varchar("days", { length: 255 }).array(),  // Array für die Tage
-  time: varchar("time", { length: 255 })
-});
-
+    userID: uuid("id").primaryKey().defaultRandom(),
+    days: varchar("days", { length: 255 }),  // JSON Array
+    time: varchar("time", { length: 255 }),
+    age: integer("age"),
+    sex: varchar("sex", { length: 255 }),
+    diet: varchar("diet", { length: 255 }),
+    occupation: varchar("occupation", { length: 255 }),
+    buyingFor: jsonb("buyingFor"),
+    allergies: jsonb("allergies"),
+    otherAllergies: varchar("otherAllergies", { length: 255 }),
+  });
 export const PointTable = pgTable("point", {
   pointID: uuid("pointId").primaryKey().defaultRandom(),
   coordinates: varchar("coordinates", { length: 255 }).notNull(),

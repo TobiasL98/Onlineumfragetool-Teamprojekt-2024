@@ -1,5 +1,5 @@
 {
-  "id": "f29401b9-b6e1-494e-a97a-e6d46c6d4466",
+  "id": "a37471fe-a4b1-4ef9-874d-603c47f7eba1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -291,20 +291,56 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "days": {
           "name": "days",
-          "type": "varchar(255)[]",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
         "time": {
           "name": "time",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sex": {
+          "name": "sex",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "diet": {
+          "name": "diet",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "occupation": {
+          "name": "occupation",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "buyingFor": {
+          "name": "buyingFor",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "allergies": {
+          "name": "allergies",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "otherAllergies": {
+          "name": "otherAllergies",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false

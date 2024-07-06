@@ -6,14 +6,18 @@ DROP TABLE IF EXISTS "shelf" CASCADE;
 DROP TABLE IF EXISTS "supermarket" CASCADE;
 DROP TABLE IF EXISTS "user" CASCADE;
 
--- Create tables
 CREATE TABLE IF NOT EXISTS "user" (
     "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-    "name" varchar(255) NOT NULL,
-	"days" varchar(255) NOT NULL,
-	"time" varchar(255) NOT NULL
+    "days" varchar(255) NOT NULL,
+    "time" varchar(255) NOT NULL,
+    "age" INTEGER,
+    "sex" VARCHAR(10),
+    "diet" VARCHAR(50),
+    "occupation" VARCHAR(50),
+    "buyingFor" JSONB,
+    "allergies" JSONB,
+    "otherAllergies" VARCHAR(255)
 );
-
 CREATE TABLE IF NOT EXISTS "point" (
     "pointId" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
     "coordinates" varchar(255) NOT NULL,
