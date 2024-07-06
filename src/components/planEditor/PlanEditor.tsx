@@ -8,7 +8,7 @@ import { IShelf } from "interfaces/edit/IShelf";
 import { ICheckout } from "interfaces/edit/ICheckout";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { EditorModes } from "lib/edit/EditorModes";
-import { IDoor, IExit } from "interfaces/edit/IDoor";
+import { IDoor, IEntrance} from "interfaces/edit/IDoor";
 import { IReferenceLine } from "interfaces/edit/IReferenceLine";
 import { Vector } from "lib/geometry/vector";
 import { IBackgroundImagePosition } from "interfaces/edit/IBackgroundImagePosition";
@@ -150,16 +150,15 @@ function PlanEditor({
             const doorVector = new Vector(activeDoorPoint.point, projectedPoint)
 
             const numberOfDoors = doors.length + 1
-            // all doors are initially exits
-            const newExit: IExit = {
-                type: "exit",
+            // all doors are initially entrances
+            const newEntrance: IEntrance = {
+                type: "entrance",
                 wallId: id,
                 name: "door",
                 vector: doorVector,
-                weight: 1,
                 hover: false
             }
-            handleDoorChange([...doors, newExit])
+            handleDoorChange([...doors, newEntrance])
             setActiveDoorPoint(null)
             setClickedLine(null)
         } else {
@@ -374,7 +373,7 @@ function PlanEditor({
             console.warn("The EditorMode does not support deleting shelfs");
             return
         }
-        const newGlobalSelectedItems = globalSelectedItems.filter(item => !shelfDelete.selectedItems.includes(item));
+        const newGlobalSelectedItems = globalSelectedItems.filter(item => !shelfDelete.selectedItems?.includes(item));
         setGlobalSelectedItems(newGlobalSelectedItems);
 
         const newShelfs = shelfs.filter((shelf) => shelfDelete !== shelf);
@@ -602,7 +601,6 @@ function PlanEditor({
     }
 
     const handleMenuItemClick = (itemText: string, selectedShelf: IShelf | null) => {
-        console.log("success")
         if (selectedShelf) {
             if (mode === EditorModes.shelfs) {
                 if (selectedShelf.text) {
@@ -610,12 +608,12 @@ function PlanEditor({
                 }
 
                 const isItemSelectedInOtherShelf = shelfs.some(shelf =>
-                    shelf.id !== selectedShelf.id && shelf.selectedItems.includes(itemText)
+                    shelf.id !== selectedShelf.id && shelf.selectedItems?.includes(itemText)
                 );
 
                 if (itemText !== selectedShelf.text && !isItemSelectedInOtherShelf) {
                     selectedShelf.text = itemText;
-                    selectedShelf.selectedItems.push(itemText);
+                    selectedShelf.selectedItems?.push(itemText);
                     setGlobalSelectedItems(prevItems => [...prevItems, itemText]);
                 }
             }
@@ -655,16 +653,33 @@ function PlanEditor({
                 onCornerMove={handleMoveCornerWrapper}
                 onImageUpdate={handleImageMoved}
             />
-            <ContextMenu
-                mode={mode}
-                visible={contextMenu.visible}
-                x={contextMenu.x}
-                y={contextMenu.y}
-                shelf={contextMenu.shelf}
-                onClose={handleCloseContextMenu}
-                onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.shelf)}
-                globalSelectedItems={globalSelectedItems} 
-            />
+            {contextMenu.visible && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 0,
+                    }}
+                    onClick={handleCloseContextMenu}
+                />
+            )}
+            <div
+                style={{zIndex: 999}}
+            >
+                <ContextMenu
+                    mode={mode}
+                    visible={contextMenu.visible}
+                    x={contextMenu.x}
+                    y={contextMenu.y}
+                    shelf={contextMenu.shelf}
+                    onClose={handleCloseContextMenu}
+                    onMenuItemClick={(itemText) => handleMenuItemClick(itemText, contextMenu.shelf)}
+                    globalSelectedItems={globalSelectedItems}
+                />
+            </div>
         </>
     );
 }

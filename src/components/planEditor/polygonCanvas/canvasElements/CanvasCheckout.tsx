@@ -23,8 +23,8 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
     const iconRef = useRef<Konva.Group | null>(null);
     const pathRef = useRef<Konva.Path | null>(null);
     const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
-    const [refreshIconWidth, setRefreshIconWidth] = useState(0);
-    const [refreshIconHeight, setRefreshIconHeight] = useState(0);
+    const [iconWidth, setRefreshIconWidth] = useState(0);
+    const [iconHeight, setRefreshIconHeight] = useState(0);
     const [hover, setHover] = useState(false);
     const highlighted =  (mode === EditorModes.checkouts) ||  ((mode === EditorModes.image)  && hover == true);
 
@@ -62,19 +62,40 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
 
         checkoutRect.id(checkout.id)
 
-        const centerX = checkoutRect.x()
-        const centerY = checkoutRect.y()
-
-        console.log("checkoutRect.x: " + checkoutRect.x(), "checkout.x: " + checkout.polygon.x)
-
-        const dx = mousePos.x - centerX;
-        const dy = mousePos.y - centerY;
+        const dx = mousePos.x - checkoutRect.x();
+        const dy = mousePos.y - checkoutRect.y();
         const newRotation = Math.atan2(dy, dx) * 180 / Math.PI;
 
         checkout.polygon.rotation = newRotation;
         checkoutRect.rotation(newRotation);
 
-        if (checkoutRect.offsetX() === 0) {
+        if (iconRef.current) {
+            iconRef.current.position({
+                x: checkout.polygon.x,
+                y: checkout.polygon.y
+            });
+            iconRef.current.rotation(newRotation);
+            iconRef.current.offsetX(- checkout.polygon.width / 2 + iconWidth);
+            iconRef.current.offsetY(iconHeight * 2);
+        }
+
+        if (textRef.current) {
+            textRef.current.rotation(newRotation);
+        }
+
+        const textX = checkout.polygon.x
+        const textY = checkout.polygon.y
+        checkout.textPosition = { x: textX, y: textY};
+
+
+        console.log("textPosition: ", checkout.textPosition)
+      /*
+       //const centerX = checkoutRect.x()
+        //const centerY = checkoutRect.y()
+        //const dx = mousePos.x - centerX;
+        //const dy = mousePos.y - centerY;
+
+      if (checkoutRect.offsetX() === 0) {
             const offsetX = checkout.polygon.width / 2;
             const offsetY = checkout.polygon.height / 2;
 
@@ -85,15 +106,17 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
             checkoutRect.y(checkout.polygon.y + offsetY);
         }
 
+        const offsetX = checkout.polygon.width / 2;
+        const offsetY = checkout.polygon.height / 2;
         const radius = checkoutRect.height() / 2
         const angleInRadians = Konva.Util.degToRad(newRotation - 90);
 
-        const rotatedIconX = centerX +  radius * Math.cos(angleInRadians);
-        const rotatedIconY = centerY + radius * Math.sin(angleInRadians);
+        const rotatedIconX = centerX + radius * Math.cos(angleInRadians);
+        const rotatedIconY = centerY +  radius * Math.sin(angleInRadians);
 
         if (iconRef.current) {
-            iconRef.current.offsetX(refreshIconWidth)
-            iconRef.current.offsetY(refreshIconHeight * 2)
+            iconRef.current.offsetX(iconWidth)
+            iconRef.current.offsetY(iconHeight * 2)
             iconRef.current.position({
                 x: rotatedIconX,
                 y: rotatedIconY
@@ -101,21 +124,18 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
             iconRef.current.rotation(newRotation);
         }
 
-        const textPositionX = checkout.polygon.x
-        const textPositionY = checkout.polygon.y
-
-        checkout.textPosition = { x: textPositionX, y: textPositionY };
-
         if (textRef.current && checkout.textPosition) {
+            const textPositionX = checkout.polygon.x
+            const textPositionY = checkout.polygon.y
+            checkout.textPosition = { x: textPositionX, y: textPositionY };
             textRef.current.position(checkout.textPosition);
-        }
+            textRef.current.rotation(newRotation)
+        }*/
 
-        console.log("offsetX: " + checkoutRect.offsetX(), "offsetY: " + checkoutRect.offsetY())
-       console.log("checkout.polygon.x: " + checkout.polygon.x, "checkout.polygon.y: " + checkout.polygon.y, "checkout.polygon.width: " + checkout.polygon.width, "checkout.polygon.height: " + checkout.polygon.height)
-        onChange(checkout);
+         onChange(checkout);
     };
 
-    const handleRotateEnd = (e: Konva.KonvaEventObject<DragEvent>) => {
+    /*const handleRotateEnd = (e: Konva.KonvaEventObject<DragEvent>) => {
         const icon = e.target as Konva.Group;
         const checkoutRect = icon.getParent()!.getChildren().find(child => child.name() === checkout.name);
         if (checkoutRect && checkoutRect.offsetX() !== 0) {
@@ -145,8 +165,8 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
             console.log("checkout.polygon.x: " + checkout.polygon.x, "checkout.polygon.y: " + checkout.polygon.y)
             console.log("checkoutRect.x: " + checkoutRect.x(), "checkoutRect.y: " + checkoutRect.y())
 
-            const newIconX = icon.x() - refreshIconWidth * cosTheta + refreshIconHeight * 2 * sinTheta
-            const newIconY = icon.y() - refreshIconWidth * sinTheta - refreshIconHeight * 2 * cosTheta
+            const newIconX = icon.x() - iconWidth * cosTheta + iconHeight * 2 * sinTheta
+            const newIconY = icon.y() - iconWidth * sinTheta - iconHeight * 2 * cosTheta
 
             if (icon) {
                icon.x(newIconX);
@@ -161,8 +181,8 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
 
             console.log("textref  " + textRef.current!.x() + " " + textRef.current!.y() + "textposition"+ checkout.textPosition!.x + " " + checkout.textPosition!.y)
             //checkout.textPosition = { x: newX, y: newY };*/
-        }
-    }
+       // }
+  //  }
 
     const handleDragStart = (e: Konva.KonvaEventObject<DragEvent>) => {
         const initPos = e.target.getPosition();
@@ -197,20 +217,33 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
 
             if (iconRef.current) {
                 iconRef.current.position({
-                    x: rotatedCircleX - checkout.polygon.width / 2 - refreshIconWidth,
-                    y: rotatedCircleY + checkout.polygon.height / 2 - refreshIconHeight *2,
+                    x: rotatedCircleX - checkout.polygon.width / 2 - iconWidth,
+                    y: rotatedCircleY + checkout.polygon.height / 2 - iconHeight *2,
                 });
                 iconRef.current.rotation(checkout.polygon.rotation!)
             }
+        } else {
+            if (iconRef.current) {
+                // offset changes position icon after drag
+                   // iconRef.current.offsetX(0);
+                   // iconRef.current.offsetX(0);
 
-            checkout.textPosition = {x: restrictedPointX, y: restrictedPointY}
-
-            if (textRef.current && checkout.textPosition) {
-                textRef.current.position(checkout.textPosition);
+                // when dragged (works with below)
+                iconRef.current.position({
+                    x: restrictedPointX,
+                    y: restrictedPointY
+                });
+                iconRef.current.rotation(checkout.polygon.rotation!);
             }
 
-        } else {
-            const notRotatedCenterX = checkout.polygon.x  - checkout.polygon.width / 2;
+        }
+        checkout.textPosition = {x: restrictedPointX, y: restrictedPointY};
+
+        if (textRef.current && checkout.textPosition) {
+            textRef.current.position(checkout.textPosition);
+        }
+
+            /*const notRotatedCenterX = checkout.polygon.x  - checkout.polygon.width / 2;
             const notRotatedCenterY = checkout.polygon.y - checkout.polygon.height / 2;
 
             //const centerX = restrictedPointX + checkout.polygon.width / 2;
@@ -218,8 +251,6 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
 
             //const rotatedCenterX = centerX;
             //const rotatedCenterY = centerY;
-
-
 
             if (textRef.current && checkout.textPosition) {
                 textRef.current.position({
@@ -231,7 +262,7 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
                 x: notRotatedCenterX ,//- 40,
                 y: notRotatedCenterY //+ 300 // + 300 had no effect lol ???
             };
-        }
+        }*/
 
          onChange(checkout);
     };
@@ -268,13 +299,13 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
             {mode === EditorModes.checkouts && (
                 <Group
                     ref={iconRef}
-                    x={checkout.polygon.x + checkout.polygon.width / 2 - refreshIconWidth}
-                    y={checkout.polygon.y - refreshIconHeight * 2}
+                    x={checkout.polygon.x + checkout.polygon.width / 2 - iconWidth}
+                    y={checkout.polygon.y - iconHeight * 2}
                     draggable
                     dragOnTop={false}
                     onDragStart={handleRotateStart}
                     onDragMove={handleRotateMove}
-                    onDragEnd={handleRotateEnd}
+                    //onDragEnd={handleRotateEnd}
                 >
                     <Path
                         ref={pathRef}
@@ -296,17 +327,20 @@ export default function CanvasCheckout({ checkout, scale, onDelete = () => { ret
                 width={checkout.polygon.width}
                 height={checkout.polygon.height}
                 listening={false}
+                rotation={checkout.polygon.rotation}
             />
             {mode === EditorModes.image && checkout.shoppingOrder !== undefined  && (
                 <Text
+                    rotation={checkout.polygon.rotation}
                     ref={textRef}
-                    x={checkout.polygon.x}
-                    y={checkout.polygon.y + 20}
+                    x={checkout.polygon.x}/// - 20 * Math.cos(Konva.Util.degToRad(checkout.polygon.rotation! - 90))}
+                    y={checkout.polygon.y}// + 20 * Math.sin(Konva.Util.degToRad(checkout.polygon.rotation! - 90))}
                     text={`${checkout.shoppingOrder}.`}
                     fontSize={14}
                     fill={highlighted ? "white" : "orange"}
-                    align='center'
-                    verticalAlign='middle'
+                    //align='center'
+                    //verticalAlign='middle'
+                    padding={7}
                     width={checkout.polygon.width}
                     height={checkout.polygon.height}
                     listening={false}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {forwardRef, useState } from 'react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
 
 import { IconTrash } from "../icons/IconTrash";
@@ -11,7 +11,8 @@ interface TypicalSupermarketButtonProps {
     editorMode: EditorModes
 }
 
-const TypicalSupermarketButton: React.FC<TypicalSupermarketButtonProps> = ({ onClick, onFileUpload, onFileClear, editorMode }) => {
+const TypicalSupermarketButton = forwardRef<HTMLButtonElement, TypicalSupermarketButtonProps>((props, ref) => {
+    const { onClick, onFileUpload, onFileClear, editorMode } = props;
     const [isClicked, setIsClicked] = useState(false); // New state variable
 
     const handleClearImage = (event: React.MouseEvent) => {
@@ -27,7 +28,7 @@ const TypicalSupermarketButton: React.FC<TypicalSupermarketButtonProps> = ({ onC
 
     return (
         <div className="relative inline-block w-full pb-1" onClick={onClick}>
-            <button
+            <button ref={ref}
                 className={`border-2 border-inputBorderColor bg-inputBackgroundColor text-sm w-full rounded-none py-2 px-4 flex items-center mb-0.5  hover:border-[--hover-color] hover:text-[--hover-color] hover:bg-inputBorderColor
         ${editorMode === EditorModes.image ? 'border-inputBackGroundColor' : ''} ${isClicked ? 'border-[--hover-color] bg-inputBorderColor text-[--hover-color]' : 'bg-bg-eFlow'}  `}
                 onClick={handleClick}
@@ -53,6 +54,8 @@ const TypicalSupermarketButton: React.FC<TypicalSupermarketButtonProps> = ({ onC
             </button>
         </div>
     );
-};
+});
+
+TypicalSupermarketButton.displayName = 'TypicalSupermarketButton';
 
 export default TypicalSupermarketButton;

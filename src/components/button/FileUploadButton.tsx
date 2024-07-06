@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {forwardRef, useRef, useState } from 'react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
 
 import { IconTrash } from "../icons/IconTrash";
@@ -13,7 +13,9 @@ interface FileUploadButtonProps {
     editorMode: EditorModes
 }
 
-const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onClick, onFileUpload, onFileClear, uploadedFile, editorMode }) => {
+const FileUploadButton = forwardRef<HTMLButtonElement, FileUploadButtonProps>((props, ref) => {
+    const { onClick, onFileUpload, onFileClear, uploadedFile, editorMode } = props;
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +46,8 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onClick, onFileUplo
                 className="sr-only"
                 key={uploadedFile?.name}
             />
-            <button
-                className={`border-2 border-inputBorderColor bg-inputBackgroundColor text-sm w-full rounded-none py-2 px-4 flex items-center mb-0.5  hover:border-[--hover-color] hover:text-[--hover-color] hover:bg-inputBorderColor 
+            <button ref={ref}
+                    className={`border-2 border-inputBorderColor bg-inputBackgroundColor text-sm w-full rounded-none py-2 px-4 flex items-center mb-0.5  hover:border-[--hover-color] hover:text-[--hover-color] hover:bg-inputBorderColor 
         ${editorMode === EditorModes.image ? 'border-inputBackGroundColor' : ''} ${uploadedFile ? 'border-[--hover-color] bg-inputBorderColor text-[--hover-color]' : 'bg-bg-eFlow'}  `}
                 onClick={handleClick}
             >
@@ -70,6 +72,8 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onClick, onFileUplo
             </button>
         </div>
     );
-};
+});
+
+FileUploadButton.displayName = 'FileUploadButton';
 
 export default FileUploadButton;

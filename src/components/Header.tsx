@@ -1,15 +1,14 @@
 "use client";
 
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Button from "components/Button";
+import { logout } from "lib/actions";
+import { useFormState } from "react-dom";
 
-
-export default function Header({ admin}: { admin: boolean }) {
+export default function Header({ admin }: { admin: boolean }) {
 	const navigation = usePathname();
-
+	const [_, dispatch] = useFormState(logout, undefined);
 	return (
 		<header className="nav-container border-b border-b-[--header-footer-separator-color] bg-[--header-color]  px-6 font-mono">
 			<div className="astro-3ef6ksr2 top-nav-wrap flex justify-between p-4 font-mono text-sm">
@@ -50,17 +49,17 @@ export default function Header({ admin}: { admin: boolean }) {
 									className="astro-3ef6ksr2 display-none flex items-center pl-10 "
 									id="menu-items"
 								>
-									<li className="astro-3ef6ksr2 flex px-5 astro-3ef6ksr2 hover:text-[--hover-color]">
+									<li className="astro-3ef6ksr2 astro-3ef6ksr2 flex px-5 hover:text-[--hover-color]">
 										<Link
-											className={`astro-3ef6ksr2 ${navigation === '/admin/edit' ? 'underline' : ''}`}
+											className={`astro-3ef6ksr2 ${navigation === "/admin/edit" ? "underline" : ""}`}
 											href="/admin/edit"
 										>
 											Neues Layout
 										</Link>
 									</li>
-									<li className="astro-3ef6ksr2 flex px-5 astro-3ef6ksr2 hover:text-[--hover-color]">
+									<li className="astro-3ef6ksr2 astro-3ef6ksr2 flex px-5 hover:text-[--hover-color]">
 										<Link
-											className={`astro-3ef6ksr2 ${navigation === '/admin/results' ? 'underline' : ''}`}
+											className={`astro-3ef6ksr2 ${navigation === "/admin/results" ? "underline" : ""}`}
 											href="/admin/results"
 										>
 											Ergebnisse
@@ -72,12 +71,17 @@ export default function Header({ admin}: { admin: boolean }) {
 					) : null}
 				</div>
 				<div className="astro-3ef6ksr2 flex px-4">
-					<Button className="p-1 px-4 font-mono">
-						<Link href="/login">
-							{/* TODO handle sessions */}
-							{admin ? "Admin Logout" : "Admin Login"}
+					{admin ? (
+						<form action={dispatch}>
+							<Button className="p-1 px-4" type="submit">
+								Admin Logout
+							</Button>
+						</form>
+					) : (
+						<Link className="link-button" href="/login">
+							Admin Login
 						</Link>
-					</Button>
+					)}
 				</div>
 			</div>
 		</header>

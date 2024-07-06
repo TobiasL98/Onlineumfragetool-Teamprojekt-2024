@@ -34,30 +34,36 @@ export const connectPoints = ({ corners, closed }: { corners: Point[], closed: b
     return vectors;
 }
 
-export function movePolygonYCoordinate(outerPolygon: IPolygon, innerPolygons: IPolygon[], stageHeight: number): { outerPolygon: IPolygon, innerPolygons: IPolygon[] } {
+export function movePolygonYCoordinate(outerPolygon: IPolygon, shelfs: IShelf[], stageHeight: number): { outerPolygon: IPolygon, shelfs: IShelf[] } {
     // Move the y coordinate of the outer polygon
     const transformedOuterCorners = outerPolygon.corners.map(point => new Point(point.x, stageHeight - point.y));
     const transformedOuterPolygon: IPolygon = { corners: transformedOuterCorners, closed: outerPolygon.closed };
 
-    // Move the y coordinate of the inner polygons
-    const transformedInnerPolygons: IPolygon[] = innerPolygons.map(innerPolygon => {
-        const transformedInnerCorners = innerPolygon.corners.map(point => new Point(point.x, stageHeight - point.y));
-        return { corners: transformedInnerCorners, closed: innerPolygon.closed };
+    // Move the y coordinate of the shelfs
+    const transformedShelfs: IShelf[] = shelfs.map(shelf => {
+        const { x, y, width, height } = shelf.polygon;
+        const corners = [
+            new Point(x, stageHeight - y), // Top-left corner
+            new Point(x + width, stageHeight - y), // Top-right corner
+            new Point(x + width, stageHeight - (y + height)), // Bottom-right corner
+            new Point(x, stageHeight - (y + height)) // Bottom-left corner
+        ];
+        return { ...shelf, corners: corners };
     });
 
-    return { outerPolygon: transformedOuterPolygon, innerPolygons: transformedInnerPolygons };
+    return { outerPolygon: transformedOuterPolygon, shelfs: transformedShelfs };
 }
 
-export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon, innerPolygons: IPolygon[], stageHeight: number): IDomainPolygon | undefined {
+export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon , shelfs: IShelf[], stageHeight: number): IDomainPolygon | undefined {
     // Check if the outer polygon is closed
     if (!outerPolygon.closed) {
         return undefined;
     }
 
     // Transform/ flip points at the x axis
-    const transformedCoordinates = movePolygonYCoordinate(outerPolygon, innerPolygons, stageHeight)
+    const transformedCoordinates = movePolygonYCoordinate(outerPolygon, shelfs, stageHeight)
     const transOuterPolygon = transformedCoordinates.outerPolygon
-    const transInnerPolygon = transformedCoordinates.innerPolygons
+    const transShelfs = transformedCoordinates.shelfs
     const segmentPoints: number[] = [];
     const pointOrder: number[] = [];
     const holes: { "x": number, "y": number }[] = [];
@@ -78,28 +84,32 @@ export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon, inner
     }
     numPoints += outerNumPoints;
 
-    // Process inner polygons
-    for (const innerPolygon of transInnerPolygon) {
-        // Check if the inner polygon is closed
-        if (!innerPolygon.closed) {
-            continue
-        }
+    // Process shelfs
+    for (const shelf of shelfs) {
+        const { x, y, width, height } = shelf.polygon;
+        const corners = [
+            new Point(x, y), // Top-left corner
+            new Point(x + width, y), // Top-right corner
+            new Point(x + width, (y + height)), // Bottom-right corner
+            new Point(x, (y + height)) // Bottom-left corner
+        ];
 
         // Add the x and y coordinates of the inner points to the segment points array
-        for (const point of innerPolygon.corners) {
+        for (const point of corners) {
             segmentPoints.push(point.x, point.y);
         }
 
         // Update the point order array
-        const innerNumPoints = innerPolygon.corners.length;
+        const innerNumPoints = corners.length;
         for (let i = 0; i < innerNumPoints; i++) {
             pointOrder.push(numPoints + i, numPoints + ((i + 1) % innerNumPoints));
             numSegments++;
         }
         numPoints += innerNumPoints;
 
+        console.log("corners" + JSON.stringify(corners))
         // Calculate the point in the middle of the polygon (centroid)
-        const centroidPoint = calculatePointInsidePolygon(innerPolygon.corners);
+        const centroidPoint = calculatePointInsidePolygon(corners);
         // Add the x and y coordinates of the middle point to the holes array
         holes.push({ "x": centroidPoint.x, "y": centroidPoint.y });
         numHoles++;
@@ -245,10 +255,9 @@ export function transformFromConfigShelfs(shelfsFD: IShelfFD[], stageHeight: num
 
         const shelf: IShelf = {
             text: shelfFD.Name,
-            selectedItems: [],
+            //selectedItems: [],
             name: shelfFD.Name,
             id: nanoid(),
-            //velocity: shelfFD.Velocity,
             polygon: polygon,
             hover: false
         };
