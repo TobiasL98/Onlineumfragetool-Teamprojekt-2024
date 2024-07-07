@@ -223,16 +223,54 @@ export default function Survey() {
 								text="* Bitte wählen Sie mindestens eine Option."
 							/>
 							<small className="mb-5 mt-3 flex flex-wrap pl-5 pr-8 text-center">
-								{days.map(
-									checkboxMapper(
-										"days",
-										(e: ChangeEvent<HTMLInputElement>) => {
-											daysRequiredErrorRef.current!.style.display =
-												"none";
-											onChange(e);
-										},
-									),
-								)}
+								{(() => {
+									let dayCheckboxes = days.slice(0, -1).map(
+										checkboxMapper(
+											"days",
+											(
+												e: ChangeEvent<HTMLInputElement>,
+											) => {
+												daysRequiredErrorRef.current!.style.display =
+													"none";
+												onChange(e);
+											},
+											formState.noPreferredDay,
+										),
+									);
+									let noPreferredDay = days.slice(-1).map(
+										checkboxMapper(
+											"days",
+											(
+												e: ChangeEvent<HTMLInputElement>,
+											) => {
+												const self =
+													e.target as HTMLInputElement;
+												if (self.checked) {
+													let updateState: any = {
+														...formState,
+													};
+													dayCheckboxes.forEach(
+														(x) => {
+															let boxProps = x
+																.props
+																.children[0]
+																.props as React.InputHTMLAttributes<HTMLInputElement>;
+															updateState[
+																boxProps.value as string
+															] = false;
+														},
+													);
+													onChange(e, updateState);
+												} else {
+													onChange(e);
+												}
+												daysRequiredErrorRef.current!.style.display =
+													"none";
+											},
+										),
+									);
+									return dayCheckboxes.concat(noPreferredDay);
+								})()}
 							</small>
 							<div className="hint flex p-1 pl-5 text-left opacity-30">
 								<p className="mr-1 font-bold">Hinweis: </p>
