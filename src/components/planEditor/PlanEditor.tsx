@@ -8,7 +8,7 @@ import { IShelf } from "interfaces/edit/IShelf";
 import { ICheckout } from "interfaces/edit/ICheckout";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { EditorModes } from "lib/edit/EditorModes";
-import { IDoor, IEntrance} from "interfaces/edit/IDoor";
+import { IDoor} from "interfaces/edit/IDoor";
 import { IReferenceLine } from "interfaces/edit/IReferenceLine";
 import { Vector } from "lib/geometry/vector";
 import { IBackgroundImagePosition } from "interfaces/edit/IBackgroundImagePosition";
@@ -148,17 +148,15 @@ function PlanEditor({
             }
             // Add the second point to a vector
             const doorVector = new Vector(activeDoorPoint.point, projectedPoint)
-
-            const numberOfDoors = doors.length + 1
-            // all doors are initially entrances
-            const newEntrance: IEntrance = {
-                type: "entrance",
+            const doorId = nanoid()
+            //const numberOfDoors = doors.length + 1
+            const newDoor: IDoor = {
                 wallId: id,
-                name: "door",
+                name: doorId,
                 vector: doorVector,
                 hover: false
             }
-            handleDoorChange([...doors, newEntrance])
+            handleDoorChange([...doors, newDoor])
             setActiveDoorPoint(null)
             setClickedLine(null)
         } else {

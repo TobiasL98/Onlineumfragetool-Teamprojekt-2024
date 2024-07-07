@@ -94,8 +94,7 @@ export default function Editor() {
 	}, [triggerSupermarket]);
 
 	// States for all eflow.json parameter
-	const [defaultParams, setDefaultParams] =
-		useState<IeFlowFile>(DefaultParameter);
+	const [defaultParams, setDefaultParams] = useState<IeFlowFile>(DefaultParameter);
 	const [activeConfig, setActiveConfig] = useState<IeFlowFile | null>(null);
 	const [name, setName] = useState<string>(defaultParams.name);
 	//const [grid, setGrid] = useState<any>(defaultParams.Grid);

@@ -2,9 +2,9 @@ import { Vector } from "lib/geometry/vector";
 
 
 export interface IDoor {
-    type:  "entrance";
-    wallId: string;
+    //type:  "entrance";
     name: string;
+    wallId: string;
     vector: Vector;
     hover: Boolean;
 }
@@ -14,8 +14,8 @@ export interface IDoor {
     weight: number;
 }*/
 
-export interface IEntrance extends IDoor {
+/*export interface IEntrance extends IDoor {
     type: 'entrance';
-    //personPerSecond: number;
-    //maxPersons: number;
-}
+    personPerSecond: number;
+    maxPersons: number;
+}*/

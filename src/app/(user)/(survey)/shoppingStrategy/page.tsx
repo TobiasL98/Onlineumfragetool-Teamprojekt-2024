@@ -13,11 +13,16 @@ import { IDoor } from "interfaces/edit/IDoor";
 import { IReferenceLine } from "interfaces/edit/IReferenceLine";
 import { Point } from "lib/geometry/point";
 import { IPolygon } from "interfaces/edit/IPolygon";
-import { connectPoints } from "utils/edit/utils";
+import { connectPoints, transformCheckoutToExit, transformDoorToEntrance } from "utils/edit/utils";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import { useForm } from "../FormContext";
 import checkForm from "utils/checkForm";
 import { redirect } from "next/navigation";
+import { ISupermarketFile } from "interfaces/edit/ISupermarketFile";
+import { IConfigEntrance } from "interfaces/edit/IConfigEntrance";
+import { IConfigExit } from "interfaces/edit/IConfigExit";
+
+const stageHeight = 1000;
 
 export default function ShoppingStrategyPage() {
 	const { formState } = useForm();
@@ -63,6 +68,7 @@ export default function ShoppingStrategyPage() {
 	const innerWallsList = holePolygons.map((corners) =>
 		connectPoints(corners),
 	);
+	const [supermarketFile, setSupermarketFile] = useState<ISupermarketFile>()
 
 	useEffect(() => {
 		const fetchConfig = async () => {
@@ -71,9 +77,7 @@ export default function ShoppingStrategyPage() {
 				if (!response.ok) {
 					throw new Error("Failed to fetch config data");
 				}
-				//console.log("response: "+ response.json())
 				const data: IeFlowFile = await response.json();
-				//console.log("data: "+ data.name)
 				setConfigFile(data);
 			} catch (error) {
 				console.error("Error fetching config:", error);
@@ -83,16 +87,79 @@ export default function ShoppingStrategyPage() {
 	}, []);
 
 	useEffect(() => {
-		//console.log("configFile updated:", configFile?.name);
 		if (configFile && configFile.name !== undefined) {
 			setPolygonCorners(configFile.PolygonCorners);
-			//setHolePolygons(configFile.HoleCorners);
 			setDoors(configFile.Door);
 			setShelfs(configFile.Shelfs);
 			setBackgroundImagePosition(configFile.BackgroundImagePosition);
 			setCheckouts(configFile.Checkouts);
+			setSupermarketFile(computeSupermarket(
+				configFile!.name,
+				doors,
+				checkouts,
+				shelfs,
+				configFile!.Domainpolygon,
+				polygonCorners,
+				backgroundImagePosition,
+			))
 		}
 	}, [configFile]);
+
+	const computeSupermarket = (
+		name: string,
+		newEntrance: IDoor[],
+		newExit: ICheckout[],
+		shelf: IShelf[],
+		polygonCorners: IPolygon,
+		domainPolygon: any,
+		backgroundImagePosition: IBackgroundImagePosition,
+	) => {
+		const configEntrance: IConfigEntrance[] = transformDoorToEntrance(
+			newEntrance,
+			stageHeight
+		);
+
+		const configExit: IConfigExit[] = transformCheckoutToExit(
+			newExit,
+			stageHeight
+		);
+
+		const supermarket: ISupermarketFile = {
+			name: name,
+			Entrance: configEntrance,
+			Exit: configExit,
+			Shelf: shelf,
+			Domainpolygon: domainPolygon,
+			PolygonCorners: polygonCorners,
+			BackgroundImagePosition: backgroundImagePosition,
+		};
+		return supermarket;
+	};
+
+	// TO DO: diese funktion dann umbauen, dass auch die userdaten irgendwie mit gespeichert werden
+	// aber da red ich noch mal mit Frau Axthelm drüber wie genau sie das dann haben will
+	// momentan speichert diese funktion das json local als download ab
+	const saveSupermarketData = async (supermarketFile: ISupermarketFile) => {
+		if (supermarketFile !== null) {
+			const formattedJsonStr = JSON.stringify(
+				supermarketFile,
+				null,
+				2,
+			);
+			const blob = new Blob([formattedJsonStr], {
+				type: "application/json",
+			});
+
+			const link = document.createElement("a");
+			link.href = URL.createObjectURL(blob);
+			link.download = supermarketFile.name + ".json";
+			link.click();
+
+			setTimeout(() => {
+				URL.revokeObjectURL(link.href);
+			}, 500);
+		}
+	};
 
 	return (
 		<div className="flex flex-col">
@@ -146,7 +213,16 @@ export default function ShoppingStrategyPage() {
 					) : null}
 				</div>
 				<div className="m-5 mr-7 flex flex-col justify-end">
-					<Link className="link-button flex w-full " href="/thankYou">
+					<Link
+						className="link-button flex w-full "
+						href="/thankYou"
+						onClick={(event) => {
+							event.preventDefault();
+							saveSupermarketData(supermarketFile!).then(() => {
+								window.location.href = "/thankYou";
+							});
+						}}
+					>
 						Fertig
 					</Link>
 				</div>

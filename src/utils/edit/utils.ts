@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
 import { calculatePointInsidePolygon } from "../geometry/utils";
-import {IDoor, IEntrance, IExit } from "interfaces/edit/IDoor";
+import {IDoor, IEntrance} from "interfaces/edit/IDoor";
 import { IShelf } from "interfaces/edit/IShelf";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { IDomainPolygon } from "interfaces/edit/IDomainPolygon";
@@ -12,6 +12,7 @@ import { IConfigExit } from "interfaces/edit/IConfigExit";
 import { IConfigEntrance } from "interfaces/edit/IConfigEntrance";
 import { IShelfFD } from "interfaces/edit/IShelfFD";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
+import { ICheckout } from "interfaces/edit/ICheckout";
 
 
 export const connectPoints = ({ corners, closed }: { corners: Point[], closed: boolean }): Vector[] => {
@@ -125,93 +126,35 @@ export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon , shel
     };
 }
 
-// add if branch for exits/ entrees
-export const splitDoorsToExitEntrances = (doors: IDoor[], stageHeight: number): { exits: IConfigExit[], entrances: IConfigEntrance[] } => {
-    const exits = doors.filter((door) => {
-        if (door.type === "entrance") { return false }
-        return true
-    }).map((door) => {
-        const exit = (door as IExit)
+export const transformDoorToEntrance = (doors: IDoor[], stageHeight: number): IConfigEntrance[] => {
+    return doors.map(door => {
         return {
-            wallId: exit.wallId,
-            name: exit.name ? exit.name : "exit",
-            xr: exit.vector.a.x,
-            yr: stageHeight - exit.vector.a.y,
-            xl: exit.vector.b.x,
-            yl: stageHeight - exit.vector.b.y,
-            weight: exit.weight
-        }
-    })
-
-    const entrances = doors.filter((door) => {
-        if (door.type === "exit") { return false }
-        return true
-    }).map((door) => {
-        const entrance = (door as IEntrance)
-        return {
-            wallId: entrance.wallId,
-            name: entrance.name ? entrance.name : "entrance",
-            xr: entrance.vector.a.x,
-            yr: stageHeight - entrance.vector.a.y,
-            xl: entrance.vector.b.x,
-            yl: stageHeight - entrance.vector.b.y,
-            personPerSecond: entrance.personPerSecond,
-            maxPersons: entrance.maxPersons,
-        }
-    })
-    return { exits, entrances }
-}
-
-export const mergeExitNEntreesToDoors = ({ exits, entrances, stageHeight }: { exits?: IConfigExit[], entrances?: IConfigEntrance[], stageHeight: number }): IDoor[] => {
-    const mergedDoors: IDoor[] = []
-
-    if (exits) {
-        exits.forEach(exit => {
-            const newExit: IExit = {
-                type: "exit",
-                wallId: exit.wallId,
-                name: exit.name ? exit.name : "exit",
-                vector: new Vector(new Point(exit.xr, stageHeight - exit.yr), new Point(exit.xl, stageHeight - exit.yl)),
-                weight: exit.weight,
-                hover: false,
-            }
-            mergedDoors.push(newExit)
-        });
-    }
-
-    if (entrances) {
-        entrances.forEach(entrance => {
-            const newEntrance: IEntrance = {
-                type: "entrance",
-                wallId: entrance.wallId,
-                name: entrance.name ? entrance.name : "entrance",
-                vector: new Vector(new Point(entrance.xr, stageHeight - entrance.yr), new Point(entrance.xl, stageHeight - entrance.yl)),
-                personPerSecond: entrance.personPerSecond,
-                maxPersons: entrance.maxPersons,
-                hover: false,
-            }
-            mergedDoors.push(newEntrance)
-        });
-    }
-    return mergedDoors
-}
-
-/*export const transformToConfigShelfs = (shelfs: IShelf[], stageHeight: number): IShelf[] => {
-    return shelfs.map((shelf) => {
-        const { polygon, name, id, text, selectedItems } = shelf;
-
-        return {
-            name: name,
-            polygon: polygon,
-            id: id,
-            text: text,
-            selectedItems: selectedItems,
+            wallId: door.wallId,
+            name: door.name ? door.name : "entrance",
+            xr: door.vector.a.x,
+            yr: stageHeight - door.vector.a.y,
+            xl: door.vector.b.x,
+            yl: stageHeight - door.vector.b.y,
+            personPerSecond: 0,
+            maxPersons: 0,
         };
     });
-};*/
+}
+
+export const transformCheckoutToExit = (checkouts: ICheckout[], stageHeight: number): IConfigExit[] => {
+    return checkouts.map(checkout => {
+        return {
+            name: checkout.name ? checkout.name : "checkout",
+            xr: 0,
+            yr: 0,
+            xl: 0,
+            yl: 0,
+            weight: 1
+        };
+    });
+}
 
 export const transformToConfigShelfs = (shelfs: IShelf[], stageHeight: number): IShelfFD[] => {
-    console.log("shelf" + shelfs)
     return shelfs.map((shelf) => {
         const { polygon, name } = shelf;
         const { x, y, width, height } = polygon;

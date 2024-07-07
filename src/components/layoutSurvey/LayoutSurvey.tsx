@@ -11,6 +11,8 @@ import { Vector } from "lib/geometry/vector";
 import { IBackgroundImagePosition } from "interfaces/edit/IBackgroundImagePosition";
 import { Point } from "lib/geometry/point";
 import PolygonCanvas from "../planEditor/polygonCanvas/PolygonCanvas";
+import { ISupermarketFile } from "interfaces/edit/ISupermarketFile";
+import { transformPointlistsToDomainpolygon } from "utils/edit/utils";
 
 export interface IPlanEditorProps {
     backgroundImage: null | HTMLImageElement,
@@ -27,6 +29,7 @@ export interface IPlanEditorProps {
     shelfs: IShelf[],
     checkouts: ICheckout[],
 }
+
 
 function LayoutSurvey({
                         backgroundImage,
@@ -120,7 +123,7 @@ function LayoutSurvey({
                     setGlobalSelectedShoppingTimes(prevItems => prevItems.filter(item => item !== selectedShelf.shoppingTime));
                 }
                 selectedShelf.shoppingTime = itemText;
-                selectedShelf.selectedShoppingTimes.push(itemText);
+                selectedShelf.selectedShoppingTimes?.push(itemText);
                 setGlobalSelectedShoppingTimes(prevItems => [...prevItems, itemText]);
             }
         }
