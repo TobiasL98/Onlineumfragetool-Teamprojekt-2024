@@ -13,7 +13,11 @@ import { IDoor } from "interfaces/edit/IDoor";
 import { IReferenceLine } from "interfaces/edit/IReferenceLine";
 import { Point } from "lib/geometry/point";
 import { IPolygon } from "interfaces/edit/IPolygon";
-import { connectPoints, transformCheckoutToExit, transformDoorToEntrance } from "utils/edit/utils";
+import {
+	connectPoints,
+	transformCheckoutToExit,
+	transformDoorToEntrance,
+} from "utils/edit/utils";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import { useForm } from "../FormContext";
 import checkForm from "utils/checkForm";
@@ -68,7 +72,7 @@ export default function ShoppingStrategyPage() {
 	const innerWallsList = holePolygons.map((corners) =>
 		connectPoints(corners),
 	);
-	const [supermarketFile, setSupermarketFile] = useState<ISupermarketFile>()
+	const [supermarketFile, setSupermarketFile] = useState<ISupermarketFile>();
 
 	useEffect(() => {
 		const fetchConfig = async () => {
@@ -93,15 +97,17 @@ export default function ShoppingStrategyPage() {
 			setShelfs(configFile.Shelfs);
 			setBackgroundImagePosition(configFile.BackgroundImagePosition);
 			setCheckouts(configFile.Checkouts);
-			setSupermarketFile(computeSupermarket(
-				configFile!.name,
-				doors,
-				checkouts,
-				shelfs,
-				configFile!.Domainpolygon,
-				//polygonCorners,
-				backgroundImagePosition,
-			))
+			setSupermarketFile(
+				computeSupermarket(
+					configFile!.name,
+					doors,
+					checkouts,
+					shelfs,
+					configFile!.Domainpolygon,
+					//polygonCorners,
+					backgroundImagePosition,
+				),
+			);
 		}
 	}, [configFile]);
 
@@ -116,12 +122,12 @@ export default function ShoppingStrategyPage() {
 	) => {
 		const configEntrance: IConfigEntrance[] = transformDoorToEntrance(
 			newEntrance,
-			stageHeight
+			stageHeight,
 		);
 
 		const configExit: IConfigExit[] = transformCheckoutToExit(
 			newExit,
-			stageHeight
+			stageHeight,
 		);
 
 		const supermarket: ISupermarketFile = {
@@ -141,11 +147,7 @@ export default function ShoppingStrategyPage() {
 	// momentan speichert diese funktion das json local als download ab
 	const saveSupermarketData = async (supermarketFile: ISupermarketFile) => {
 		if (supermarketFile !== null) {
-			const formattedJsonStr = JSON.stringify(
-				supermarketFile,
-				null,
-				2,
-			);
+			const formattedJsonStr = JSON.stringify(supermarketFile, null, 2);
 			const blob = new Blob([formattedJsonStr], {
 				type: "application/json",
 			});
