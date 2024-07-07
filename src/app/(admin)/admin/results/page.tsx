@@ -29,10 +29,9 @@ export default function Results() {
 							</label>
 							<Select name="time" id="time" className="px-2 py-1">
 								{/*TODO*/}
-								<option value="volvo">Volvo</option>
-								<option value="saab">Saab</option>
-								<option value="mercedes">Mercedes</option>
-								<option value="audi">Audi</option>
+								<option value="morgens">morgens</option>
+								<option value="mittags">mittags</option>
+								<option value="abends">abends</option>
 							</Select>
 
 							<label htmlFor="day" className="font-semibold">
@@ -45,7 +44,7 @@ export default function Results() {
 								<option value="thursday">Donnerstag</option>
 								<option value="friday">Freitag</option>
 								<option value="saturday">Samstag</option>
-								<option value="sunday">Sonnabend</option>
+								<option value="sunday">Sonntag</option>
 							</Select>
 						</form>
 						<Headline className="mt-6"></Headline>
