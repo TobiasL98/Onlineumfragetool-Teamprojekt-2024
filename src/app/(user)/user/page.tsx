@@ -26,7 +26,7 @@ export default function UserHome() {
 						Personenflusses in Einkaufzentren zu schaffen.
 					</p>
 					<p className="mb-4">Dauer: ca. 10 Minuten</p>
-					<h3 className="font-semibold">So funktioniert's:</h3>
+					<h3 className="font-semibold">So funktioniert&apos;s:</h3>
 					<p>
 						Beantworten Sie bitte zun&auml;chst einige kurze Fragen
 						zu Ihrer Einkaufssituation. W&auml;hlen Sie im folgenden

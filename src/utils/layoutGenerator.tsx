@@ -10,7 +10,7 @@ export default function DefaultLayout(
 	FooterFun: () => React.ReactNode = () => null,
 ) {
 	let [Header, Footer] = [HeaderFun(), FooterFun()];
-	return ({ children }: { children: React.ReactNode }) => {
+	function HOC({ children }: { children: React.ReactNode }) {
 		return (
 			<html lang="en">
 				<body className="flex min-h-screen flex-col">
@@ -26,5 +26,7 @@ export default function DefaultLayout(
 				</body>
 			</html>
 		);
-	};
+	}
+	HOC.displayName = "Layout";
+	return HOC;
 }
