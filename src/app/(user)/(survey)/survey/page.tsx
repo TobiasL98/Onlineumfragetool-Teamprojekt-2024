@@ -72,16 +72,13 @@ export default function Survey() {
 	const router = useRouter(); // Initialize useRouter
 
 	const optionMapper = (x: FormObject) => {
-		function HOC() {
-			return (
-				<option key={x.value} value={x.value}>
-					{x.label}
-				</option>
-			);
-		}
-		HOC.displayName = "optionMapper";
-		return HOC;
+		return (
+			<option key={x.value} value={x.value}>
+				{x.label}
+			</option>
+		);
 	};
+	optionMapper.displayName = "optionMapper";
 
 	const checkboxMapper = (
 		name: string,
