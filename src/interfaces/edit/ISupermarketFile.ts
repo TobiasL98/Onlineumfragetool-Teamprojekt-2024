@@ -10,6 +10,6 @@ export interface ISupermarketFile {
     Exit: IConfigExit[];
     Shelf: IShelf[];
     Domainpolygon: any;
-    PolygonCorners: IPolygon;
+    //PolygonCorners: IPolygon;
     BackgroundImagePosition: IBackgroundImagePosition;
 }

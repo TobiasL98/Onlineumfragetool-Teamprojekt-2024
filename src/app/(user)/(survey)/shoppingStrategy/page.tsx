@@ -99,7 +99,7 @@ export default function ShoppingStrategyPage() {
 				checkouts,
 				shelfs,
 				configFile!.Domainpolygon,
-				polygonCorners,
+				//polygonCorners,
 				backgroundImagePosition,
 			))
 		}
@@ -110,7 +110,7 @@ export default function ShoppingStrategyPage() {
 		newEntrance: IDoor[],
 		newExit: ICheckout[],
 		shelf: IShelf[],
-		polygonCorners: IPolygon,
+		//polygonCorners: IPolygon,
 		domainPolygon: any,
 		backgroundImagePosition: IBackgroundImagePosition,
 	) => {
@@ -125,12 +125,12 @@ export default function ShoppingStrategyPage() {
 		);
 
 		const supermarket: ISupermarketFile = {
-			name: name,
+			name: name + "_supermarket",
 			Entrance: configEntrance,
 			Exit: configExit,
 			Shelf: shelf,
 			Domainpolygon: domainPolygon,
-			PolygonCorners: polygonCorners,
+			//PolygonCorners: polygonCorners,
 			BackgroundImagePosition: backgroundImagePosition,
 		};
 		return supermarket;

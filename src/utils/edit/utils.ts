@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { Point } from "lib/geometry/point";
 import { Vector } from "lib/geometry/vector";
 import { calculatePointInsidePolygon } from "../geometry/utils";
-import {IDoor, IEntrance} from "interfaces/edit/IDoor";
+import {IDoor} from "interfaces/edit/IDoor";
 import { IShelf } from "interfaces/edit/IShelf";
 import { IPolygon } from "interfaces/edit/IPolygon";
 import { IDomainPolygon } from "interfaces/edit/IDomainPolygon";
@@ -13,6 +13,7 @@ import { IConfigEntrance } from "interfaces/edit/IConfigEntrance";
 import { IShelfFD } from "interfaces/edit/IShelfFD";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import { ICheckout } from "interfaces/edit/ICheckout";
+import Konva from "konva";
 
 
 export const connectPoints = ({ corners, closed }: { corners: Point[], closed: boolean }): Vector[] => {
@@ -35,36 +36,75 @@ export const connectPoints = ({ corners, closed }: { corners: Point[], closed: b
     return vectors;
 }
 
-export function movePolygonYCoordinate(outerPolygon: IPolygon, shelfs: IShelf[], stageHeight: number): { outerPolygon: IPolygon, shelfs: IShelf[] } {
+export function movePolygonYCoordinate(outerPolygon: IPolygon, shelfs: IShelf[], checkouts: ICheckout[], stageHeight: number): { outerPolygon: IPolygon, shelfs: IShelf[], checkouts: ICheckout[]} {
     // Move the y coordinate of the outer polygon
     const transformedOuterCorners = outerPolygon.corners.map(point => new Point(point.x, stageHeight - point.y));
     const transformedOuterPolygon: IPolygon = { corners: transformedOuterCorners, closed: outerPolygon.closed };
 
     // Move the y coordinate of the shelfs
     const transformedShelfs: IShelf[] = shelfs.map(shelf => {
-        const { x, y, width, height } = shelf.polygon;
-        const corners = [
-            new Point(x, stageHeight - y), // Top-left corner
-            new Point(x + width, stageHeight - y), // Top-right corner
-            new Point(x + width, stageHeight - (y + height)), // Bottom-right corner
-            new Point(x, stageHeight - (y + height)) // Bottom-left corner
-        ];
-        return { ...shelf, corners: corners };
+        const newY = stageHeight - shelf.polygon.y;
+        return { ...shelf, polygon: { ...shelf.polygon, y: newY } };
     });
 
-    return { outerPolygon: transformedOuterPolygon, shelfs: transformedShelfs };
+    // Move the y coordinate of the checkouts
+    const transformedCheckouts: ICheckout[] = checkouts.map(checkout => {
+        const newY = stageHeight - checkout.polygon.y;
+        return { ...checkout, polygon: { ...checkout.polygon, y: newY } };
+    });
+
+    return { outerPolygon: transformedOuterPolygon, shelfs: transformedShelfs, checkouts: transformedCheckouts};
 }
 
-export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon , shelfs: IShelf[], stageHeight: number): IDomainPolygon | undefined {
+export function calculateCorners(polygon: IShelf | ICheckout): Point[] {
+    const { x, y, width, height, rotation } = polygon.polygon;
+
+    let shelfCorners: Point[] = [];
+
+    // Taking shelf rotation into consideration
+    if (rotation && rotation !== 0) {
+        const angleInRadians = rotation * Math.PI / 180;
+
+        // Top-left corner (rotation point)
+        const topLeft = new Point(x, y);
+
+        // Calculate other corners considering rotation
+        const topRight = new Point(
+            x - width * Math.cos(angleInRadians),
+            y - width * Math.sin(angleInRadians)
+        );
+        const bottomRight = new Point(
+            x - width * Math.cos(angleInRadians) - height * Math.sin(angleInRadians),
+            y - width * Math.sin(angleInRadians) + height * Math.cos(angleInRadians)
+        );
+        const bottomLeft = new Point(
+            x - height * Math.sin(angleInRadians),
+            y + height * Math.cos(angleInRadians)
+        );
+
+        shelfCorners = [topLeft, topRight, bottomRight, bottomLeft];
+    } else {
+        shelfCorners = [
+            new Point(x, y), // Top-left corner
+            new Point(x + width, y), // Top-right corner
+            new Point(x + width, (y - height)), // Bottom-right corner
+            new Point(x, (y - height)) // Bottom-left corner
+        ];
+    }
+    return shelfCorners;
+}
+
+export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon , shelfs: IShelf[],  checkouts: ICheckout[],  stageHeight: number): IDomainPolygon | undefined {
     // Check if the outer polygon is closed
     if (!outerPolygon.closed) {
         return undefined;
     }
 
     // Transform/ flip points at the x axis
-    const transformedCoordinates = movePolygonYCoordinate(outerPolygon, shelfs, stageHeight)
+    const transformedCoordinates = movePolygonYCoordinate(outerPolygon, shelfs, checkouts, stageHeight)
     const transOuterPolygon = transformedCoordinates.outerPolygon
     const transShelfs = transformedCoordinates.shelfs
+   // const transCheckout = transformedCoordinates.checkouts
     const segmentPoints: number[] = [];
     const pointOrder: number[] = [];
     const holes: { "x": number, "y": number }[] = [];
@@ -86,35 +126,56 @@ export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon , shel
     numPoints += outerNumPoints;
 
     // Process shelfs
-    for (const shelf of shelfs) {
-        const { x, y, width, height } = shelf.polygon;
-        const corners = [
-            new Point(x, y), // Top-left corner
-            new Point(x + width, y), // Top-right corner
-            new Point(x + width, (y + height)), // Bottom-right corner
-            new Point(x, (y + height)) // Bottom-left corner
-        ];
+    for (const shelf of transShelfs) {
+        const shelfCorners = calculateCorners(shelf);
 
         // Add the x and y coordinates of the inner points to the segment points array
-        for (const point of corners) {
+        for (const point of shelfCorners) {
             segmentPoints.push(point.x, point.y);
         }
 
         // Update the point order array
-        const innerNumPoints = corners.length;
+        const innerNumPoints = shelfCorners.length;
         for (let i = 0; i < innerNumPoints; i++) {
             pointOrder.push(numPoints + i, numPoints + ((i + 1) % innerNumPoints));
             numSegments++;
         }
         numPoints += innerNumPoints;
 
-        console.log("corners" + JSON.stringify(corners))
-        // Calculate the point in the middle of the polygon (centroid)
-        const centroidPoint = calculatePointInsidePolygon(corners);
+        // Calculate the point in the middle of the shelf polygon (centroid)
+        const centroidPoint = calculatePointInsidePolygon(shelfCorners);
+
         // Add the x and y coordinates of the middle point to the holes array
         holes.push({ "x": centroidPoint.x, "y": centroidPoint.y });
         numHoles++;
     }
+
+    /*
+    // Process checkouts (to later be able to determine the weighted Vector of the Exit from the checkout corners)
+    for (const checkout of transCheckout) {
+        const checkoutCorners = calculateCorners(checkout);
+
+        /* the part below is not needed for the program, but only to verify the correctness of the checkout corners transformation
+        // Add the x and y coordinates of the inner points to the segment points array
+        for (const point of checkoutCorners) {
+            segmentPoints.push(point.x, point.y);
+        }
+
+        // Update the point order array
+        const innerNumPoints = checkoutCorners.length;
+        for (let i = 0; i < innerNumPoints; i++) {
+            pointOrder.push(numPoints + i, numPoints + ((i + 1) % innerNumPoints));
+            numSegments++;
+        }
+        numPoints += innerNumPoints;
+
+        // Calculate the point in the middle of the checkout polygon (centroid)
+        const centroidPoint = calculatePointInsidePolygon(checkoutCorners);
+
+        // Add the x and y coordinates of the middle point to the holes array
+        holes.push({ "x": centroidPoint.x, "y": centroidPoint.y });
+        numHoles++;
+    }*/
 
     return {
         numberPoints: numPoints,
@@ -165,6 +226,7 @@ export const transformToConfigShelfs = (shelfs: IShelf[], stageHeight: number): 
                 x + width, stageHeight - (y + height),    // Bottom-right corner (flipped y-coordinate)
                 x, stageHeight - (y + height)              // Bottom-left corner (flipped y-coordinate)
             ];
+        console.log("x: " + x + " y: " + y + " width: " + width + " height: " + height)
         return {
             Name: name,
             //Velocity: velocity,

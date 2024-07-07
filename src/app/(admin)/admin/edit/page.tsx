@@ -157,6 +157,7 @@ export default function Editor() {
 		const configDomainpolygon = transformPointlistsToDomainpolygon(
 			newPolygonCorners,
 			newShelfs,
+			newCheckouts,
 			stageHeight,
 		);
 
