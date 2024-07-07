@@ -153,7 +153,7 @@ export default function Editor() {
 		newCheckouts: ICheckout[],
 	) => {
 		//let configShelfs = transformToConfigShelfs(newShelfs, stageHeight)
-		const configDoors = doors; // TO DO
+		const configDoors = doors;
 		const configDomainpolygon = transformPointlistsToDomainpolygon(
 			newPolygonCorners,
 			newShelfs,

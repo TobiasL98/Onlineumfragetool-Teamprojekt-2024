@@ -13,7 +13,6 @@ import { IConfigEntrance } from "interfaces/edit/IConfigEntrance";
 import { IShelfFD } from "interfaces/edit/IShelfFD";
 import { IeFlowFile } from "interfaces/edit/IeFlowFile";
 import { ICheckout } from "interfaces/edit/ICheckout";
-import Konva from "konva";
 
 
 export const connectPoints = ({ corners, closed }: { corners: Point[], closed: boolean }): Vector[] => {
@@ -151,11 +150,10 @@ export function transformPointlistsToDomainpolygon(outerPolygon: IPolygon , shel
     }
 
     /*
-    // Process checkouts (to later be able to determine the weighted Vector of the Exit from the checkout corners)
+    // Process checkouts here to be able to verify the correctness of the checkout corners transformation
     for (const checkout of transCheckout) {
         const checkoutCorners = calculateCorners(checkout);
 
-        /* the part below is not needed for the program, but only to verify the correctness of the checkout corners transformation
         // Add the x and y coordinates of the inner points to the segment points array
         for (const point of checkoutCorners) {
             segmentPoints.push(point.x, point.y);
@@ -203,6 +201,17 @@ export const transformDoorToEntrance = (doors: IDoor[], stageHeight: number): IC
 }
 
 export const transformCheckoutToExit = (checkouts: ICheckout[], stageHeight: number): IConfigExit[] => {
+
+   //Process checkout corners (to later be able to determine the weighted Vector of the Exit from the checkout corners)
+    // Move the y coordinate of the checkouts
+   /* const transformedCheckouts: ICheckout[] = checkouts.map(checkout => {
+        const newY = stageHeight - checkout.polygon.y;
+        return { ...checkout, polygon: { ...checkout.polygon, y: newY } };
+    });
+    for (const checkout of transformedCheckouts) {
+       const checkoutCorners = calculateCorners(checkout);
+   }*/
+
     return checkouts.map(checkout => {
         return {
             name: checkout.name ? checkout.name : "checkout",
