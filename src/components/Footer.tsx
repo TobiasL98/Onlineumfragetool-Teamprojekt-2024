@@ -1,7 +1,7 @@
 export default function Footer() {
 	return (
-		<footer>
-			<p className="align-center border-b border-b-[--header-footer-separator-color] mx-8"></p>
+		<div>
+			<p className="align-center mx-8 border-b border-b-[--header-footer-separator-color]"></p>
 			<div className="bg-bg-eFlow flex p-3 px-7">
 				<div className="mb-3 ml-8 mr-8 flex font-mono text-sm">
 					<p className="mr-2 font-bold">Datenschutzhinweis: </p>
@@ -13,6 +13,6 @@ export default function Footer() {
 					</p>
 				</div>
 			</div>
-		</footer>
+		</div>
 	);
 }

@@ -10,7 +10,7 @@ export default function Header({ admin }: { admin: boolean }) {
 	const navigation = usePathname();
 	const [_, dispatch] = useFormState(logout, undefined);
 	return (
-		<header className="nav-container border-b border-b-[--header-footer-separator-color] bg-[--header-color]  px-6 font-mono">
+		<div className="nav-container border-b border-b-[--header-footer-separator-color] bg-[--header-color]  px-6 font-mono">
 			<div className="astro-3ef6ksr2 top-nav-wrap flex justify-between p-4 font-mono text-sm">
 				<div className="flex align-baseline ">
 					{!admin ? (
@@ -84,6 +84,6 @@ export default function Header({ admin }: { admin: boolean }) {
 					)}
 				</div>
 			</div>
-		</header>
+		</div>
 	);
 }
