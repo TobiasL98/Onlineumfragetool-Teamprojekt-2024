@@ -161,7 +161,39 @@ export default function ShoppingStrategyPage() {
 				URL.revokeObjectURL(link.href);
 			}, 500);
 		}
+
+		const clickedShelfs = shelfs
+			.filter(shelf => shelf.shoppingOrder)
+			.filter(shelf => shelf.shoppingTime);
+
+		const checkout = checkouts
+			.filter(checkout => checkout.shoppingOrder);
+
+
+
+		const routeData = {
+			shelfID: clickedShelfs.map((shelf) => shelf.name),
+			shoppingOrder: clickedShelfs.map((shelf) => shelf.shoppingOrder),
+			shoppingTime: clickedShelfs.map((shelf) => shelf.shoppingTime),
+			checkoutID: checkout.map((checkout) => checkout.name),
+
+		}
+
+		const formattedJsonStr = JSON.stringify(supermarketFile, null, 2);
+
+		const supermarketData = {
+			layout: formattedJsonStr
+		}
+
+		const supermarketResponse = await fetch("/api/saveShoppingstrategy", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(supermarketData),
+		})
 	};
+
 
 	return (
 		<div className="flex flex-col">

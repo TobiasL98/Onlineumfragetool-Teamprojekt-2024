@@ -468,9 +468,9 @@ export default function Survey() {
 															);
 														if (self.checked) {
 															let updateState: any =
-																{
-																	...formState,
-																};
+															{
+																...formState,
+															};
 															others.forEach(
 																(x) => {
 																	updateState[
@@ -527,9 +527,9 @@ export default function Survey() {
 															);
 														if (self.checked) {
 															let updateState: any =
-																{
-																	...formState,
-																};
+															{
+																...formState,
+															};
 															allergies.forEach(
 																(x) => {
 																	updateState[
@@ -555,7 +555,7 @@ export default function Survey() {
 											{(() => {
 												const others =
 													allergies[
-														allergies.length - 1
+													allergies.length - 1
 													];
 												return (
 													<Label key={others.value}>

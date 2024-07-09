@@ -38,3 +38,6 @@ next-env.d.ts
 
 # IntelliJ IDEA specific
 .idea/
+
+# Migrate Folder
+./drizzle/migrations
