@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, jsonb, integer, text } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, jsonb, integer, text, numeric } from "drizzle-orm/pg-core";
 
 // Supermarket Table
 export const SupermarketTable = pgTable("supermarket", {
