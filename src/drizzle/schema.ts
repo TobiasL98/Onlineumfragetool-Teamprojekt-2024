@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, json, jsonb, integer, text, numeric } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, json, jsonb, integer, text, numeric, PgArray } from "drizzle-orm/pg-core";
 import { routeModule } from "next/dist/build/templates/app-page";
 
 // Supermarket Table
@@ -25,9 +25,9 @@ export const UserTable = pgTable("user", {
 // Route Table
 export const RouteTable = pgTable("route", {
   routeID: uuid("routeID").primaryKey().defaultRandom(),
-  shelfID: uuid("shelfID"),
-  checkoutID: uuid("checkoutID"),
-  shoppingTime: varchar("shoppingTime", { length: 255 }),
-  shoppingOrder: integer("shoppingOrder"),
-  userID: uuid("UserID").references(() => UserTable.userID),
+  shelfID: varchar("shelfID", { length: 255}),
+  checkoutID: varchar("checkoutID", { length: 255}),
+  shoppingTime: varchar("shoppingTime", { length: 500 }),
+  shoppingOrder: varchar("shoppingOrder", { length: 255 }),
+  userID: uuid("id").references(() => UserTable.userID),
 });

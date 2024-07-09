@@ -176,8 +176,15 @@ export default function ShoppingStrategyPage() {
 			shoppingOrder: clickedShelfs.map((shelf) => shelf.shoppingOrder),
 			shoppingTime: clickedShelfs.map((shelf) => shelf.shoppingTime),
 			checkoutID: checkout.map((checkout) => checkout.name),
-
 		}
+
+		const routeResponse = await fetch("/api/saveRoute", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(routeData),
+		})
 
 		const formattedJsonStr = JSON.stringify(supermarketFile, null, 2);
 

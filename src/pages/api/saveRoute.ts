@@ -1,23 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import "dotenv/config"
 import { db } from 'drizzle/db';
-import { UserTable } from 'drizzle/schema';
+import { RouteTable } from 'drizzle/schema';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { days, time, age, sex, diet, occupation, buyingFor, allergies, otherAllergies } = req.body;
+            const {shelfID, shoppingOrder, shoppingTime, checkoutID   } = req.body;
 
-            await db.insert(UserTable).values({
-                days: JSON.stringify(days),
-                time,
-                age: age || null,
-                sex: sex || null,
-                diet: diet || null,
-                occupation: occupation || null,
-                buyingFor: JSON.stringify(buyingFor),
-                allergies: JSON.stringify(allergies),
-                otherAllergies: otherAllergies || null,
+            await db.insert(RouteTable).values({
+                shelfID,
+                checkoutID,
+                shoppingTime,
+                shoppingOrder,
             });
 
             res.status(200).json({ message: 'Data saved successfully' });
