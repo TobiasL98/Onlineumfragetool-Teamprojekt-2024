@@ -3,13 +3,7 @@ import Bordered from "components/Bordered";
 import Input from "components/Input";
 import Label from "components/Label";
 import Select from "components/Select";
-import {
-	ChangeEvent,
-	ChangeEventHandler,
-	HTMLAttributes,
-	forwardRef,
-	useRef,
-} from "react";
+import { ChangeEvent, ChangeEventHandler, HTMLAttributes, useRef } from "react";
 
 import {
 	useForm,
@@ -22,21 +16,7 @@ import {
 	occupation,
 } from "../FormContext";
 import { useRouter } from "next/navigation";
-
-const Error = forwardRef<HTMLDivElement, { text: string }>((props, ref) => {
-	return (
-		<div
-			className="hint ml-5 mt-1 opacity-75"
-			style={{ color: "red", display: "none" }}
-			ref={ref}
-		>
-			{props.text}
-		</div>
-	);
-});
-
-Error.displayName = "SurveyError";
-
+import { SurveyError as Error } from "components/SurveyError";
 function Separator({
 	className,
 	...rest
@@ -468,9 +448,9 @@ export default function Survey() {
 															);
 														if (self.checked) {
 															let updateState: any =
-															{
-																...formState,
-															};
+																{
+																	...formState,
+																};
 															others.forEach(
 																(x) => {
 																	updateState[
@@ -527,9 +507,9 @@ export default function Survey() {
 															);
 														if (self.checked) {
 															let updateState: any =
-															{
-																...formState,
-															};
+																{
+																	...formState,
+																};
 															allergies.forEach(
 																(x) => {
 																	updateState[
@@ -555,7 +535,7 @@ export default function Survey() {
 											{(() => {
 												const others =
 													allergies[
-													allergies.length - 1
+														allergies.length - 1
 													];
 												return (
 													<Label key={others.value}>

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
+import { SurveyError } from "components/SurveyError";
 import Headline from "components/Headline";
 import LayoutSurvey from "components/layoutSurvey/LayoutSurvey";
 import { EditorModes } from "lib/edit/EditorModes";
@@ -33,7 +33,7 @@ export default function ShoppingStrategyPage() {
 	if (checkForm(formState).length != 0) {
 		redirect("/survey");
 	}
-
+	const checkoutMissingRef = useRef<HTMLDivElement>(null);
 	const [configFile, setConfigFile] = useState<IeFlowFile | null>(null);
 
 	const [selectedTime, setSelectedTime] = useState("");
@@ -68,7 +68,7 @@ export default function ShoppingStrategyPage() {
 		closed: false,
 	});
 	const walls = connectPoints(polygonCorners);
-	const [holePolygons, setHolePolygons] = useState<IPolygon[]>([]);
+	const [holePolygons, _] = useState<IPolygon[]>([]);
 	const innerWallsList = holePolygons.map((corners) =>
 		connectPoints(corners),
 	);
@@ -163,20 +163,17 @@ export default function ShoppingStrategyPage() {
 		}
 
 		const clickedShelfs = shelfs
-			.filter(shelf => shelf.shoppingOrder)
-			.filter(shelf => shelf.shoppingTime);
+			.filter((shelf) => shelf.shoppingOrder)
+			.filter((shelf) => shelf.shoppingTime);
 
-		const checkout = checkouts
-			.filter(checkout => checkout.shoppingOrder);
-
-
+		const checkout = checkouts.filter((checkout) => checkout.shoppingOrder);
 
 		const routeData = {
 			shelfID: clickedShelfs.map((shelf) => shelf.name),
 			shoppingOrder: clickedShelfs.map((shelf) => shelf.shoppingOrder),
 			shoppingTime: clickedShelfs.map((shelf) => shelf.shoppingTime),
 			checkoutID: checkout.map((checkout) => checkout.name),
-		}
+		};
 
 		const routeResponse = await fetch("/api/saveRoute", {
 			method: "POST",
@@ -184,13 +181,13 @@ export default function ShoppingStrategyPage() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(routeData),
-		})
+		});
 
 		const formattedJsonStr = JSON.stringify(supermarketFile, null, 2);
 
 		const supermarketData = {
-			layout: formattedJsonStr
-		}
+			layout: formattedJsonStr,
+		};
 
 		const supermarketResponse = await fetch("/api/saveShoppingstrategy", {
 			method: "POST",
@@ -198,9 +195,8 @@ export default function ShoppingStrategyPage() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(supermarketData),
-		})
+		});
 	};
-
 
 	return (
 		<div className="flex flex-col">
@@ -210,6 +206,12 @@ export default function ShoppingStrategyPage() {
 			<div className="mb-3 text-center italic">
 				Stellen Sie sich im Geiste vor Sie machen gerade Ihren
 				Einkauf...
+			</div>
+			<div className="text-center">
+				<SurveyError
+					text="* Sie müssen eine Kasse auswählen."
+					ref={checkoutMissingRef}
+				/>
 			</div>
 			<div className="h-65 flex">
 				<div className="w-25-percent m-5 ml-7 flex flex-col justify-between">
@@ -259,6 +261,16 @@ export default function ShoppingStrategyPage() {
 						href="/thankYou"
 						onClick={(event) => {
 							event.preventDefault();
+							if (
+								checkouts.filter(
+									(checkout) => checkout.shoppingOrder,
+								).length != 1
+							) {
+								checkoutMissingRef.current!.style.display =
+									"block";
+
+								return;
+							}
 							saveSupermarketData(supermarketFile!).then(() => {
 								window.location.href = "/thankYou";
 							});
