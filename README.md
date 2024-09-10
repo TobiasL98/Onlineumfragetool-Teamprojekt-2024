@@ -1,3 +1,5 @@
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -61,81 +63,105 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ### **Als User**
 
-| Home Page: | ◦ Umfrage starten |
-| --- | --- |
-| Survey Page: | ◦ Pflichtfelder:
-        ▪ WochenTag anklicken
-        ▪ Tageszeit auswählen
-    ◦ Optionale Felder:
-        ▪ Alter
-        ▪ Geschlecht
-        ▪ Berufstätigkeit
-        ▪ Ernährungstil
-        ▪ Anzahl an
-         Erwachsene/Kinder für die eingekauft werden
-        ▪ Allergien/Unverträglichkeiten
-    ◦ Weiter Button:
-        ▪ Speichern der User Daten
-         in der Datenbank
-        ▪ Weiterleiten zur
-         ShoppingStrategy Page |
-| ShoppingStrategy Page: | ◦ Per Linksklick ist es
-        möglich die Reihenfolge durchzuklicken in welcher der Einkauf statt
-        findet.
-    ◦ Aus dem Contextmenu wird
-        die Dauer ausgewählt, die am Regal verbracht wird.
-    ◦ Per Rechtklick ist es
-        möglich ein Regal/Kasse wieder zu entwählen.Zuletzt muss eine Kasse
-        ausgewählt worden sein.
-    ◦ Fertig Button:
-        ▪ Speichern der
-         angeklickten Supermarkt Route in der Datenbank
-        ▪ Lokales Speichern des
-         SupermarktLayout als Json mit transformierten Koordinaten
-         (*_supermarket.json). wichtig: JSON Dateien mit dieser
-         Datenstruktur werden für die PersonenFlow Berechnungen genutzt!
-        ▪ Weiterleiten zur ThankYou
-         Page |
-| ThankYou Page: | ◦ Umfrage Beenden Button zum
-        Beenden der Umfrage und weiterleiten zur Home Page |
+<table>
+  <tr>
+    <td>Home Page</td>
+    <td>Umfrage starten</td>
+  </tr>
+  <tr>
+    <td>Survey Page</td>
+    <td>Pflichtfelder:<br>
+      <ul>
+        <li>Wochentag anklicken</li>
+        <li>Tagezzeit ausw&auml;hlen</li>
+      </ul>
+      Optionale Felder:<br>
+      <ul>
+        <li>Alter</li>
+        <li>Geschlecht</li>
+        <li>Berufst&auml;tigkeit</li>
+        <li>Ern&auml;hrungstil</li>
+        <li>Anzahl an Erwachsene/Kinder für die eingekauft werden</li>
+      </ul>
+      Weiter Button:<br>
+      <ul>
+        <li>Speichern der User Daten in der Datenbank</li>
+        <li>Weiterleiten zur ShoppingStrategy Page</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>ShoppingStrategy Page</td>
+    <td>
+      <ul>
+        <li>Per Linksklick ist es möglich die Reihenfolge durchzuklicken in welcher der Einkauf statt findet.</li>
+        <li>Aus dem Contextmenu wird die Dauer ausgewählt, die am Regal verbracht wird.</li>
+        <li>Per Rechtklick ist es möglich ein Regal/Kasse wieder zu entwählen. Zuletzt muss eine Kasse ausgewählt worden sein.</li>
+      </ul>
+      Fertig Button:
+      <ul>
+        <li>Speichern der angeklickten Supermarkt Route in der Datenbank</li>
+        <li>Lokales Speichern des SupermarktLayout als JSON mit transformierten Koordinaten (*_supermarket.json). <strong>wichtig: JSON Dateien mit dieser Datenstruktur werden für die PersonenFlow Berechnungen genutzt!</strong></li>
+        <li>Weiterleiten zur ThankYou Page</li>        
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>ThankYou Page</td>
+    <td>Umfrage Beenden Button zum
+      Beenden der Umfrage und weiterleiten zur Home Page</td>
+  </tr>
+</table>
 
-### Login:
+### **Als Admin**
 
-| Login Page: | ◦ Login mit:
-        ▪  username: admin 
-        ▪ password: 1234567890 |
-| --- | --- |
-
-### Als Admin:
-
-| Home Page: | ◦ Neues LayoutButton:
-        Weiterleiten zur Edit Page
-    ◦ Supermarkt Vorlage laden
-        Button: Weiterleiten zur Edit Page, aber mit Supermarkt Vorlage als
-        Start Layout
-    ◦ Eigene Vorlage laden:
-        Weiterleiten zur Edit Page und öffnen des File Explorers um eine eigene
-        JSON Datei hochzuladen als Start Layout |
-| --- | --- |
-| Edit Page: | ◦ Layout Name ändern
-    ◦ Supermarkt Vorlage
-        hochladen
-    ◦ Eigene Vorlage hochladen
-    ◦ Wände
-    ◦ Türen (in
-        *_supermarket.json als "Entrance") 
-    ◦ Regale (rotierbar)
-    ◦ Kasse (in
-        *_supermarket.json als "Exit") (rotierbar)
-    ◦ Speichern Button:
-        ▪ Lokales Speichern des
-         Layouts als JSON (mit invertierter Y-Achse). wichtig:
-         Nur JSON Dateien mit dieser Datenstruktur können verwendet werden um
-         als Admin ein Layout in der Edit Page hochzuladen!
-        ▪ Das gespeicherte Layout
+<table>
+  <tr>
+    <td>Login Page</td>
+    <td>Login mit:
+      <ul><li>Username: admin</li><li>Password: 1234567890</li></ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Home Page</td>
+    <td>
+      <ul>        
+        <li>Neues Layout: Weiterleiten zur Edit Page</li>
+        <li>Supermarkt Vorlage laden: Weiterleiten zur Edit Page, aber mit Supermarkt Vorlage als Startlayout</li>
+        <li>Eigene Vorlage laden: Weiterleiten zur Edit Page und öffnen des File Explorers um eine eigene
+          JSON Datei hochzuladen als Start Layout</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Edit Page</td>
+    <td>
+      <ul>
+        <li>Layout Name ändern ("Ihr Layout" is ein Textfeld)</li>
+        <li>Supermarkt Vorlage hochladen</li>
+        <li>Wände</li>
+        <li>Türen (in *_supermarket.json als "Entrance")</li>
+        <li>Regale (rotierbar)</li>
+        <li>Kasse (in *_supermarket.json als "Exit") (rotierbar)</li>
+        <li>Speichern Button:
+          <ul>
+            <li>Lokales Speichern des
+              Layouts als JSON (mit invertierter Y-Achse). <strong>wichtig: Nur JSON Dateien mit dieser Datenstruktur können verwendet werden um als Admin ein Layout in der Edit Page hochzuladen!</strong></li>
+            <li>Das gespeicherte Layout
          ist nun das current_supermarket.json (im public folder) und ist nun
          das Layout, welches für den User auf der ShoppingStrategy Page
-         angezeigt wird. |
-| Results Page: | ◦ Zukunftsmusik: Hier soll
-        für bestimmte Wochentage/Uhrzeiten, die Routen im Layout dargestellt
-        werden. |
+         angezeigt wird.</li>
+          </ul>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Results Page</td>
+    <td>
+      Zukunftsmusik: Hier soll
+      für bestimmte Wochentage/Uhrzeiten, die Routen im Layout dargestellt
+      werden.
+    </td>
+  </tr>
+</table>
